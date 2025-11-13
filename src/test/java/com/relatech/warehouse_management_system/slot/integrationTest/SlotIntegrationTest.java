@@ -86,6 +86,16 @@ class SlotIntegrationTest {
     }
 
     @Test
+    void givenNewSlotWithoutCode_whenPost_thenReturnBadRequest() throws Exception {
+        SlotDTO slotWithoutCode = new SlotDTO(null, null, ProductCategory.FLAMMABLE, 10, null);
+
+        mockMvc.perform(post("/api/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(slotWithoutCode)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void givenValidSlot_whenPost_thenReturnUpdatedObject() throws Exception {
         String createResult = mockMvc.perform(post("/api/slots")
                         .contentType(MediaType.APPLICATION_JSON)
