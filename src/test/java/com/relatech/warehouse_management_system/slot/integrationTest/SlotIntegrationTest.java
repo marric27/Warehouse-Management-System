@@ -2,7 +2,6 @@ package com.relatech.warehouse_management_system.slot.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
-import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
 import com.relatech.warehouse_management_system.slot.service.SlotService;
 import com.relatech.warehouse_management_system.util.ProductCategory;

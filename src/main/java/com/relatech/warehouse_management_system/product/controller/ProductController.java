@@ -6,6 +6,7 @@ import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.product.service.ProductService;
 import com.relatech.warehouse_management_system.util.ProductCategory;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -21,43 +23,57 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) throws EntityNotFoundException {
+        log.info("Received GET request for product with ID: {}", id);
         ProductDTO product = productService.getProductById(id);
+        log.info("Returning product: {}", product);
         return ResponseEntity.ok(product);
     }
 
     @GetMapping("/code/{code}")
     public ResponseEntity<ProductDTO> getProductByCode(@PathVariable String code) throws EntityNotFoundException {
+        log.info("Received GET request for product with code: {}", code);
         ProductDTO product = productService.getProductByCode(code);
+        log.info("Returning product: {}", product);
         return ResponseEntity.ok(product);
     }
 
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
+        log.info("Received GET request for all products");
         List<ProductDTO> products = productService.getAllProducts();
+        log.info("Returning products: {}", products);
         return ResponseEntity.ok(products);
     }
 
     @GetMapping("/category/{category}")
     public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable ProductCategory category) {
+        log.info("Received GET request for product with category: {}", category);
         List<ProductDTO> products = productService.getAllProductByProductCategory(category);
+        log.info("Returning products: {}", products);
         return ResponseEntity.ok(products);
     }
 
     @PostMapping
     public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDTO) {
+        log.info("Received POST request to create product : {}", productDTO);
         ProductDTO created = productService.createProduct(productDTO);
+        log.info("Product created with ID: {}", created);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductDTO productDTO) throws Exception {
+        log.info("Received PUT request to update product with ID: {}", id);
         ProductDTO updated = productService.updateProduct(id, productDTO);
+        log.info("Product updated: {} (ID: {})", updated.getName(), id);
         return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) throws EntityNotFoundException {
+        log.info("Received DELETE request for product with ID: {}", id);
         productService.deleteProduct(id);
+        log.info("Product with ID: {} deleted successfully", id);
         return ResponseEntity.noContent().build();
     }
 

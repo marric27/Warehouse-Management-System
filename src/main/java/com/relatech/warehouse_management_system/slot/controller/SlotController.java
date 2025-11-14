@@ -3,12 +3,15 @@ package com.relatech.warehouse_management_system.slot.controller;
 import com.relatech.warehouse_management_system.exception.EntityNotFoundException;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.slot.service.SlotService;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/slots")
 public class SlotController {
@@ -18,31 +21,41 @@ public class SlotController {
 
     @GetMapping
     public ResponseEntity<List<SlotDTO>> getAllSlots() {
+        log.info("Received GET request for all slots");
         List<SlotDTO> slots = slotService.getAllSlots();
+        log.info("Returning slots: {}", slots);
         return ResponseEntity.ok(slots);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SlotDTO> getSlotById(@PathVariable Long id) throws EntityNotFoundException {
+        log.info("Received GET request for slot with ID: {}", id);
         SlotDTO slot = slotService.getSlotById(id);
+        log.info("Returning slot: {}", slot);
         return ResponseEntity.ok(slot);
     }
 
     @PostMapping
-    public ResponseEntity<SlotDTO> createSlot(@RequestBody SlotDTO slotDTO) {
+    public ResponseEntity<SlotDTO> createSlot(@Valid @RequestBody SlotDTO slotDTO) {
+        log.info("Received POST request to create slot : {}", slotDTO);
         SlotDTO createdSlot = slotService.createSlot(slotDTO);
+        log.info("Slot created with ID: {}", createdSlot);
         return ResponseEntity.ok(createdSlot);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SlotDTO> updateSlot(@PathVariable Long id, @RequestBody SlotDTO slotDTO) throws Exception {
+    public ResponseEntity<SlotDTO> updateSlot(@PathVariable Long id, @Valid @RequestBody SlotDTO slotDTO) throws Exception {
+        log.info("Received PUT request to update slot with ID: {}", id);
         SlotDTO updatedSlot = slotService.updateSlot(id, slotDTO);
+        log.info("Slot updated: {} (ID: {})", updatedSlot, id);
         return ResponseEntity.ok(updatedSlot);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSlot(@PathVariable Long id) throws EntityNotFoundException {
+        log.info("Received DELETE request for slot with ID: {}", id);
         slotService.deleteSlot(id);
+        log.info("Slot with ID: {} deleted successfully", id);
         return ResponseEntity.noContent().build();
     }
 
