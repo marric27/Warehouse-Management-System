@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.slot.service;
 
-import com.relatech.warehouse_management_system.exception.EntityNotFoundException;
+import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.slot.entity.Slot;
@@ -32,10 +32,10 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
-    public SlotDTO getSlotById(Long id) throws EntityNotFoundException {
+    public SlotDTO getSlotById(Long id) throws ResourceNotFoundException {
         return slotRepository.findById(id)
                 .map(SlotMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException("Slot with id " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), id));
     }
 
     @Override
@@ -48,15 +48,15 @@ public class SlotServiceImpl implements SlotService {
     @Override
     public SlotDTO updateSlot(Long id, SlotDTO slotDTO) throws Exception {
         Slot existingSlot = slotRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Slot not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), id));
 
         existingSlot.setCode(slotDTO.getCode());
         existingSlot.setCapacity(slotDTO.getCapacity());
 
         if (existingSlot.getProd() == null)
-            existingSlot.setProductCategory(slotDTO.getProductCategory());
-        else if (existingSlot.getProd().getProductCategory().equals(slotDTO.getProductCategory())) {
-            existingSlot.setProductCategory(slotDTO.getProductCategory());
+            existingSlot.setAllowedCategory(slotDTO.getAllowedCategory());
+        else if (existingSlot.getProd().getProductCategory().equals(slotDTO.getAllowedCategory())) {
+            existingSlot.setAllowedCategory(slotDTO.getAllowedCategory());
         } else throw new Exception("Cant update slot product category cause contains a product");
 
         Slot updatedSlot = slotRepository.save(existingSlot);
@@ -64,9 +64,9 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
-    public void deleteSlot(Long id) throws EntityNotFoundException {
+    public void deleteSlot(Long id) throws ResourceNotFoundException {
         Slot slot = slotRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Slot with id " + id + " not found. Delete failed"));
+                .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), id));
 
         if (slot.getProd() != null) {
             throw new IllegalStateException("Cannot delete slot because it contains a product");

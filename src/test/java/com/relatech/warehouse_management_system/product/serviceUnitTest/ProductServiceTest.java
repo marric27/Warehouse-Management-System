@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.product.serviceUnitTest;
 
-import com.relatech.warehouse_management_system.exception.EntityNotFoundException;
+import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
@@ -47,7 +47,7 @@ public class ProductServiceTest {
 
     @Test
     @DisplayName("Given product exists, when getProductById, then return ProductDTO")
-    void givenProductExists_whenGetProductById_thenReturnProductDTO() throws EntityNotFoundException {
+    void givenProductExists_whenGetProductById_thenReturnProductDTO() throws ResourceNotFoundException {
         when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
 
         ProductDTO result = productService.getProductById(product.getId());
@@ -58,11 +58,11 @@ public class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("Given product does not exist, when getProductById, then throw EntityNotFoundException")
+    @DisplayName("Given product does not exist, when getProductById, then throw ResourceNotFoundException")
     void givenProductDoesNotExist_whenGetProductById_thenThrowException() {
         when(productRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> productService.getProductById(99L));
+        assertThrows(ResourceNotFoundException.class, () -> productService.getProductById(99L));
 
         verify(productRepository, times(1)).findById(99L);
     }
@@ -93,19 +93,19 @@ public class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("Given product does not exist, when updateProduct, then throw EntityNotFoundException")
+    @DisplayName("Given product does not exist, when updateProduct, then throw ResourceNotFoundException")
     void givenNonExistingProduct_whenUpdateProduct_thenThrowException() {
         when(productRepository.findById(10L)).thenReturn(Optional.empty());
         ProductDTO dto = new ProductDTO(10L, "X123", "Ibuprofene", ProductCategory.STANDARD, "IT010");
 
-        assertThrows(EntityNotFoundException.class, () -> productService.updateProduct(10L, dto));
+        assertThrows(ResourceNotFoundException.class, () -> productService.updateProduct(10L, dto));
 
         verify(productRepository, never()).save(any());
     }
 
     @Test
     @DisplayName("Given product exists, when deleteProduct, then repository deleteById called")
-    void givenProductExists_whenDeleteProduct_thenSuccess() throws EntityNotFoundException {
+    void givenProductExists_whenDeleteProduct_thenSuccess() throws ResourceNotFoundException {
         when(productRepository.existsById(1L)).thenReturn(true);
 
         productService.deleteProduct(1L);
@@ -114,11 +114,11 @@ public class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("Given product does not exist, when deleteProduct, then throw EntityNotFoundException")
+    @DisplayName("Given product does not exist, when deleteProduct, then throw ResourceNotFoundException")
     void givenProductDoesNotExist_whenDeleteProduct_thenThrowException() {
         when(productRepository.existsById(99L)).thenReturn(false);
 
-        assertThrows(EntityNotFoundException.class, () -> productService.deleteProduct(99L));
+        assertThrows(ResourceNotFoundException.class, () -> productService.deleteProduct(99L));
 
         verify(productRepository, never()).deleteById(anyLong());
     }

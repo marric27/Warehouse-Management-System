@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface SlotRepository extends JpaRepository<Slot, Long> {
     Optional<Slot> findByCode(String code);
 
-    List<Slot> findByProductCategory(ProductCategory productCategory);
+    List<Slot> findByAllowedCategory(ProductCategory productCategory);
 }

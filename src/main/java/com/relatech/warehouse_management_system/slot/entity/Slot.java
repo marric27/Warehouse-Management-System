@@ -22,7 +22,7 @@ public class Slot {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    ProductCategory productCategory;
+    ProductCategory allowedCategory;
 
     @Column(nullable = false)
     Integer capacity = 0;
@@ -38,7 +38,7 @@ public class Slot {
 
     public boolean canContain(Product p) {
         if (p == null) return false;
-        return this.productCategory == p.getProductCategory();
+        return this.allowedCategory == p.getProductCategory();
     }
 
     public void addProduct(Product p) {

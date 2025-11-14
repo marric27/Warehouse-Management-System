@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.product.service;
 
-import com.relatech.warehouse_management_system.exception.EntityNotFoundException;
+import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
@@ -21,17 +21,17 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
 
     @Override
-    public ProductDTO getProductById(Long id) throws EntityNotFoundException {
+    public ProductDTO getProductById(Long id) throws ResourceNotFoundException {
         return productRepository.findById(id)
                 .map(ProductMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), id));
     }
 
     @Override
-    public ProductDTO getProductByCode(String code) throws EntityNotFoundException {
+    public ProductDTO getProductByCode(String code) throws ResourceNotFoundException {
         return productRepository.findByCode(code)
                 .map(ProductMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException("Product with code " + code + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), code));
     }
 
     @Override
@@ -43,7 +43,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) throws Exception {
         Product existing = productRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found. Update failed"));
+                .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), id));
+
 
         existing.setCode(productDTO.getCode());
         existing.setName(productDTO.getName());
@@ -53,8 +54,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProduct(Long id) throws EntityNotFoundException {
-        if(!productRepository.existsById(id)) throw new EntityNotFoundException("Product with id " + id + " not found. Delete failed");
+    public void deleteProduct(Long id) throws ResourceNotFoundException {
+        if(!productRepository.existsById(id)) throw new ResourceNotFoundException(this.getClass().getName(), id);
+
         productRepository.deleteById(id);
     }
 

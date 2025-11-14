@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.slot.serviceUnitTest;
 
-import com.relatech.warehouse_management_system.exception.EntityNotFoundException;
+import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import com.relatech.warehouse_management_system.util.ProductCategory;
@@ -51,7 +51,7 @@ class SlotServiceTest {
 
         slot = new Slot();
         slot.setCode("SLOT001");
-        slot.setProductCategory(ProductCategory.STANDARD);
+        slot.setAllowedCategory(ProductCategory.STANDARD);
         slot.setCapacity(100);
         slot.setProd(product);
 
@@ -72,7 +72,7 @@ class SlotServiceTest {
 
     @Test
     @DisplayName("Given slot exists, when getSlotById, then return SlotDTO")
-    void givenSlotExists_whenGetSlotById_thenReturnSlotDTO() throws EntityNotFoundException {
+    void givenSlotExists_whenGetSlotById_thenReturnSlotDTO() throws ResourceNotFoundException {
         when(slotRepository.findById(slot.getId())).thenReturn(Optional.of(slot));
 
         SlotDTO result = slotService.getSlotById(slot.getId());
@@ -83,11 +83,11 @@ class SlotServiceTest {
     }
 
     @Test
-    @DisplayName("Given slot does not exist, when getSlotById, then throw EntityNotFoundException")
+    @DisplayName("Given slot does not exist, when getSlotById, then throw ResourceNotFoundException")
     void givenSlotDoesNotExist_whenGetSlotById_thenThrowException() {
         when(slotRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> slotService.getSlotById(99L));
+        assertThrows(ResourceNotFoundException.class, () -> slotService.getSlotById(99L));
 
         verify(slotRepository, times(1)).findById(99L);
     }
@@ -130,7 +130,7 @@ class SlotServiceTest {
 
     @Test
     @DisplayName("Given slot exists and is empty, when deleteSlot, then deleteById is called")
-    void givenEmptySlot_whenDeleteSlot_thenDeleteByIdCalled() throws EntityNotFoundException {
+    void givenEmptySlot_whenDeleteSlot_thenDeleteByIdCalled() throws ResourceNotFoundException {
         slot.setProd(null);
         when(slotRepository.findById(1L)).thenReturn(Optional.of(slot));
 
@@ -150,11 +150,11 @@ class SlotServiceTest {
     }
 
     @Test
-    @DisplayName("Given slot does not exist, when deleteSlot, then throw EntityNotFoundException")
-    void givenSlotDoesNotExist_whenDeleteSlot_thenThrowEntityNotFoundException() {
+    @DisplayName("Given slot does not exist, when deleteSlot, then throw ResourceNotFoundException")
+    void givenSlotDoesNotExist_whenDeleteSlot_thenThrowResourceNotFoundException() {
         when(slotRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> slotService.deleteSlot(99L));
+        assertThrows(ResourceNotFoundException.class, () -> slotService.deleteSlot(99L));
 
         verify(slotRepository, never()).deleteById(anyLong());
     }

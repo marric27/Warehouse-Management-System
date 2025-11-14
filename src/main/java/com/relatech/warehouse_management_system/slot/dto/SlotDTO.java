@@ -15,7 +15,7 @@ public class SlotDTO {
     @NotBlank(message = "The code cannot be empty or null.")
     private String code;
     @NotNull(message = "The product category cannot be null.")
-    private ProductCategory productCategory;
+    private ProductCategory allowedCategory;
     @NotNull(message = "The capacity cannot be null.")
     private int capacity;
     private ProductDTO product;

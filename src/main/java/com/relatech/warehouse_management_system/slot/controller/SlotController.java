@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.slot.controller;
 
-import com.relatech.warehouse_management_system.exception.EntityNotFoundException;
+import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.slot.service.SlotService;
 import jakarta.validation.Valid;
@@ -28,7 +28,7 @@ public class SlotController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SlotDTO> getSlotById(@PathVariable Long id) throws EntityNotFoundException {
+    public ResponseEntity<SlotDTO> getSlotById(@PathVariable Long id) throws ResourceNotFoundException {
         log.info("Received GET request for slot with ID: {}", id);
         SlotDTO slot = slotService.getSlotById(id);
         log.info("Returning slot: {}", slot);
@@ -52,7 +52,7 @@ public class SlotController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSlot(@PathVariable Long id) throws EntityNotFoundException {
+    public ResponseEntity<Void> deleteSlot(@PathVariable Long id) throws ResourceNotFoundException {
         log.info("Received DELETE request for slot with ID: {}", id);
         slotService.deleteSlot(id);
         log.info("Slot with ID: {} deleted successfully", id);
