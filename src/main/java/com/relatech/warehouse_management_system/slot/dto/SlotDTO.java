@@ -1,5 +1,6 @@
-package com.relatech.warehouse_management_system.product.dto;
+package com.relatech.warehouse_management_system.slot.dto;
 
+import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.util.ProductCategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,13 +10,13 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO {
+public class SlotDTO {
     private Long id;
     @NotBlank(message = "The code cannot be empty or null.")
-    String code;
-    @NotBlank(message = "The name cannot be empty or null.")
-    String name;
+    private String code;
     @NotNull(message = "The product category cannot be null.")
-    ProductCategory productCategory;
-    String nationalCode;
+    private ProductCategory productCategory;
+    @NotNull(message = "The capacity cannot be null.")
+    private int capacity;
+    private ProductDTO product;
 }
