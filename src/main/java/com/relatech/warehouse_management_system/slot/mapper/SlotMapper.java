@@ -13,7 +13,7 @@ public class SlotMapper {
         SlotDTO dto = new SlotDTO();
         dto.setId(slot.getId());
         dto.setCode(slot.getCode());
-        dto.setProductCategory(slot.getAllowedCategory());
+        dto.setAllowedCategory(slot.getAllowedCategory());
         dto.setCapacity(slot.getCapacity());
         dto.setProduct(ProductMapper.toDto(slot.getProd()));
 
@@ -26,7 +26,7 @@ public class SlotMapper {
         Slot slot = new Slot();
         slot.setId(dto.getId());
         slot.setCode(dto.getCode());
-        slot.setAllowedCategory(dto.getProductCategory());
+        slot.setAllowedCategory(dto.getAllowedCategory());
         slot.setCapacity(dto.getCapacity());
         slot.setProd(ProductMapper.toEntity(dto.getProduct()));
 

@@ -1,31 +1,38 @@
 package com.relatech.warehouse_management_system.logistic.controller;
 
+import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.logistic.service.LogisticService;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/logistic")
 public class LogisticController {
     @Autowired
     private LogisticService logisticService;
 
-    // POST /api/slots/{slotId}/assign/{productId}
-    @PostMapping("/{slotId}/assign/{productId}")
+    // PATCH /api/slots/{slotId}/assign/{productId}
+    @PatchMapping("/{slotId}/assign/{productId}")
     public ResponseEntity<SlotDTO> assignProductToSlot(
             @PathVariable Long slotId,
             @PathVariable Long productId
-    ) {
+    ) throws ResourceNotFoundException {
+        log.info("Received PATCH request for assign product with ID {} to slot with ID {} ", slotId, productId);
         SlotDTO slotDTO = logisticService.assignProductToSlot(slotId, productId);
+        log.info("Successfully assigned product: {} to slot: {}", productId, slotId);
         return ResponseEntity.ok(slotDTO);
     }
 
-    // POST /api/slots/{id}/remove-product
-    @PostMapping("/{id}/remove-product")
-    public ResponseEntity<SlotDTO> removeProductFromSlot(@PathVariable Long id) {
+    // PATCH /api/slots/{id}/remove-product
+    @PatchMapping("/{id}/remove-product")
+    public ResponseEntity<SlotDTO> removeProductFromSlot(@PathVariable Long id) throws ResourceNotFoundException {
+        log.info("Received PATCH request for remove product from slot with ID {} ", id);
         SlotDTO slotDTO = logisticService.removeProductFromSlot(id);
+        log.info("Successfully removed product from slot: {}",id);
         return ResponseEntity.ok(slotDTO);
     }
 
@@ -34,8 +41,10 @@ public class LogisticController {
     public ResponseEntity<Boolean> canSlotContainProduct(
             @PathVariable Long slotId,
             @PathVariable Long productId
-    ) {
+    ) throws ResourceNotFoundException {
+        log.info("Received GET request to check if slot with ID {} can contain product with ID {}", slotId, productId);
         boolean canContain = logisticService.canSlotContainProduct(slotId, productId);
+        log.info("slot with ID {} can contain product with ID {}: {}",slotId, productId, canContain);
         return ResponseEntity.ok(canContain);
     }
 }
