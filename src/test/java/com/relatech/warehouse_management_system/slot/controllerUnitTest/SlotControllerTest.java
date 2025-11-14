@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.slot.controllerUnitTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.relatech.warehouse_management_system.exception.EntityNotFoundException;
+import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.util.ProductCategory;
 import com.relatech.warehouse_management_system.slot.controller.SlotController;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
@@ -70,7 +70,7 @@ class SlotControllerTest {
     @Test
     @DisplayName("GET /api/slots/{id} - should return 404 when not found")
     void givenSlotNotFound_whenGetSlotById_thenReturnNotFound() throws Exception {
-        when(slotService.getSlotById(99L)).thenThrow(new EntityNotFoundException("Slot not found"));
+        when(slotService.getSlotById(99L)).thenThrow(new ResourceNotFoundException("Slot", 99L));
 
         mockMvc.perform(get("/api/slots/99"))
                 .andExpect(status().isNotFound());
@@ -108,7 +108,7 @@ class SlotControllerTest {
     @DisplayName("PUT /api/slots/{id} - should return 404 when slot not found")
     void givenSlotNotFound_whenUpdateSlot_thenReturnNotFound() throws Exception {
         when(slotService.updateSlot(eq(99L), any(SlotDTO.class)))
-                .thenThrow(new EntityNotFoundException("Slot not found"));
+                .thenThrow(new ResourceNotFoundException("Slot", 99L));
 
         mockMvc.perform(put("/api/slots/99")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -129,7 +129,7 @@ class SlotControllerTest {
     @Test
     @DisplayName("DELETE /api/slots/{id} - should return 404 when slot not found")
     void givenSlotNotFound_whenDeleteSlot_thenReturnNotFound() throws Exception {
-        Mockito.doThrow(new EntityNotFoundException("Not found"))
+        Mockito.doThrow(new ResourceNotFoundException("Slot", 99L))
                 .when(slotService).deleteSlot(99L);
 
         mockMvc.perform(delete("/api/slots/99"))

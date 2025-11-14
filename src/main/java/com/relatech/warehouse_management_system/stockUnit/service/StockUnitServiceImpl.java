@@ -2,6 +2,8 @@ package com.relatech.warehouse_management_system.stockUnit.service;
 
 import com.relatech.warehouse_management_system.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.slot.entity.Slot;
+import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
 import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
 import com.relatech.warehouse_management_system.stockUnit.mapper.StockUnitMapper;
@@ -9,13 +11,15 @@ import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRe
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@Log4j
+@Slf4j
 @RequiredArgsConstructor
 public class StockUnitServiceImpl implements StockUnitService{
 

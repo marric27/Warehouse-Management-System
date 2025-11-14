@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.product.controller;
 
 
-import com.relatech.warehouse_management_system.exception.EntityNotFoundException;
+import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.product.service.ProductService;
 import com.relatech.warehouse_management_system.util.ProductCategory;
@@ -22,7 +22,7 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) throws EntityNotFoundException {
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) throws ResourceNotFoundException {
         log.info("Received GET request for product with ID: {}", id);
         ProductDTO product = productService.getProductById(id);
         log.info("Returning product: {}", product);
@@ -30,7 +30,7 @@ public class ProductController {
     }
 
     @GetMapping("/code/{code}")
-    public ResponseEntity<ProductDTO> getProductByCode(@PathVariable String code) throws EntityNotFoundException {
+    public ResponseEntity<ProductDTO> getProductByCode(@PathVariable String code) throws ResourceNotFoundException {
         log.info("Received GET request for product with code: {}", code);
         ProductDTO product = productService.getProductByCode(code);
         log.info("Returning product: {}", product);
@@ -70,7 +70,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) throws EntityNotFoundException {
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) throws ResourceNotFoundException {
         log.info("Received DELETE request for product with ID: {}", id);
         productService.deleteProduct(id);
         log.info("Product with ID: {} deleted successfully", id);

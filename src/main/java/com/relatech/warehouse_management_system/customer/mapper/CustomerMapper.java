@@ -2,7 +2,9 @@ package com.relatech.warehouse_management_system.customer.mapper;
 
 import com.relatech.warehouse_management_system.customer.dto.CustomerDTO;
 import com.relatech.warehouse_management_system.customer.entity.Customer;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CustomerMapper {
     public CustomerDTO toDTO(Customer entity) {
         if (entity == null) return null;

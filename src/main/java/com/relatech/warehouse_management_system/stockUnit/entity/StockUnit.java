@@ -2,10 +2,12 @@ package com.relatech.warehouse_management_system.stockUnit.entity;
 
 import com.relatech.warehouse_management_system.enums.ProductCategory;
 import com.relatech.warehouse_management_system.product.entity.Product;
+import com.relatech.warehouse_management_system.slot.entity.Slot;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Table(name = "stock_units")

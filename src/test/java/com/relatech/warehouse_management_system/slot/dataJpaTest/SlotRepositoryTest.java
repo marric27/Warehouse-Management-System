@@ -39,7 +39,7 @@ public class SlotRepositoryTest {
     private Slot createTestSlot() {
         Slot slot = new Slot();
         slot.setCode("SLOT001");
-        slot.setProductCategory(ProductCategory.STANDARD);
+        slot.setAllowedCategory(ProductCategory.STANDARD);
         slot.setCapacity(100);
         return slot;
     }
@@ -92,10 +92,10 @@ public class SlotRepositoryTest {
     @DisplayName("Given slot saved, when findByProductCategory, then return list of slots")
     void givenSlotSaved_whenFindByProductCategory_thenReturnList() {
         slotRepository.save(createTestSlot());
-        List<Slot> found = slotRepository.findByProductCategory(ProductCategory.STANDARD);
+        List<Slot> found = slotRepository.findByAllowedCategory(ProductCategory.STANDARD);
 
         assertThat(found).isNotEmpty();
-        assertThat(found.getFirst().getProductCategory()).isEqualTo(ProductCategory.STANDARD);
+        assertThat(found.getFirst().getAllowedCategory()).isEqualTo(ProductCategory.STANDARD);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class SlotRepositoryTest {
     void givenSlot_whenAddProductWithWrongCategory_thenThrowException() {
         Product product = createTestProduct();
         Slot slot = createTestSlot();
-        slot.setProductCategory(ProductCategory.FLAMMABLE);
+        slot.setAllowedCategory(ProductCategory.FLAMMABLE);
         assertThrows(IllegalArgumentException.class, () -> slot.addProduct(product));
     }
 
