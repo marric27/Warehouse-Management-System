@@ -20,5 +20,5 @@ public class StockUnitDTO {
     private String uniqueCode;
     private Integer quantity;
     private ProductCategory productCategory;
-    private Set<Long> slotIds;
+    private Long slotId;
 }

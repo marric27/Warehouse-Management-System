@@ -5,6 +5,10 @@ package com.relatech.warehouse_management_system.stockUnit.mapper;
 import com.relatech.warehouse_management_system.slot.entity.Slot;
 import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
+<<<<<<< Updated upstream
+=======
+import com.relatech.warehouse_management_system.slot.entity.Slot;
+>>>>>>> Stashed changes
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -22,13 +26,12 @@ public class StockUnitMapper {
                 .uniqueCode(entity.getUniqueCode())
                 .quantity(entity.getQuantity())
                 .productCategory(entity.getProductCategory())
-                .slotIds(entity.getSlots() != null ?
-                        entity.getSlots().stream().map(Slot::getId).collect(Collectors.toSet())
-                        : null)
+                .slotId(entity.getSlot() != null ? entity.getSlot().getId() : null)
                 .build();
     }
 
-    public StockUnit toEntity(StockUnitDTO dto, Set<Slot> slots) {
+
+    public StockUnit toEntity(StockUnitDTO dto, Slot slot) {
         return StockUnit.builder()
                 .id(dto.getId())
                 .batchNumber(dto.getBatchNumber())
@@ -37,7 +40,7 @@ public class StockUnitMapper {
                 .uniqueCode(dto.getUniqueCode())
                 .quantity(dto.getQuantity())
                 .productCategory(dto.getProductCategory())
-                .slots(slots)
+                .slot(slot)
                 .build();
     }
 }

@@ -10,18 +10,25 @@ import com.relatech.warehouse_management_system.stockUnit.mapper.StockUnitMapper
 import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRepository;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
+<<<<<<< Updated upstream
 import lombok.extern.log4j.Log4j;
+=======
+>>>>>>> Stashed changes
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+
 import java.util.List;
+<<<<<<< Updated upstream
 import java.util.Set;
 import java.util.stream.Collectors;
+=======
+>>>>>>> Stashed changes
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class StockUnitServiceImpl implements StockUnitService{
+public class StockUnitServiceImpl implements StockUnitService {
 
     private final StockUnitRepository stockUnitRepository;
     private final SlotRepository slotRepository;
@@ -32,18 +39,18 @@ public class StockUnitServiceImpl implements StockUnitService{
         if (stockUnitRepository.findByUniqueCode(dto.getUniqueCode()).isPresent()) {
             throw new DuplicateResourceException("StockUnit", "uniqueCode", dto.getUniqueCode());
         }
-        Set<Slot> slots = slotRepository.findAllById(dto.getSlotIds()).stream().collect(Collectors.toSet());
 
-        for (Slot s : slots) {
-            if (!s.getAllowedCategory().equals(dto.getProductCategory())) {
-                throw new ValidationException(
-                        "StockUnit category " + dto.getProductCategory() +
-                                " not allowed in Slot " + s.getId() +
-                                " (allowed: " + s.getAllowedCategory() + ")"
-                );
-            }
+        Long slotId = dto.getSlotId();
+        if (slotId == null) {
+            throw new ValidationException("Slot ID is required");
         }
-        StockUnit stockUnit = stockUnitMapper.toEntity(dto, slots);
+        Slot slot = slotRepository.findById(slotId)
+                .orElseThrow(() -> new ValidationException("Slot not found with id " + slotId));
+
+
+        dto.setProductCategory(slot.getProductCategory());
+
+        StockUnit stockUnit = stockUnitMapper.toEntity(dto, slot);
         StockUnit saved = stockUnitRepository.save(stockUnit);
         return stockUnitMapper.toDTO(saved);
     }
@@ -58,28 +65,31 @@ public class StockUnitServiceImpl implements StockUnitService{
     @Override
     public List<StockUnitDTO> getAllStockUnits() {
         return stockUnitRepository.findAll()
-                .stream().map(stockUnitMapper::toDTO).collect(Collectors.toList());
+                .stream().map(stockUnitMapper::toDTO).toList();
     }
 
     @Override
     public StockUnitDTO updateStockUnit(Long id, StockUnitDTO dto) throws ResourceNotFoundException, ValidationException {
         StockUnit existing = stockUnitRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("StockUnit", id));
-        Set<Slot> slots = slotRepository.findAllById(dto.getSlotIds()).stream().collect(Collectors.toSet());
-        for (Slot s : slots) {
-            if (!s.getAllowedCategory().equals(dto.getProductCategory())) {
-                throw new ValidationException("StockUnit category " + dto.getProductCategory() +
-                        " not allowed in Slot " + s.getId() +
-                        " (allowed: " + s.getAllowedCategory() + ")");
-            }
+
+        Long slotId = dto.getSlotId();
+        if (slotId == null) {
+            throw new ValidationException("Slot ID is required");
         }
+        Slot slot = slotRepository.findById(slotId)
+                .orElseThrow(() -> new ValidationException("Slot not found with id " + slotId));
+
+
+        dto.setProductCategory(slot.getProductCategory());
+
         existing.setBatchNumber(dto.getBatchNumber());
         existing.setExpirationDate(dto.getExpirationDate());
-        existing.setProductCode(dto.getProductCode());
         existing.setUniqueCode(dto.getUniqueCode());
         existing.setQuantity(dto.getQuantity());
         existing.setProductCategory(dto.getProductCategory());
-        existing.setSlots(slots);
+        existing.setSlot(slot);
+
         StockUnit saved = stockUnitRepository.save(existing);
         return stockUnitMapper.toDTO(saved);
     }

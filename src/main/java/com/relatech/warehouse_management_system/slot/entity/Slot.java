@@ -1,40 +1,48 @@
 package com.relatech.warehouse_management_system.slot.entity;
 
 import com.relatech.warehouse_management_system.product.entity.Product;
-import com.relatech.warehouse_management_system.util.ProductCategory;
+import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
+import com.relatech.warehouse_management_system.enums.ProductCategory;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.List;
 
 @Entity
 @Table(name = "slot")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Slot {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
-    String code;
+    private String code;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+<<<<<<< Updated upstream
     ProductCategory allowedCategory;
+=======
+    private ProductCategory productCategory;
+>>>>>>> Stashed changes
 
     @Column(nullable = false)
-    Integer capacity = 0;
+    private Integer capacity;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    // associazione logistica:
-    // dice che tale prodotto potrebbe essere inserito in quello slot,
-    // in seguito questa compatibilità verrà verificata per fare la associazione fisica,
-    // ossia mettere fisicamente il prodotto/stock unit nello slot
-    private Product prod; // if null then slot is empty
+    private Product prod;
+
+    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StockUnit> stockUnits;
 
     public boolean canContain(Product p) {
         if (p == null) return false;

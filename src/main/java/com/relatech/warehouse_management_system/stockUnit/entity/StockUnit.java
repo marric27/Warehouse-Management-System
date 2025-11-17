@@ -41,19 +41,13 @@ public class StockUnit {
     @Column(name = "product_category", nullable = false)
     private ProductCategory productCategory;
 
-
-
-     @ManyToOne(fetch = FetchType.LAZY)
+     @ManyToOne(optional = false)
      @JoinColumn(name = "product_id")
      private Product product;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name="slot_id")
+    private Slot slot;
 
-    @ManyToMany
-    @JoinTable(
-         name = "stockunit_slot",
-       joinColumns = @JoinColumn(name = "stockunit_id"),
-     inverseJoinColumns = @JoinColumn(name = "slot_id")
-    )
-    private Set<Slot> slots;
 }
 

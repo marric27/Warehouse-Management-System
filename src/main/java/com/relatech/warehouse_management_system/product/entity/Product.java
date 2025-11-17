@@ -17,17 +17,15 @@ public class Product {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    String code;
+    private String code;
 
     @Column(nullable = false)
-    String name;
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    ProductCategory productCategory;
+    private ProductCategory productCategory;
 
     @Column(nullable = false)
-    String nationalCode;
-
-
+    private String nationalCode;
 }

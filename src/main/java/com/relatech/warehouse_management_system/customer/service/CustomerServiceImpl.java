@@ -1,4 +1,4 @@
-package com.relatech.warehouse_management_system.customer.service;
+package com.relatech.warehouse_management_system.customer;
 
 import com.relatech.warehouse_management_system.customer.dto.CustomerDTO;
 import com.relatech.warehouse_management_system.customer.entity.Customer;
@@ -65,12 +65,16 @@ public class CustomerServiceImpl implements CustomerService {
         return customerMapper.toDTO(saved);
     }
 
+
+    public boolean hasActiveOrders(Long customerId) {
+        return false;
+    }
+
     @Override
     @Transactional
     public void deleteCustomer(Long id) throws ResourceNotFoundException, CustomerWithActiveOrdersException {
         log.info("Deleting customer with ID: {}", id);
-        boolean hasActiveOrders = false; // TODO: replace with real check
-        if (hasActiveOrders) {
+        if (hasActiveOrders(id)) {
             throw new CustomerWithActiveOrdersException(id);
         }
         Customer customer = customerRepository.findById(id)
@@ -78,6 +82,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.delete(customer);
         log.info("Customer deleted with ID: {}", id);
     }
+
 
     @Override
     public List<CustomerDTO> searchCustomers(String term) {
