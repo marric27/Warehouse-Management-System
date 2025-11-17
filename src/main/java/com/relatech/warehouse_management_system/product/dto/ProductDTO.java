@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.product.dto;
 
-import com.relatech.warehouse_management_system.util.ProductCategory;
+import com.relatech.warehouse_management_system.util.Category;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -16,6 +16,6 @@ public class ProductDTO {
     @NotBlank(message = "The name cannot be empty or null.")
     String name;
     @NotNull(message = "The product category cannot be null.")
-    ProductCategory productCategory;
+    Category category;
     String nationalCode;
 }

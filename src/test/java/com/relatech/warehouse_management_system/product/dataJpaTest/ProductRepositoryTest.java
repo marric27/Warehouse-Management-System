@@ -2,8 +2,7 @@ package com.relatech.warehouse_management_system.product.dataJpaTest;
 
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.util.ProductCategory;
-import org.junit.jupiter.api.DisplayName;
+import com.relatech.warehouse_management_system.util.Category;import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -27,7 +26,7 @@ public class ProductRepositoryTest {
         testProduct = new Product();
         testProduct.setCode("P123");
         testProduct.setName("Paracetamolo");
-        testProduct.setProductCategory(ProductCategory.STANDARD);
+        testProduct.setCategory(Category.STANDARD);
         testProduct.setNationalCode("IT001");
     }
 
@@ -68,7 +67,7 @@ public class ProductRepositoryTest {
         createTestProduct();
         productRepository.save(testProduct);
 
-        List<Product> found = productRepository.findByProductCategory(ProductCategory.STANDARD);
+        List<Product> found = productRepository.findByCategory(Category.STANDARD);
 
         assertThat(found)
                 .isNotEmpty()
@@ -77,7 +76,7 @@ public class ProductRepositoryTest {
         Product productFound = found.getFirst();
         assertEquals(productFound, testProduct);
         assertThat(productFound.getName()).isEqualTo("Paracetamolo");
-        assertThat(productFound.getProductCategory()).isEqualTo(ProductCategory.STANDARD);
+        assertThat(productFound.getCategory()).isEqualTo(Category.STANDARD);
     }
 
     @Test

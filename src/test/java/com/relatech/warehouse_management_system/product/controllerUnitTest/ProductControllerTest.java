@@ -5,8 +5,7 @@ import com.relatech.warehouse_management_system.exception.ResourceNotFoundExcept
 import com.relatech.warehouse_management_system.product.controller.ProductController;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.product.service.ProductService;
-import com.relatech.warehouse_management_system.util.ProductCategory;
-import org.junit.jupiter.api.DisplayName;
+import com.relatech.warehouse_management_system.util.Category;import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ class ProductControllerTest {
     private ObjectMapper objectMapper;
 
     private final ProductDTO productDTO = new ProductDTO(
-            1L, "P001", "Paracetamolo", ProductCategory.STANDARD, "IT001"
+            1L, "P001", "Paracetamolo", Category.STANDARD, "IT001"
     );
 
     //  GET /api/products/{id}
@@ -98,12 +97,12 @@ class ProductControllerTest {
     @Test
     @DisplayName("GET /api/products/category/{category} - should return list by category")
     void givenCategory_whenGetByCategory_thenReturnList() throws Exception {
-        when(productService.getAllProductByProductCategory(ProductCategory.STANDARD))
+        when(productService.getAllProductByProductCategory(Category.STANDARD))
                 .thenReturn(List.of(productDTO));
 
         mockMvc.perform(get("/api/products/category/STANDARD"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].productCategory").value("STANDARD"));
+                .andExpect(jsonPath("$[0].category").value("STANDARD"));
     }
 
     //  POST /api/products
@@ -123,7 +122,7 @@ class ProductControllerTest {
     @Test
     @DisplayName("PUT /api/products/{id} - should update product and return updated DTO")
     void givenProductExists_whenUpdate_thenReturnUpdated() throws Exception {
-        ProductDTO updated = new ProductDTO(1L, "P002", "Aspirina", ProductCategory.STANDARD, "IT002");
+        ProductDTO updated = new ProductDTO(1L, "P002", "Aspirina", Category.STANDARD, "IT002");
         when(productService.updateProduct(eq(1L), any(ProductDTO.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/products/1")

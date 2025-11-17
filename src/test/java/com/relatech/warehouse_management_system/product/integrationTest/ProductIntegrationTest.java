@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import com.relatech.warehouse_management_system.product.service.ProductService;
-import com.relatech.warehouse_management_system.util.ProductCategory;
-import org.junit.jupiter.api.BeforeEach;
+import com.relatech.warehouse_management_system.util.Category;import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -34,7 +33,7 @@ class ProductIntegrationTest {
     private ObjectMapper objectMapper;
 
     private final ProductDTO productDTO = new ProductDTO(
-            null, "P001", "Paracetamolo", ProductCategory.STANDARD, "IT001"
+            null, "P001", "Paracetamolo", Category.STANDARD, "IT001"
     );
 
     @BeforeEach
@@ -66,8 +65,8 @@ class ProductIntegrationTest {
 
     @Test
     void givenExistingProducts_whenGetProductByCategory_thenReturnProduct() throws Exception {
-        ProductDTO product1 = new ProductDTO(null, "C001", "Tachipirina", ProductCategory.STANDARD, "IT5");
-        ProductDTO product2 = new ProductDTO(null, "C991", "Brufen", ProductCategory.FLAMMABLE, "EN6");
+        ProductDTO product1 = new ProductDTO(null, "C001", "Tachipirina", Category.STANDARD, "IT5");
+        ProductDTO product2 = new ProductDTO(null, "C991", "Brufen", Category.FLAMMABLE, "EN6");
         productService.createProduct(product1);
         productService.createProduct(product2);
 
@@ -104,7 +103,7 @@ class ProductIntegrationTest {
     void whenPostDuplicateMovie_thenReturnConflict() throws Exception {
         productService.createProduct(productDTO);
 
-        ProductDTO duplicate = new ProductDTO(null, "P001", "Brufen", ProductCategory.FLAMMABLE, "EN6");
+        ProductDTO duplicate = new ProductDTO(null, "P001", "Brufen", Category.FLAMMABLE, "EN6");
 
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -114,7 +113,7 @@ class ProductIntegrationTest {
 
     @Test
     void givenNewProductWithoutCode_whenPost_thenReturnBadRequest() throws Exception {
-        ProductDTO prodWithoutCode = new ProductDTO(null, null, "Brufen", ProductCategory.FLAMMABLE, "EN6");
+        ProductDTO prodWithoutCode = new ProductDTO(null, null, "Brufen", Category.FLAMMABLE, "EN6");
 
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -143,8 +142,8 @@ class ProductIntegrationTest {
 
     @Test
     void givenExistingProduct_whenUpdateProductWithExistingCode_thenReturnConflict() throws Exception {
-        ProductDTO product1 = new ProductDTO(null, "C001", "Tachipirina", ProductCategory.STANDARD, "IT5");
-        ProductDTO product2 = new ProductDTO(null, "C991", "Brufen", ProductCategory.FLAMMABLE, "EN6");
+        ProductDTO product1 = new ProductDTO(null, "C001", "Tachipirina", Category.STANDARD, "IT5");
+        ProductDTO product2 = new ProductDTO(null, "C991", "Brufen", Category.FLAMMABLE, "EN6");
         ProductDTO first = productService.createProduct(product1);
         ProductDTO toUpdate = productService.createProduct(product2);
 

@@ -1,10 +1,11 @@
-package com.relatech.warehouse_management_system.logistic.controller;
+package com.relatech.warehouse_management_system.logistic.controllerUnitTest;
 
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.logistic.controller.LogisticController;
 import com.relatech.warehouse_management_system.logistic.service.LogisticService;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
-import com.relatech.warehouse_management_system.util.ProductCategory;
+import com.relatech.warehouse_management_system.util.Category;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +35,13 @@ class LogisticControllerTest {
         productDTO.setId(1L);
         productDTO.setCode("PRD-001");
         productDTO.setName("Paracetamolo");
-        productDTO.setProductCategory(ProductCategory.STANDARD);
+        productDTO.setCategory(Category.STANDARD);
         productDTO.setNationalCode("IT123");
 
         SlotDTO slotDTO = new SlotDTO();
         slotDTO.setId(1L);
         slotDTO.setCode("SLOT001");
-        slotDTO.setAllowedCategory(ProductCategory.STANDARD);
+        slotDTO.setAllowedCategory(Category.STANDARD);
         slotDTO.setCapacity(100);
         slotDTO.setProduct(productDTO);
 
@@ -54,7 +55,7 @@ class LogisticControllerTest {
                 .andExpect(jsonPath("$.code").value("SLOT001"))
                 .andExpect(jsonPath("$.product.id").value(1))
                 .andExpect(jsonPath("$.product.name").value("Paracetamolo"))
-                .andExpect(jsonPath("$.product.productCategory").value("STANDARD"))
+                .andExpect(jsonPath("$.product.category").value("STANDARD"))
                 .andExpect(jsonPath("$.product.nationalCode").value("IT123"));
     }
 
@@ -63,7 +64,7 @@ class LogisticControllerTest {
         SlotDTO slotDTO = new SlotDTO();
         slotDTO.setId(1L);
         slotDTO.setCode("SLOT001");
-        slotDTO.setAllowedCategory(ProductCategory.STANDARD);
+        slotDTO.setAllowedCategory(Category.STANDARD);
         slotDTO.setCapacity(100);
         slotDTO.setProduct(null); // prodotto rimosso
 

@@ -3,8 +3,7 @@ package com.relatech.warehouse_management_system.slot.serviceUnitTest;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.util.ProductCategory;
-import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
+import com.relatech.warehouse_management_system.util.Category;import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.slot.entity.Slot;
 import com.relatech.warehouse_management_system.slot.mapper.SlotMapper;
 import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
@@ -46,12 +45,12 @@ class SlotServiceTest {
         product = new Product();
         product.setCode("P001");
         product.setName("Paracetamolo");
-        product.setProductCategory(ProductCategory.STANDARD);
+        product.setCategory(Category.STANDARD);
         product.setNationalCode("IT001");
 
         slot = new Slot();
         slot.setCode("SLOT001");
-        slot.setAllowedCategory(ProductCategory.STANDARD);
+        slot.setAllowedCategory(Category.STANDARD);
         slot.setCapacity(100);
         slot.setProd(product);
 
@@ -107,7 +106,7 @@ class SlotServiceTest {
     @Test
     @DisplayName("Given existing slot, when updateSlot with same category, then update fields and return SlotDTO")
     void givenExistingSlot_whenUpdateSlot_thenReturnUpdatedDTO() throws Exception {
-        SlotDTO updatedDTO = new SlotDTO(1L, "SLOT002", ProductCategory.STANDARD, 200, null);
+        SlotDTO updatedDTO = new SlotDTO(1L, "SLOT002", Category.STANDARD, 200, null);
         when(slotRepository.findById(1L)).thenReturn(Optional.of(slot));
         when(slotRepository.save(any(Slot.class))).thenReturn(SlotMapper.toEntity(updatedDTO));
 
@@ -120,7 +119,7 @@ class SlotServiceTest {
     @Test
     @DisplayName("Given slot contains product, when updateSlot with different category, then throw Exception")
     void givenSlotContainsProduct_whenUpdateSlotWithDifferentCategory_thenThrowException() {
-        SlotDTO updatedDTO = new SlotDTO(1L, "SLOT002", ProductCategory.FLAMMABLE, 200, null);
+        SlotDTO updatedDTO = new SlotDTO(1L, "SLOT002", Category.FLAMMABLE, 200, null);
         when(slotRepository.findById(1L)).thenReturn(Optional.of(slot));
 
         assertThrows(Exception.class, () -> slotService.updateSlot(1L, updatedDTO));

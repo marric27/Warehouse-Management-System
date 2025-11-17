@@ -2,7 +2,7 @@ package com.relatech.warehouse_management_system.product.service;
 
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
-import com.relatech.warehouse_management_system.util.ProductCategory;
+import com.relatech.warehouse_management_system.util.Category;
 
 import java.util.List;
 
@@ -13,5 +13,5 @@ public interface ProductService {
     ProductDTO updateProduct(Long id, ProductDTO productDTO) throws Exception;
     void deleteProduct(Long id) throws ResourceNotFoundException;
     List<ProductDTO> getAllProducts();
-    List<ProductDTO> getAllProductByProductCategory(ProductCategory productCategory);
+    List<ProductDTO> getAllProductByProductCategory(Category category);
 }

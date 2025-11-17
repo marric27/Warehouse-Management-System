@@ -10,20 +10,14 @@ import com.relatech.warehouse_management_system.stockUnit.mapper.StockUnitMapper
 import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRepository;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
-<<<<<<< Updated upstream
-import lombok.extern.log4j.Log4j;
-=======
->>>>>>> Stashed changes
+
+
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
 import java.util.List;
-<<<<<<< Updated upstream
-import java.util.Set;
-import java.util.stream.Collectors;
-=======
->>>>>>> Stashed changes
 
 @Service
 @Slf4j
@@ -48,7 +42,7 @@ public class StockUnitServiceImpl implements StockUnitService {
                 .orElseThrow(() -> new ValidationException("Slot not found with id " + slotId));
 
 
-        dto.setProductCategory(slot.getProductCategory());
+        dto.setCategory(slot.getAllowedCategory());
 
         StockUnit stockUnit = stockUnitMapper.toEntity(dto, slot);
         StockUnit saved = stockUnitRepository.save(stockUnit);
@@ -81,13 +75,13 @@ public class StockUnitServiceImpl implements StockUnitService {
                 .orElseThrow(() -> new ValidationException("Slot not found with id " + slotId));
 
 
-        dto.setProductCategory(slot.getProductCategory());
+        dto.setCategory(slot.getAllowedCategory());
 
         existing.setBatchNumber(dto.getBatchNumber());
         existing.setExpirationDate(dto.getExpirationDate());
         existing.setUniqueCode(dto.getUniqueCode());
         existing.setQuantity(dto.getQuantity());
-        existing.setProductCategory(dto.getProductCategory());
+        existing.setCategory(dto.getCategory());
         existing.setSlot(slot);
 
         StockUnit saved = stockUnitRepository.save(existing);

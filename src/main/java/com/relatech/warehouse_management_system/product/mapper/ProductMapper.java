@@ -14,7 +14,7 @@ public class ProductMapper {
                 .id(product.getId())
                 .code(product.getCode())
                 .name(product.getName())
-                .productCategory(product.getProductCategory())
+                .category(product.getCategory())
                 .nationalCode(product.getNationalCode())
                 .build();
     }
@@ -28,7 +28,7 @@ public class ProductMapper {
         product.setId(dto.getId());
         product.setCode(dto.getCode());
         product.setName(dto.getName());
-        product.setProductCategory(dto.getProductCategory());
+        product.setCategory(dto.getCategory());
         product.setNationalCode(dto.getNationalCode());
 
         return product;

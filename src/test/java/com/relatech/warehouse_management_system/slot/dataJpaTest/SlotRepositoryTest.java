@@ -2,7 +2,7 @@ package com.relatech.warehouse_management_system.slot.dataJpaTest;
 
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.util.ProductCategory;
+import com.relatech.warehouse_management_system.util.Category;
 import com.relatech.warehouse_management_system.slot.entity.Slot;
 import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +31,7 @@ public class SlotRepositoryTest {
         Product product = new Product();
         product.setCode("P123");
         product.setName("Paracetamolo");
-        product.setProductCategory(ProductCategory.STANDARD);
+        product.setCategory(Category.STANDARD);
         product.setNationalCode("IT001");
         return productRepository.save(product);
     }
@@ -39,7 +39,7 @@ public class SlotRepositoryTest {
     private Slot createTestSlot() {
         Slot slot = new Slot();
         slot.setCode("SLOT001");
-        slot.setAllowedCategory(ProductCategory.STANDARD);
+        slot.setAllowedCategory(Category.STANDARD);
         slot.setCapacity(100);
         return slot;
     }
@@ -92,10 +92,10 @@ public class SlotRepositoryTest {
     @DisplayName("Given slot saved, when findByProductCategory, then return list of slots")
     void givenSlotSaved_whenFindByProductCategory_thenReturnList() {
         slotRepository.save(createTestSlot());
-        List<Slot> found = slotRepository.findByAllowedCategory(ProductCategory.STANDARD);
+        List<Slot> found = slotRepository.findByAllowedCategory(Category.STANDARD);
 
         assertThat(found).isNotEmpty();
-        assertThat(found.getFirst().getAllowedCategory()).isEqualTo(ProductCategory.STANDARD);
+        assertThat(found.getFirst().getAllowedCategory()).isEqualTo(Category.STANDARD);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class SlotRepositoryTest {
     void givenSlot_whenAddProductWithWrongCategory_thenThrowException() {
         Product product = createTestProduct();
         Slot slot = createTestSlot();
-        slot.setAllowedCategory(ProductCategory.FLAMMABLE);
+        slot.setAllowedCategory(Category.FLAMMABLE);
         assertThrows(IllegalArgumentException.class, () -> slot.addProduct(product));
     }
 
@@ -124,7 +124,7 @@ public class SlotRepositoryTest {
         Product p2 = new Product();
         p2.setCode("P999");
         p2.setName("Aspirina");
-        p2.setProductCategory(ProductCategory.STANDARD);
+        p2.setCategory(Category.STANDARD);
         p2.setNationalCode("IT002");
         productRepository.save(p2);
 

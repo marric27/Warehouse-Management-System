@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
 import com.relatech.warehouse_management_system.slot.service.SlotService;
-import com.relatech.warehouse_management_system.util.ProductCategory;
-import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
+import com.relatech.warehouse_management_system.util.Category;import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ class SlotIntegrationTest {
     private SlotRepository slotRepository;
 
     private final SlotDTO slotDTO = new SlotDTO(
-            null, "SLOT001", ProductCategory.STANDARD, 100, null
+            null, "SLOT001", Category.STANDARD, 100, null
     );
 
     @BeforeEach
@@ -86,7 +85,7 @@ class SlotIntegrationTest {
 
     @Test
     void givenNewSlotWithoutCode_whenPost_thenReturnBadRequest() throws Exception {
-        SlotDTO slotWithoutCode = new SlotDTO(null, null, ProductCategory.FLAMMABLE, 10, null);
+        SlotDTO slotWithoutCode = new SlotDTO(null, null, Category.FLAMMABLE, 10, null);
 
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -115,8 +114,8 @@ class SlotIntegrationTest {
 
     @Test
     void givenExistingProduct_whenUpdateProductWithExistingCode_thenReturnConflict() throws Exception {
-        SlotDTO slotDTO1 = new SlotDTO(null, "SLOT001", ProductCategory.STANDARD, 100, null);
-        SlotDTO slotDTO2 = new SlotDTO(null, "SLOT002", ProductCategory.STANDARD, 100, null);
+        SlotDTO slotDTO1 = new SlotDTO(null, "SLOT001", Category.STANDARD, 100, null);
+        SlotDTO slotDTO2 = new SlotDTO(null, "SLOT002", Category.STANDARD, 100, null);
         SlotDTO first = slotService.createSlot(slotDTO1);
         SlotDTO toUpdate = slotService.createSlot(slotDTO2);
 

@@ -10,7 +10,7 @@ import com.relatech.warehouse_management_system.slot.entity.Slot;
 import com.relatech.warehouse_management_system.slot.mapper.SlotMapper;
 import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
 import com.relatech.warehouse_management_system.slot.service.SlotService;
-import com.relatech.warehouse_management_system.util.ProductCategory;
+import com.relatech.warehouse_management_system.util.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +43,8 @@ class LogisticIntegrationTest {
     @Autowired
     private ProductRepository productRepository;
 
-    private final SlotDTO slotDTO = new SlotDTO(null, "SLOT001", ProductCategory.STANDARD, 100, null);
-    private final ProductDTO productDTO = new ProductDTO(null, "PRD-001", "Paracetamolo", ProductCategory.STANDARD, "IT123");
+    private final SlotDTO slotDTO = new SlotDTO(null, "SLOT001", Category.STANDARD, 100, null);
+    private final ProductDTO productDTO = new ProductDTO(null, "PRD-001", "Paracetamolo", Category.STANDARD, "IT123");
 
     @BeforeEach
     void setup() {
@@ -66,7 +66,7 @@ class LogisticIntegrationTest {
                 .andExpect(jsonPath("$.code").value("SLOT001"))
                 .andExpect(jsonPath("$.product.id").value(productDTO.getId()))
                 .andExpect(jsonPath("$.product.name").value("Paracetamolo"))
-                .andExpect(jsonPath("$.product.productCategory").value("STANDARD"))
+                .andExpect(jsonPath("$.product.category").value("STANDARD"))
                 .andExpect(jsonPath("$.product.nationalCode").value("IT123"));
     }
 

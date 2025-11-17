@@ -1,8 +1,11 @@
 package com.relatech.warehouse_management_system.slot.controllerUnitTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.util.ProductCategory;
+import com.relatech.warehouse_management_system.util.Category;
+
+
 import com.relatech.warehouse_management_system.slot.controller.SlotController;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.slot.service.SlotService;
@@ -39,7 +42,7 @@ class SlotControllerTest {
     private ObjectMapper objectMapper;
 
     private final SlotDTO slotDTO = new SlotDTO(
-            1L, "SLOT001", ProductCategory.STANDARD, 100, null
+            1L, "SLOT001", Category.STANDARD, 100, null
     );
 
     //  GET /api/slots
@@ -93,7 +96,7 @@ class SlotControllerTest {
     @Test
     @DisplayName("PUT /api/slots/{id} - should update slot")
     void givenValidSlot_whenUpdateSlot_thenReturnUpdated() throws Exception {
-        SlotDTO updated = new SlotDTO(1L, "SLOT002", ProductCategory.STANDARD, 200, null);
+        SlotDTO updated = new SlotDTO(1L, "SLOT002", Category.STANDARD, 200, null);
         when(slotService.updateSlot(eq(1L), any(SlotDTO.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/slots/1")

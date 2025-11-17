@@ -4,7 +4,7 @@ package com.relatech.warehouse_management_system.product.controller;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.product.service.ProductService;
-import com.relatech.warehouse_management_system.util.ProductCategory;
+import com.relatech.warehouse_management_system.util.Category;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class ProductController {
     }
 
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable ProductCategory category) {
+    public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable Category category) {
         log.info("Received GET request for product with category: {}", category);
         List<ProductDTO> products = productService.getAllProductByProductCategory(category);
         log.info("Returning products: {}", products);

@@ -2,7 +2,7 @@ package com.relatech.warehouse_management_system.slot.entity;
 
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
-import com.relatech.warehouse_management_system.enums.ProductCategory;
+import com.relatech.warehouse_management_system.util.Category;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -27,14 +27,11 @@ public class Slot {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-<<<<<<< Updated upstream
-    ProductCategory allowedCategory;
-=======
-    private ProductCategory productCategory;
->>>>>>> Stashed changes
+
+    Category allowedCategory;
 
     @Column(nullable = false)
-    private Integer capacity;
+    private Integer capacity = 0;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -46,7 +43,7 @@ public class Slot {
 
     public boolean canContain(Product p) {
         if (p == null) return false;
-        return this.allowedCategory == p.getProductCategory();
+        return this.allowedCategory == p.getCategory();
     }
 
     public void addProduct(Product p) {

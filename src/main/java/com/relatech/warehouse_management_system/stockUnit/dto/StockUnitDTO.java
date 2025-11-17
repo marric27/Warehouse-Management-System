@@ -1,10 +1,9 @@
 package com.relatech.warehouse_management_system.stockUnit.dto;
 
-import com.relatech.warehouse_management_system.util.ProductCategory;
+import com.relatech.warehouse_management_system.util.Category;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -19,6 +18,6 @@ public class StockUnitDTO {
     private String productCode;
     private String uniqueCode;
     private Integer quantity;
-    private ProductCategory productCategory;
+    private Category category;
     private Long slotId;
 }

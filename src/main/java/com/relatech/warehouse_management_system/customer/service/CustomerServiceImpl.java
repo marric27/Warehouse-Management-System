@@ -1,4 +1,4 @@
-package com.relatech.warehouse_management_system.customer;
+package com.relatech.warehouse_management_system.customer.service;
 
 import com.relatech.warehouse_management_system.customer.dto.CustomerDTO;
 import com.relatech.warehouse_management_system.customer.entity.Customer;

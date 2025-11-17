@@ -1,13 +1,12 @@
 package com.relatech.warehouse_management_system.stockUnit.entity;
 
-import com.relatech.warehouse_management_system.util.ProductCategory;
+import com.relatech.warehouse_management_system.util.Category;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.slot.entity.Slot;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 @Entity
 @Table(name = "stock_units")
@@ -39,7 +38,7 @@ public class StockUnit {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "product_category", nullable = false)
-    private ProductCategory productCategory;
+    private Category category;
 
      @ManyToOne(optional = false)
      @JoinColumn(name = "product_id")

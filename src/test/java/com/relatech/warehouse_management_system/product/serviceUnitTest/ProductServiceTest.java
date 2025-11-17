@@ -6,8 +6,7 @@ import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import com.relatech.warehouse_management_system.product.service.ProductServiceImpl;
-import com.relatech.warehouse_management_system.util.ProductCategory;
-import org.junit.jupiter.api.BeforeEach;
+import com.relatech.warehouse_management_system.util.Category;import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +38,7 @@ public class ProductServiceTest {
         product = new Product();
         product.setCode("P001");
         product.setName("Paracetamolo");
-        product.setProductCategory(ProductCategory.STANDARD);
+        product.setCategory(Category.STANDARD);
         product.setNationalCode("IT001");
 
         productDTO = ProductMapper.toDto(product);
@@ -81,7 +80,7 @@ public class ProductServiceTest {
     @Test
     @DisplayName("Given existing product, when updateProduct, then update fields and return ProductDTO")
     void givenExistingProduct_whenUpdateProduct_thenReturnUpdatedDTO() throws Exception {
-        ProductDTO updatedDTO = new ProductDTO(1L, "P002", "Aspirina", ProductCategory.STANDARD, "IT002");
+        ProductDTO updatedDTO = new ProductDTO(1L, "P002", "Aspirina", Category.STANDARD, "IT002");
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
         when(productRepository.save(any(Product.class))).thenReturn(ProductMapper.toEntity(updatedDTO));
 
@@ -96,7 +95,7 @@ public class ProductServiceTest {
     @DisplayName("Given product does not exist, when updateProduct, then throw ResourceNotFoundException")
     void givenNonExistingProduct_whenUpdateProduct_thenThrowException() {
         when(productRepository.findById(10L)).thenReturn(Optional.empty());
-        ProductDTO dto = new ProductDTO(10L, "X123", "Ibuprofene", ProductCategory.STANDARD, "IT010");
+        ProductDTO dto = new ProductDTO(10L, "X123", "Ibuprofene", Category.STANDARD, "IT010");
 
         assertThrows(ResourceNotFoundException.class, () -> productService.updateProduct(10L, dto));
 
@@ -138,12 +137,12 @@ public class ProductServiceTest {
     @Test
     @DisplayName("Given products with category, when getAllByProductCategory, then return list of ProductDTO")
     void givenProductsWithCategory_whenGetAllByProductCategory_thenReturnList() {
-        when(productRepository.findByProductCategory(ProductCategory.STANDARD)).thenReturn(List.of(product));
+        when(productRepository.findByCategory(Category.STANDARD)).thenReturn(List.of(product));
 
-        List<ProductDTO> result = productService.getAllProductByProductCategory(ProductCategory.STANDARD);
+        List<ProductDTO> result = productService.getAllProductByProductCategory(Category.STANDARD);
 
         assertThat(result).isNotEmpty();
-        assertThat(result.getFirst().getProductCategory()).isEqualTo(ProductCategory.STANDARD);
-        verify(productRepository, times(1)).findByProductCategory(ProductCategory.STANDARD);
+        assertThat(result.getFirst().getCategory()).isEqualTo(Category.STANDARD);
+        verify(productRepository, times(1)).findByCategory(Category.STANDARD);
     }
 }

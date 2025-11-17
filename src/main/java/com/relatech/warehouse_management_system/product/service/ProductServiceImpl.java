@@ -5,7 +5,7 @@ import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.util.ProductCategory;
+import com.relatech.warehouse_management_system.util.Category;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,8 +69,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> getAllProductByProductCategory(ProductCategory productCategory) {
-        return productRepository.findByProductCategory(productCategory)
+    public List<ProductDTO> getAllProductByProductCategory(Category category) {
+        return productRepository.findByCategory(category)
                 .stream()
                 .map(ProductMapper::toDto)
                 .collect(Collectors.toList());

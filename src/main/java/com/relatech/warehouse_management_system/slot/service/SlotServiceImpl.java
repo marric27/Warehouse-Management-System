@@ -55,7 +55,7 @@ public class SlotServiceImpl implements SlotService {
 
         if (existingSlot.getProd() == null)
             existingSlot.setAllowedCategory(slotDTO.getAllowedCategory());
-        else if (existingSlot.getProd().getProductCategory().equals(slotDTO.getAllowedCategory())) {
+        else if (existingSlot.getProd().getCategory().equals(slotDTO.getAllowedCategory())) {
             existingSlot.setAllowedCategory(slotDTO.getAllowedCategory());
         } else throw new Exception("Cant update slot product category cause contains a product");
 
