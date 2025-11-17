@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.stockUnit.dto;
 
-import com.relatech.warehouse_management_system.enums.ProductCategory;
+import com.relatech.warehouse_management_system.util.ProductCategory;
 import lombok.*;
 
 import java.time.LocalDate;
