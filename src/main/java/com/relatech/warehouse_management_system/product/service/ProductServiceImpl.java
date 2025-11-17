@@ -66,8 +66,7 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll()
                 .stream()
-                .map(ProductMapper::toDto)
-                .collect(Collectors.toList());
+                .map(ProductMapper::toDto).toList();
     }
 
     @Override
@@ -75,7 +74,6 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> getAllProductByProductCategory(Category category) {
         return productRepository.findByCategory(category)
                 .stream()
-                .map(ProductMapper::toDto)
-                .collect(Collectors.toList());
+                .map(ProductMapper::toDto).toList();
     }
 }

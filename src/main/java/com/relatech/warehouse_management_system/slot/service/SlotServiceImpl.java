@@ -27,8 +27,7 @@ public class SlotServiceImpl implements SlotService {
     public List<SlotDTO> getAllSlots() {
         return slotRepository.findAll()
                 .stream()
-                .map(SlotMapper::toDto)
-                .collect(Collectors.toList());
+                .map(SlotMapper::toDto).toList();
     }
 
     @Override

@@ -46,8 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
     public List<CustomerDTO> getAllCustomers() {
         return customerRepository.findAll()
                 .stream()
-                .map(customerMapper::toDTO)
-                .collect(Collectors.toList());
+                .map(customerMapper::toDTO).toList();
     }
 
     @Override
@@ -91,7 +90,6 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return customerRepository.searchByTerm(term)
                 .stream()
-                .map(customerMapper::toDTO)
-                .collect(Collectors.toList());
+                .map(customerMapper::toDTO).toList();
     }
 }
