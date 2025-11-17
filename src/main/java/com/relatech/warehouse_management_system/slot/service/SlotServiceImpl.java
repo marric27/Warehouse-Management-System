@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class SlotServiceImpl implements SlotService {
 
     @Autowired
@@ -24,6 +23,7 @@ public class SlotServiceImpl implements SlotService {
     private ProductRepository productRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<SlotDTO> getAllSlots() {
         return slotRepository.findAll()
                 .stream()
@@ -32,6 +32,7 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SlotDTO getSlotById(Long id) throws ResourceNotFoundException {
         return slotRepository.findById(id)
                 .map(SlotMapper::toDto)
@@ -39,6 +40,7 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
+    @Transactional
     public SlotDTO createSlot(SlotDTO slotDTO) {
         Slot slot = SlotMapper.toEntity(slotDTO);
         Slot savedSlot = slotRepository.save(slot);
@@ -46,6 +48,7 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
+    @Transactional
     public SlotDTO updateSlot(Long id, SlotDTO slotDTO) throws Exception {
         Slot existingSlot = slotRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), id));
@@ -64,6 +67,7 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
+    @Transactional
     public void deleteSlot(Long id) throws ResourceNotFoundException {
         Slot slot = slotRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), id));

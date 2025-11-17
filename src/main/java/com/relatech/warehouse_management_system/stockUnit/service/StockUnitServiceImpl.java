@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class StockUnitServiceImpl implements StockUnitService {
     private final StockUnitMapper stockUnitMapper;
 
     @Override
+    @Transactional
     public StockUnitDTO createStockUnit(StockUnitDTO dto) throws DuplicateResourceException, ValidationException {
         if (stockUnitRepository.findByUniqueCode(dto.getUniqueCode()).isPresent()) {
             throw new DuplicateResourceException("StockUnit", "uniqueCode", dto.getUniqueCode());
@@ -50,6 +52,7 @@ public class StockUnitServiceImpl implements StockUnitService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public StockUnitDTO getStockUnitById(Long id) throws ResourceNotFoundException {
         StockUnit stockUnit = stockUnitRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("StockUnit", id));
@@ -57,12 +60,14 @@ public class StockUnitServiceImpl implements StockUnitService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<StockUnitDTO> getAllStockUnits() {
         return stockUnitRepository.findAll()
                 .stream().map(stockUnitMapper::toDTO).toList();
     }
 
     @Override
+    @Transactional
     public StockUnitDTO updateStockUnit(Long id, StockUnitDTO dto) throws ResourceNotFoundException, ValidationException {
         StockUnit existing = stockUnitRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("StockUnit", id));
@@ -89,6 +94,7 @@ public class StockUnitServiceImpl implements StockUnitService {
     }
 
     @Override
+    @Transactional
     public void deleteStockUnit(Long id) throws ResourceNotFoundException {
         StockUnit stockUnit = stockUnitRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("StockUnit", id));

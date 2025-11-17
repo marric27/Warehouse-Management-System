@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-@RequestMapping("/api/v1/stockunits")
+@RequestMapping("/api/v1/stock-units")
 public class StockUnitController {
 
     private final StockUnitService stockUnitService;

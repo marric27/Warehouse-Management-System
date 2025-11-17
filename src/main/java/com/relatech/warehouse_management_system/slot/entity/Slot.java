@@ -27,7 +27,6 @@ public class Slot {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-
     Category allowedCategory;
 
     @Column(nullable = false)
