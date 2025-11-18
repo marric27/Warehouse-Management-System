@@ -39,7 +39,6 @@ public class ProductServiceTest {
         product.setCode("P001");
         product.setName("Paracetamolo");
         product.setCategory(Category.STANDARD);
-        product.setNationalCode("IT001");
 
         productDTO = ProductMapper.toDto(product);
     }
@@ -80,7 +79,7 @@ public class ProductServiceTest {
     @Test
     @DisplayName("Given existing product, when updateProduct, then update fields and return ProductDTO")
     void givenExistingProduct_whenUpdateProduct_thenReturnUpdatedDTO() throws Exception {
-        ProductDTO updatedDTO = new ProductDTO(1L, "P002", "Aspirina", Category.STANDARD, "IT002");
+        ProductDTO updatedDTO = new ProductDTO(1L, "P002", "Aspirina", Category.STANDARD);
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
         when(productRepository.save(any(Product.class))).thenReturn(ProductMapper.toEntity(updatedDTO));
 
@@ -95,7 +94,7 @@ public class ProductServiceTest {
     @DisplayName("Given product does not exist, when updateProduct, then throw ResourceNotFoundException")
     void givenNonExistingProduct_whenUpdateProduct_thenThrowException() {
         when(productRepository.findById(10L)).thenReturn(Optional.empty());
-        ProductDTO dto = new ProductDTO(10L, "X123", "Ibuprofene", Category.STANDARD, "IT010");
+        ProductDTO dto = new ProductDTO(10L, "X123", "Ibuprofene", Category.STANDARD);
 
         assertThrows(ResourceNotFoundException.class, () -> productService.updateProduct(10L, dto));
 

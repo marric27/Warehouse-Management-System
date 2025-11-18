@@ -36,7 +36,6 @@ class LogisticControllerTest {
         productDTO.setCode("PRD-001");
         productDTO.setName("Paracetamolo");
         productDTO.setCategory(Category.STANDARD);
-        productDTO.setNationalCode("IT123");
 
         SlotDTO slotDTO = new SlotDTO();
         slotDTO.setId(1L);
@@ -55,8 +54,7 @@ class LogisticControllerTest {
                 .andExpect(jsonPath("$.code").value("SLOT001"))
                 .andExpect(jsonPath("$.product.id").value(1))
                 .andExpect(jsonPath("$.product.name").value("Paracetamolo"))
-                .andExpect(jsonPath("$.product.category").value("STANDARD"))
-                .andExpect(jsonPath("$.product.nationalCode").value("IT123"));
+                .andExpect(jsonPath("$.product.category").value("STANDARD"));
     }
 
     @Test

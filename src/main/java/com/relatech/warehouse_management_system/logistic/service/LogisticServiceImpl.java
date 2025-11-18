@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class LogisticServiceImpl implements LogisticService {
 
     @Autowired
@@ -22,6 +21,7 @@ public class LogisticServiceImpl implements LogisticService {
     private ProductRepository productRepository;
 
     @Override
+    @Transactional
     public SlotDTO assignProductToSlot(Long slotId, Long productId) throws ResourceNotFoundException {
         Slot slot = slotRepository.findById(slotId)
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", slotId));
@@ -33,6 +33,7 @@ public class LogisticServiceImpl implements LogisticService {
     }
 
     @Override
+    @Transactional
     public SlotDTO removeProductFromSlot(Long id) throws ResourceNotFoundException {
         Slot slot = slotRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", id));
@@ -41,6 +42,7 @@ public class LogisticServiceImpl implements LogisticService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean canSlotContainProduct(Long slotId, Long productId) throws ResourceNotFoundException {
         Slot slot = slotRepository.findById(slotId)
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", slotId));

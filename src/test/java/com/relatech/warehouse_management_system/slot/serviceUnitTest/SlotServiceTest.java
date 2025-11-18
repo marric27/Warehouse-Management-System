@@ -46,7 +46,6 @@ class SlotServiceTest {
         product.setCode("P001");
         product.setName("Paracetamolo");
         product.setCategory(Category.STANDARD);
-        product.setNationalCode("IT001");
 
         slot = new Slot();
         slot.setCode("SLOT001");
@@ -106,7 +105,7 @@ class SlotServiceTest {
     @Test
     @DisplayName("Given existing slot, when updateSlot with same category, then update fields and return SlotDTO")
     void givenExistingSlot_whenUpdateSlot_thenReturnUpdatedDTO() throws Exception {
-        SlotDTO updatedDTO = new SlotDTO(1L, "SLOT002", Category.STANDARD, 200, null);
+        SlotDTO updatedDTO = new SlotDTO(1L, "SLOT002", Category.STANDARD, 200, null, null);
         when(slotRepository.findById(1L)).thenReturn(Optional.of(slot));
         when(slotRepository.save(any(Slot.class))).thenReturn(SlotMapper.toEntity(updatedDTO));
 
@@ -119,7 +118,7 @@ class SlotServiceTest {
     @Test
     @DisplayName("Given slot contains product, when updateSlot with different category, then throw Exception")
     void givenSlotContainsProduct_whenUpdateSlotWithDifferentCategory_thenThrowException() {
-        SlotDTO updatedDTO = new SlotDTO(1L, "SLOT002", Category.FLAMMABLE, 200, null);
+        SlotDTO updatedDTO = new SlotDTO(1L, "SLOT002", Category.FLAMMABLE, 200, null, null);
         when(slotRepository.findById(1L)).thenReturn(Optional.of(slot));
 
         assertThrows(Exception.class, () -> slotService.updateSlot(1L, updatedDTO));

@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public ProductDTO getProductById(Long id) throws ResourceNotFoundException {
         return productRepository.findById(id)
                 .map(ProductMapper::toDto)
@@ -28,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProductDTO getProductByCode(String code) throws ResourceNotFoundException {
         return productRepository.findByCode(code)
                 .map(ProductMapper::toDto)
@@ -35,25 +36,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductDTO createProduct(ProductDTO productDTO) {
         Product product = ProductMapper.toEntity(productDTO);
         return ProductMapper.toDto(productRepository.save(product));
     }
 
     @Override
+    @Transactional
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) throws Exception {
         Product existing = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), id));
 
-
-        existing.setCode(productDTO.getCode());
         existing.setName(productDTO.getName());
-        existing.setNationalCode(productDTO.getNationalCode());
 
         return ProductMapper.toDto(productRepository.save(existing));
     }
 
     @Override
+    @Transactional
     public void deleteProduct(Long id) throws ResourceNotFoundException {
         if(!productRepository.existsById(id)) throw new ResourceNotFoundException(this.getClass().getName(), id);
 
@@ -61,18 +62,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll()
                 .stream()
-                .map(ProductMapper::toDto)
-                .collect(Collectors.toList());
+                .map(ProductMapper::toDto).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductDTO> getAllProductByProductCategory(Category category) {
         return productRepository.findByCategory(category)
                 .stream()
-                .map(ProductMapper::toDto)
-                .collect(Collectors.toList());
+                .map(ProductMapper::toDto).toList();
     }
 }
