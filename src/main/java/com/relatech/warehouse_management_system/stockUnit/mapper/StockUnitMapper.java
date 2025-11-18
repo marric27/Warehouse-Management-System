@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class StockUnitMapper {
 
-    public StockUnitDTO toDTO(StockUnit entity) {
+    public static StockUnitDTO toDTO(StockUnit entity) {
         return StockUnitDTO.builder()
                 .id(entity.getId())
                 .batchNumber(entity.getBatchNumber())
@@ -21,12 +21,12 @@ public class StockUnitMapper {
                 .uniqueCode(entity.getUniqueCode())
                 .quantity(entity.getQuantity())
                 .category(entity.getCategory())
-                .slotId(entity.getSlot() != null ? entity.getSlot().getId() : null)
+                //.slotId(entity.getSlot() != null ? entity.getSlot().getId() : null)
                 .build();
     }
 
 
-    public StockUnit toEntity(StockUnitDTO dto, Slot slot) {
+    public static StockUnit toEntity(StockUnitDTO dto) {
         return StockUnit.builder()
                 .id(dto.getId())
                 .batchNumber(dto.getBatchNumber())
@@ -35,7 +35,6 @@ public class StockUnitMapper {
                 .uniqueCode(dto.getUniqueCode())
                 .quantity(dto.getQuantity())
                 .category(dto.getCategory())
-                .slot(slot)
                 .build();
     }
 }
