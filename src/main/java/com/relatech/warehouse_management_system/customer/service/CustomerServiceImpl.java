@@ -7,13 +7,17 @@ import com.relatech.warehouse_management_system.customer.repository.CustomerRepo
 import com.relatech.warehouse_management_system.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class CustomerServiceImpl implements CustomerService {
@@ -22,6 +26,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerMapper customerMapper;
 
     @Override
+    @Transactional(readOnly = false, rollbackFor = DuplicateResourceException.class)
     public CustomerDTO createCustomer(CustomerDTO customerDTO) throws DuplicateResourceException {
         if (customerRepository.findByEmail(customerDTO.getEmail()).isPresent()) {
             throw new DuplicateResourceException("Customer", "email", customerDTO.getEmail());
@@ -50,7 +55,15 @@ public class CustomerServiceImpl implements CustomerService {
                 .collect(Collectors.toList());
     }
 
+
     @Override
+    public Page<CustomerDTO> getAllCustomersPaged(Pageable pageable) {
+        Page<Customer> customersPage = customerRepository.findAll(pageable);
+        return customersPage.map(customerMapper::toDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = false, timeout = 5, propagation = Propagation.REQUIRED)
     public CustomerDTO updateCustomer(Long id, CustomerDTO customerDTO) throws ResourceNotFoundException {
         Customer existing = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", id));
@@ -65,13 +78,13 @@ public class CustomerServiceImpl implements CustomerService {
         return customerMapper.toDTO(saved);
     }
 
-
     public boolean hasActiveOrders(Long customerId) {
         return false;
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = false, rollbackFor = {ResourceNotFoundException.class, CustomerWithActiveOrdersException.class},
+            propagation = Propagation.REQUIRES_NEW)
     public void deleteCustomer(Long id) throws ResourceNotFoundException, CustomerWithActiveOrdersException {
         log.info("Deleting customer with ID: {}", id);
         if (hasActiveOrders(id)) {
@@ -82,7 +95,6 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.delete(customer);
         log.info("Customer deleted with ID: {}", id);
     }
-
 
     @Override
     public List<CustomerDTO> searchCustomers(String term) {

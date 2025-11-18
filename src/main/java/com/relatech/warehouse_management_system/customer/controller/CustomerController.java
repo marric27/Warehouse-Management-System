@@ -3,8 +3,12 @@ package com.relatech.warehouse_management_system.customer.controller;
 import com.relatech.warehouse_management_system.customer.dto.CustomerDTO;
 import com.relatech.warehouse_management_system.customer.service.CustomerService;
 import com.relatech.warehouse_management_system.exception.*;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +25,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO dto) throws DuplicateResourceException {
+    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerDTO dto) throws DuplicateResourceException {
         log.info("Request to create customer: {} {}", dto.getName(), dto.getSurname());
         CustomerDTO created = customerService.createCustomer(dto);
         return ResponseEntity.ok(created);
@@ -35,14 +39,15 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
-        log.info("Request to fetch all customers");
-        List<CustomerDTO> customers = customerService.getAllCustomers();
-        return ResponseEntity.ok(customers);
+    public ResponseEntity<Page<CustomerDTO>> getAllCustomersPaged(
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        log.info("Request to fetch customers paged: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
+        Page<CustomerDTO> customersPage = customerService.getAllCustomersPaged(pageable);
+        return ResponseEntity.ok(customersPage);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO dto) throws ResourceNotFoundException {
+    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerDTO dto) throws ResourceNotFoundException {
         log.info("Request to update customer with ID: {}", id);
         CustomerDTO updated = customerService.updateCustomer(id, dto);
         return ResponseEntity.ok(updated);
