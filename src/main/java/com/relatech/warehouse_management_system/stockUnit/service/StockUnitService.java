@@ -16,5 +16,5 @@ public interface StockUnitService {
     StockUnitDTO updateStockUnit(Long id,StockUnitDTO dto) throws ResourceNotFoundException;
     void deleteStockUnit(Long id) throws ResourceNotFoundException;
     StockUnitDTO assignProductToStockUnit(Long stockUnitId, Long slotId) throws ResourceNotFoundException;
-    StockUnitDTO removeProductFromStockUnit(Long stockUnitId, Long productId) throws ResourceNotFoundException;
+    StockUnitDTO removeProductFromStockUnit(Long stockUnitId) throws ResourceNotFoundException;
 }

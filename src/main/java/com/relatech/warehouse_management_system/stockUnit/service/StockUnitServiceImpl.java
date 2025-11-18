@@ -33,21 +33,7 @@ public class StockUnitServiceImpl implements StockUnitService {
 
     @Override
     @Transactional
-    public StockUnitDTO createStockUnit(StockUnitDTO dto) throws DuplicateResourceException, ValidationException {
-//        StockUnit existingStockUnit = stockUnitRepository.findByUniqueCode(dto.getUniqueCode())
-//                .orElseThrow(() -> new DuplicateResourceException("StockUnit", "uniqueCode", dto.getUniqueCode()));
-
-//        Long slotId = dto.getSlotId();
-//        if (slotId == null) {
-//            throw new ValidationException("Slot ID is required");
-//        }
-//        Slot slot = slotRepository.findById(slotId)
-//                .orElseThrow(() -> new ValidationException("Slot not found with id " + slotId));
-
-
-        //dto.setCategory(slot.getAllowedCategory());
-
-        //StockUnit stockUnit = stockUnitMapper.toEntity(dto, slot);
+    public StockUnitDTO createStockUnit(StockUnitDTO dto) throws ValidationException {
         StockUnit saved = stockUnitRepository.save(StockUnitMapper.toEntity(dto));
         return StockUnitMapper.toDTO(saved);
     }
@@ -73,22 +59,11 @@ public class StockUnitServiceImpl implements StockUnitService {
         StockUnit existing = stockUnitRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("StockUnit", id));
 
-        Long slotId = null;//dto.getSlotId();TODO
-        if (slotId == null) {
-            throw new ValidationException("Slot ID is required");
-        }
-        Slot slot = slotRepository.findById(slotId)
-                .orElseThrow(() -> new ValidationException("Slot not found with id " + slotId));
-
-
-        dto.setCategory(slot.getAllowedCategory());
-
         existing.setBatchNumber(dto.getBatchNumber());
         existing.setExpirationDate(dto.getExpirationDate());
         existing.setUniqueCode(dto.getUniqueCode());
         existing.setQuantity(dto.getQuantity());
         existing.setCategory(dto.getCategory());
-        existing.setSlot(slot);
 
         StockUnit saved = stockUnitRepository.save(existing);
         return StockUnitMapper.toDTO(saved);
@@ -114,9 +89,9 @@ public class StockUnitServiceImpl implements StockUnitService {
         return StockUnitMapper.toDTO(stockUnitRepository.save(su));
     }
 
-    @Transactional
     @Override
-    public StockUnitDTO removeProductFromStockUnit(Long stockUnitId, Long productId) throws ResourceNotFoundException {
+    @Transactional
+    public StockUnitDTO removeProductFromStockUnit(Long stockUnitId) throws ResourceNotFoundException {
         StockUnit stockUnit = stockUnitRepository.findById(stockUnitId)
                 .orElseThrow(() -> new ResourceNotFoundException("Stock Unit", stockUnitId));
         stockUnit.setProduct(null);

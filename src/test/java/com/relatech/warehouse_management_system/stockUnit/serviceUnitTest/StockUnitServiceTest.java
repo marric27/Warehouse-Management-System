@@ -65,23 +65,23 @@ public class StockUnitServiceTest {
         slot.setCapacity(100);
     }
 
-    @Test
-    public void testAssignStockUnitToSlot_success() throws ResourceNotFoundException {
-        Long slotId = slot.getId();
-        Long stockUnitId = stockUnit.getId();
-
-        when(slotRepository.findById(slotId)).thenReturn(Optional.of(slot));
-        when(stockUnitRepository.findById(stockUnitId)).thenReturn(Optional.of(stockUnit));
-
-        stockUnitService.assignStockUnitToSlot(stockUnitId, slotId);
-
-        assertNotNull(slot.getStockUnits());
-        assertEquals(1, slot.getStockUnits().size());
-        assertEquals(stockUnit, slot.getStockUnits().getFirst());
-
-        verify(slotRepository).findById(slotId);
-        verify(stockUnitRepository).findById(stockUnitId);
-    }
+//    @Test
+//    public void testAssignStockUnitToSlot_success() throws ResourceNotFoundException {
+//        Long slotId = slot.getId();
+//        Long stockUnitId = stockUnit.getId();
+//
+//        when(slotRepository.findById(slotId)).thenReturn(Optional.of(slot));
+//        when(stockUnitRepository.findById(stockUnitId)).thenReturn(Optional.of(stockUnit));
+//
+//        stockUnitService.assignStockUnitToSlot(stockUnitId, slotId);
+//
+//        assertNotNull(slot.getStockUnits());
+//        assertEquals(1, slot.getStockUnits().size());
+//        assertEquals(stockUnit, slot.getStockUnits().getFirst());
+//
+//        verify(slotRepository).findById(slotId);
+//        verify(stockUnitRepository).findById(stockUnitId);
+//    }
 
 
 

@@ -39,7 +39,7 @@ public class Slot {
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private Product prod;
 
-    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
     private List<StockUnit> stockUnits;
 
     public boolean canContain(Product p) {
@@ -56,4 +56,19 @@ public class Slot {
         }
         this.prod = p;
     }
+
+    public void addStockUnit(StockUnit stockUnit) {
+        if (stockUnit == null) {
+            throw new IllegalArgumentException("StockUnit cannot be null");
+        }
+        if (this.stockUnits == null) {
+            this.stockUnits = new ArrayList<>();
+        }
+        if (stockUnit.getCategory() != this.allowedCategory) {
+            throw new IllegalArgumentException("Category not allowed in this slot");
+        }
+        this.stockUnits.add(stockUnit);
+        stockUnit.setSlot(this);
+    }
+
 }

@@ -33,7 +33,7 @@ class SlotIntegrationTest {
     private SlotRepository slotRepository;
 
     private final SlotDTO slotDTO = new SlotDTO(
-            null, "SLOT001", Category.STANDARD, 100, null
+            null, "SLOT001", Category.STANDARD, 100, null, null
     );
 
     @BeforeEach
@@ -85,7 +85,7 @@ class SlotIntegrationTest {
 
     @Test
     void givenNewSlotWithoutCode_whenPost_thenReturnBadRequest() throws Exception {
-        SlotDTO slotWithoutCode = new SlotDTO(null, null, Category.FLAMMABLE, 10, null);
+        SlotDTO slotWithoutCode = new SlotDTO(null, null, Category.FLAMMABLE, 10, null, null);
 
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -114,8 +114,8 @@ class SlotIntegrationTest {
 
     @Test
     void givenExistingProduct_whenUpdateProductWithExistingCode_thenReturnConflict() throws Exception {
-        SlotDTO slotDTO1 = new SlotDTO(null, "SLOT001", Category.STANDARD, 100, null);
-        SlotDTO slotDTO2 = new SlotDTO(null, "SLOT002", Category.STANDARD, 100, null);
+        SlotDTO slotDTO1 = new SlotDTO(null, "SLOT001", Category.STANDARD, 100, null, null);
+        SlotDTO slotDTO2 = new SlotDTO(null, "SLOT002", Category.STANDARD, 100, null, null);
         SlotDTO first = slotService.createSlot(slotDTO1);
         SlotDTO toUpdate = slotService.createSlot(slotDTO2);
 

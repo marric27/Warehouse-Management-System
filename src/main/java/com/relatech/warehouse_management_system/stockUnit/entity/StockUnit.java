@@ -9,7 +9,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 @Entity
 @Table(name = "stock_units")
@@ -61,12 +60,10 @@ public class StockUnit {
         if (!canContain(p)) {
             throw new IllegalArgumentException("Product category not allowed in this stock unit");
         }
-//        if (product != null && !product.getId().equals(p.getId())) {
-//            throw new IllegalArgumentException("This stock unit already contains another product type");
-//        }
+        if (product != null && !product.getId().equals(p.getId())) {
+            throw new IllegalArgumentException("This stock unit already contains another product type");
+        }
         this.product = p;
     }
-
-
 }
 

@@ -64,11 +64,11 @@ public class StockUnitController {
     }
 
     // PATCH /api/stock-units/{stockUnitId}/remove-product
-    @PatchMapping("/{stockUnitId}/remove-product/{productId}")
-    public ResponseEntity<StockUnitDTO> removeProductFromStockUnit(@PathVariable Long stockUnitId, @PathVariable Long productId) throws ResourceNotFoundException {
-        log.info("Received PATCH request for remove product with ID {} from stock unit with ID {} ", productId, stockUnitId);
-        StockUnitDTO stockUnitDTO = stockUnitService.removeProductFromStockUnit(stockUnitId, productId);
-        log.info("Successfully removed product with ID {} from stock unit: {}",productId, stockUnitId);
+    @PatchMapping("/{stockUnitId}/remove-product")
+    public ResponseEntity<StockUnitDTO> removeProductFromStockUnit(@PathVariable Long stockUnitId) throws ResourceNotFoundException {
+        log.info("Received PATCH request for remove product from stock unit with ID {} ", stockUnitId);
+        StockUnitDTO stockUnitDTO = stockUnitService.removeProductFromStockUnit(stockUnitId);
+        log.info("Successfully removed product from stock unit: {}", stockUnitId);
         return ResponseEntity.ok(stockUnitDTO);
     }
 

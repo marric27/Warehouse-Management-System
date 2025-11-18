@@ -1,10 +1,13 @@
 package com.relatech.warehouse_management_system.slot.dto;
 
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
+import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.util.Category;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -19,4 +22,5 @@ public class SlotDTO {
     @NotNull(message = "The capacity cannot be null.")
     private int capacity;
     private ProductDTO product;
+    private List<StockUnitDTO> stockunits;
 }

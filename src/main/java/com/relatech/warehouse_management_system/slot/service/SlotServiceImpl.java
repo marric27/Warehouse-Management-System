@@ -6,9 +6,13 @@ import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.slot.entity.Slot;
 import com.relatech.warehouse_management_system.slot.mapper.SlotMapper;
 import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
+import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
+import com.relatech.warehouse_management_system.stockUnit.mapper.StockUnitMapper;
+import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +22,9 @@ public class SlotServiceImpl implements SlotService {
 
     @Autowired
     private SlotRepository slotRepository;
+
+    @Autowired
+    private StockUnitRepository stockUnitRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -77,5 +84,42 @@ public class SlotServiceImpl implements SlotService {
 
         slotRepository.deleteById(id);
     }
+
+    @Override
+    @Transactional
+    public SlotDTO assignStockUnitToSlot(Long slotId, Long stockUnitId) throws ResourceNotFoundException {
+        Slot slot = slotRepository.findById(slotId)
+                .orElseThrow(() -> new ResourceNotFoundException("Slot", slotId));
+        StockUnit stockUnit = stockUnitRepository.findById(stockUnitId)
+                .orElseThrow(() -> new ResourceNotFoundException("Stock Unit", stockUnitId));
+
+        if (!slot.getAllowedCategory().equals(stockUnit.getCategory())) {
+            throw new IllegalArgumentException("StockUnit category not allowed in this Slot");
+        }
+
+        slot.addStockUnit(stockUnit);
+
+        return SlotMapper.toDto(slotRepository.save(slot));
+    }
+
+    @Override
+    @Transactional
+    public SlotDTO removeStockUnitFromSlot(Long slotId, Long stockUnitId) throws ResourceNotFoundException {
+        Slot slot = slotRepository.findById(slotId)
+                .orElseThrow(() -> new ResourceNotFoundException("Slot", slotId));
+        StockUnit toRemove = slot.getStockUnits().stream()
+                .filter(su -> su.getId().equals(stockUnitId))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("StockUnit", stockUnitId));
+
+        slot.getStockUnits().remove(toRemove);
+
+        toRemove.setSlot(null);
+
+        Slot savedSlot = slotRepository.save(slot);
+
+        return SlotMapper.toDto(savedSlot);
+    }
+
 
 }

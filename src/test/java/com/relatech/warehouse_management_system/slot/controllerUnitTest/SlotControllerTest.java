@@ -42,7 +42,7 @@ class SlotControllerTest {
     private ObjectMapper objectMapper;
 
     private final SlotDTO slotDTO = new SlotDTO(
-            1L, "SLOT001", Category.STANDARD, 100, null
+            1L, "SLOT001", Category.STANDARD, 100, null, null
     );
 
     //  GET /api/slots
@@ -96,7 +96,7 @@ class SlotControllerTest {
     @Test
     @DisplayName("PUT /api/slots/{id} - should update slot")
     void givenValidSlot_whenUpdateSlot_thenReturnUpdated() throws Exception {
-        SlotDTO updated = new SlotDTO(1L, "SLOT002", Category.STANDARD, 200, null);
+        SlotDTO updated = new SlotDTO(1L, "SLOT002", Category.STANDARD, 200, null, null);
         when(slotService.updateSlot(eq(1L), any(SlotDTO.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/slots/1")

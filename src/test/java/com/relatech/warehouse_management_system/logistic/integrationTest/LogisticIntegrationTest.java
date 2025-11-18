@@ -43,7 +43,7 @@ class LogisticIntegrationTest {
     @Autowired
     private ProductRepository productRepository;
 
-    private final SlotDTO slotDTO = new SlotDTO(null, "SLOT001", Category.STANDARD, 100, null);
+    private final SlotDTO slotDTO = new SlotDTO(null, "SLOT001", Category.STANDARD, 100, null, null);
     private final ProductDTO productDTO = new ProductDTO(null, "PRD-001", "Paracetamolo", Category.STANDARD);
 
     @BeforeEach
