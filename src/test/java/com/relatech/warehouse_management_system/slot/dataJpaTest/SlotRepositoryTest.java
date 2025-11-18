@@ -32,7 +32,6 @@ public class SlotRepositoryTest {
         product.setCode("P123");
         product.setName("Paracetamolo");
         product.setCategory(Category.STANDARD);
-        product.setNationalCode("IT001");
         return productRepository.save(product);
     }
 
@@ -125,7 +124,6 @@ public class SlotRepositoryTest {
         p2.setCode("P999");
         p2.setName("Aspirina");
         p2.setCategory(Category.STANDARD);
-        p2.setNationalCode("IT002");
         productRepository.save(p2);
 
         Slot slot = createTestSlot();

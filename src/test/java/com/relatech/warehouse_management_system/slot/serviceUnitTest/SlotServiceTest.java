@@ -46,7 +46,6 @@ class SlotServiceTest {
         product.setCode("P001");
         product.setName("Paracetamolo");
         product.setCategory(Category.STANDARD);
-        product.setNationalCode("IT001");
 
         slot = new Slot();
         slot.setCode("SLOT001");

@@ -17,5 +17,4 @@ public class ProductDTO {
     String name;
     @NotNull(message = "The product category cannot be null.")
     Category category;
-    String nationalCode;
 }

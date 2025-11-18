@@ -29,6 +29,7 @@ public class Slot {
     @Column(nullable = false)
     Category allowedCategory;
 
+    @Builder.Default
     @Column(nullable = false)
     private Integer capacity = 0;
 

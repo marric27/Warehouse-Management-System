@@ -44,7 +44,7 @@ class LogisticIntegrationTest {
     private ProductRepository productRepository;
 
     private final SlotDTO slotDTO = new SlotDTO(null, "SLOT001", Category.STANDARD, 100, null);
-    private final ProductDTO productDTO = new ProductDTO(null, "PRD-001", "Paracetamolo", Category.STANDARD, "IT123");
+    private final ProductDTO productDTO = new ProductDTO(null, "PRD-001", "Paracetamolo", Category.STANDARD);
 
     @BeforeEach
     void setup() {
@@ -66,8 +66,7 @@ class LogisticIntegrationTest {
                 .andExpect(jsonPath("$.code").value("SLOT001"))
                 .andExpect(jsonPath("$.product.id").value(productDTO.getId()))
                 .andExpect(jsonPath("$.product.name").value("Paracetamolo"))
-                .andExpect(jsonPath("$.product.category").value("STANDARD"))
-                .andExpect(jsonPath("$.product.nationalCode").value("IT123"));
+                .andExpect(jsonPath("$.product.category").value("STANDARD"));
     }
 
     @Test
