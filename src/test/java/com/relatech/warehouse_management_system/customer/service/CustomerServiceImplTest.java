@@ -168,7 +168,6 @@ class CustomerServiceImplTest {
                 .taxCode("MRRSSM80A01H501X")
                 .build();
 
-        // SOLO email serve qui!
         when(repository.findByEmail("mail@rossi.com")).thenReturn(Optional.of(new Customer()));
 
         assertThrows(DuplicateResourceException.class, () -> service.createCustomer(dto));
