@@ -37,7 +37,14 @@ public class StockUnitController {
         return ResponseEntity.ok(stockUnits);
     }
 
-    @PutMapping
+    @GetMapping("/{id}")
+    public ResponseEntity<StockUnitDTO> getStockUnitById(@PathVariable Long id) throws ResourceNotFoundException {
+        log.info("Request to fetch stock unit by ID {}", id);
+        StockUnitDTO stockUnit = stockUnitService.getStockUnitById(id);
+        return ResponseEntity.ok(stockUnit);
+    }
+
+    @PutMapping("/{id}")
     public ResponseEntity<StockUnitDTO> updateStockUnit(@PathVariable Long id, @RequestBody StockUnitDTO dto) throws ResourceNotFoundException, ValidationException {
         log.info("Request to update stock unit with ID: {}", id);
         StockUnitDTO updated = stockUnitService.updateStockUnit(id, dto);
