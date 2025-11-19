@@ -5,6 +5,8 @@ import com.relatech.warehouse_management_system.exception.ResourceNotFoundExcept
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.stockUnit.mapper.StockUnitMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -13,6 +15,7 @@ public interface StockUnitService {
     StockUnitDTO createStockUnit(StockUnitDTO dto) throws DuplicateResourceException;
     StockUnitDTO getStockUnitById(Long id) throws ResourceNotFoundException;
     List<StockUnitDTO> getAllStockUnits();
+    Page<StockUnitDTO> getAllStockUnitsPaged(Pageable pageable);
     StockUnitDTO updateStockUnit(Long id,StockUnitDTO dto) throws ResourceNotFoundException;
     void deleteStockUnit(Long id) throws ResourceNotFoundException;
     StockUnitDTO assignProductToStockUnit(Long stockUnitId, Long slotId) throws ResourceNotFoundException;

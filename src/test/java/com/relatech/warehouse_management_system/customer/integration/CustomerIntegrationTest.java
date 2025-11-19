@@ -44,13 +44,13 @@ class CustomerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(invalidCustomer)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").exists()); // verifica la risposta con errore di validazione
+                .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
     @DisplayName("Get All Customers Paged - Verify Pagination Works")
     void whenGetAllCustomersPaged_thenReturnsCorrectPage() throws Exception {
-        // Assumendo ci siano clienti già popolati nel DB di test in memoria
+
         mockMvc.perform(get("/api/v1/customers")
                         .param("page", "0")
                         .param("size", "2")
@@ -64,13 +64,13 @@ class CustomerIntegrationTest {
     @Test
     @DisplayName("Search Customers - Return Matches or Empty List")
     void whenSearchCustomers_thenReturnResultsOrEmpty() throws Exception {
-        // Cerca per termine che probabilmente esiste (se ci sono clienti creati nei test precedenti)
+
         mockMvc.perform(get("/api/v1/customers/search")
                         .param("term", "Rossi"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
 
-        // Cerca per termine che probabilmente NON esiste per ottenere lista vuota
+
         mockMvc.perform(get("/api/v1/customers/search")
                         .param("term", "termNotExpectedToExist"))
                 .andExpect(status().isOk())
@@ -87,7 +87,7 @@ class CustomerIntegrationTest {
                 .shippingAddress("Addr1")
                 .billingAddress("Addr2")
                 .email("testuser@email.com")
-                .taxCode("TSTUSR010101")
+                .taxCode("TSTUSR0101012345")
                 .build();
 
         MvcResult createResult = mockMvc.perform(post("/api/v1/customers")
@@ -98,7 +98,7 @@ class CustomerIntegrationTest {
 
         CustomerDTO created = fromJsonResult(createResult, CustomerDTO.class);
 
-        // Modifica email e aggiorna
+
         CustomerDTO updatedDTO = created.toBuilder().email("updated.email@email.com").build();
 
         mockMvc.perform(put("/api/v1/customers/" + created.getId())
@@ -107,7 +107,7 @@ class CustomerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("updated.email@email.com"));
 
-        // Verifica con una GET che l'aggiornamento persiste
+
         mockMvc.perform(get("/api/v1/customers/" + created.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("updated.email@email.com"));
@@ -116,14 +116,14 @@ class CustomerIntegrationTest {
     @Test
     @DisplayName("Delete Customer - Verify Deletion and Subsequent NotFound")
     void whenDeleteCustomer_thenNotFoundOnGet() throws Exception {
-        // Crea cliente da cancellare
+
         CustomerDTO newCustomer = CustomerDTO.builder()
                 .name("Delete")
                 .surname("Me")
                 .shippingAddress("Addr1")
                 .billingAddress("Addr2")
                 .email("deleteme@email.com")
-                .taxCode("DLTM01010101")
+                .taxCode("DLTM010101012345")
                 .build();
 
         MvcResult createResult = mockMvc.perform(post("/api/v1/customers")
@@ -134,16 +134,16 @@ class CustomerIntegrationTest {
 
         CustomerDTO created = fromJsonResult(createResult, CustomerDTO.class);
 
-        // Esegui delete
+
         mockMvc.perform(delete("/api/v1/customers/" + created.getId()))
                 .andExpect(status().isNoContent());
 
-        // GET dopo delete deve restituire NOT FOUND
+
         mockMvc.perform(get("/api/v1/customers/" + created.getId()))
                 .andExpect(status().isNotFound());
     }
 
-    // Utility JSON conversioni
+
     private static String asJsonString(final Object obj) {
         try {
             return mapper.writeValueAsString(obj);

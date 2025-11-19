@@ -25,7 +25,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerMapper customerMapper;
 
     @Override
-    @Transactional(readOnly = false, rollbackFor = DuplicateResourceException.class)
+    @Transactional(rollbackFor = DuplicateResourceException.class)
     public CustomerDTO createCustomer(CustomerDTO customerDTO) throws DuplicateResourceException {
         if (customerRepository.findByEmail(customerDTO.getEmail()).isPresent()) {
             throw new DuplicateResourceException("Customer", "email", customerDTO.getEmail());
@@ -53,7 +53,6 @@ public class CustomerServiceImpl implements CustomerService {
                 .map(customerMapper::toDTO).toList();
     }
 
-
     @Override
     public Page<CustomerDTO> getAllCustomersPaged(Pageable pageable) {
         Page<Customer> customersPage = customerRepository.findAll(pageable);
@@ -61,7 +60,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @Transactional(readOnly = false, timeout = 5, propagation = Propagation.REQUIRED)
+    @Transactional(timeout = 5, propagation = Propagation.REQUIRED)
     public CustomerDTO updateCustomer(Long id, CustomerDTO customerDTO) throws ResourceNotFoundException {
         Customer existing = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", id));
@@ -81,7 +80,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @Transactional(readOnly = false, rollbackFor = {ResourceNotFoundException.class, CustomerWithActiveOrdersException.class},
+    @Transactional(rollbackFor = {ResourceNotFoundException.class, CustomerWithActiveOrdersException.class},
             propagation = Propagation.REQUIRES_NEW)
     public void deleteCustomer(Long id) throws ResourceNotFoundException, CustomerWithActiveOrdersException {
         log.info("Deleting customer with ID: {}", id);

@@ -2,12 +2,14 @@ package com.relatech.warehouse_management_system.stockUnit.controller;
 
 import com.relatech.warehouse_management_system.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.stockUnit.service.StockUnitService;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +36,13 @@ public class StockUnitController {
     public ResponseEntity<List<StockUnitDTO>> getAllStockUnits() {
         log.info("Request to fetch all stock units");
         List<StockUnitDTO> stockUnits = stockUnitService.getAllStockUnits();
+        return ResponseEntity.ok(stockUnits);
+    }
+
+    @GetMapping("/paged")
+    public ResponseEntity<Page<StockUnitDTO>> getAllStockUnitsPaged (@PageableDefault(page = 0, size = 10) Pageable pageable){
+        log.info("Request to fetch all stock units paged: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
+        Page<StockUnitDTO> stockUnits = stockUnitService.getAllStockUnitsPaged(pageable);
         return ResponseEntity.ok(stockUnits);
     }
 

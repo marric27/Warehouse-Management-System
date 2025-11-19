@@ -1,9 +1,5 @@
 package com.relatech.warehouse_management_system.stockUnit.mapper;
 
-
-
-import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
-import com.relatech.warehouse_management_system.slot.entity.Slot;
 import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
 
