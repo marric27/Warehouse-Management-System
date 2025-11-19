@@ -51,4 +51,5 @@ public class StockUnitDTO {
 
     @Schema(description = "Storage slot information")
     private Slot slot;
+
 }
