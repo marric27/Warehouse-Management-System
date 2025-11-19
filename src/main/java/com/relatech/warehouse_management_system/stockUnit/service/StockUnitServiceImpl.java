@@ -1,10 +1,8 @@
 package com.relatech.warehouse_management_system.stockUnit.service;
 
-import com.relatech.warehouse_management_system.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.slot.entity.Slot;
 import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
 import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
