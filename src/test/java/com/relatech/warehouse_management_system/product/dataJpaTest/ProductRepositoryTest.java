@@ -27,7 +27,6 @@ public class ProductRepositoryTest {
         testProduct.setCode("P123");
         testProduct.setName("Paracetamolo");
         testProduct.setCategory(Category.STANDARD);
-        testProduct.setNationalCode("IT001");
     }
 
     @Test

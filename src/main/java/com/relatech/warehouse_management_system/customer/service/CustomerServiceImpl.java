@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -51,8 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
     public List<CustomerDTO> getAllCustomers() {
         return customerRepository.findAll()
                 .stream()
-                .map(customerMapper::toDTO)
-                .collect(Collectors.toList());
+                .map(customerMapper::toDTO).toList();
     }
 
 
@@ -103,7 +101,6 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return customerRepository.searchByTerm(term)
                 .stream()
-                .map(customerMapper::toDTO)
-                .collect(Collectors.toList());
+                .map(customerMapper::toDTO).toList();
     }
 }

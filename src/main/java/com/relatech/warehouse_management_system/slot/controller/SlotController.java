@@ -59,5 +59,25 @@ public class SlotController {
         return ResponseEntity.noContent().build();
     }
 
+    // PATCH /api/slots/{slotId}/assign/{stockUnitId}
+    @PatchMapping("/{slotId}/assign/{stockUnitId}")
+    public ResponseEntity<SlotDTO> assignStockUnitToSlot(@PathVariable Long slotId, @PathVariable Long stockUnitId) throws ResourceNotFoundException {
+        log.info("Received PATCH request for assign stock unit with ID {} to slot with ID {} ", stockUnitId, slotId);
+        SlotDTO slotDTO = slotService.assignStockUnitToSlot(slotId, stockUnitId);
+        log.info("Successfully assigned stock unit: {} to slot: {}", stockUnitId, slotId);
+        return ResponseEntity.ok(slotDTO);
+    }
+
+    // PATCH /api/stock-units/{slotId}/remove-stock-unit
+    @PatchMapping("/{slotId}/remove-stock-unit/{stockUnitId}")
+    public ResponseEntity<SlotDTO> removeStockUnitFromSlot(@PathVariable Long slotId, @PathVariable Long stockUnitId) throws ResourceNotFoundException {
+        log.info("Received PATCH request for remove stock unit from slot with ID {} ", slotId);
+        SlotDTO slotDTO = slotService.removeStockUnitFromSlot(slotId, stockUnitId);
+        log.info("Successfully removed stock unit from slot with ID: {}", slotId);
+        return ResponseEntity.ok(slotDTO);
+    }
+
+
+
 
 }

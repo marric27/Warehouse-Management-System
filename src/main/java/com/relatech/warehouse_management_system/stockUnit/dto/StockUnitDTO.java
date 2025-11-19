@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.stockUnit.dto;
 
+import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.util.Category;
 import lombok.*;
 
@@ -19,5 +20,5 @@ public class StockUnitDTO {
     private String uniqueCode;
     private Integer quantity;
     private Category category;
-    private Long slotId;
+    private Product product;
 }

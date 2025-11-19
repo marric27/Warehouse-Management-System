@@ -24,8 +24,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -42,7 +41,7 @@ class SlotControllerTest {
     private ObjectMapper objectMapper;
 
     private final SlotDTO slotDTO = new SlotDTO(
-            1L, "SLOT001", Category.STANDARD, 100, null
+            1L, "SLOT001", Category.STANDARD, 100, null, null
     );
 
     //  GET /api/slots
@@ -96,7 +95,7 @@ class SlotControllerTest {
     @Test
     @DisplayName("PUT /api/slots/{id} - should update slot")
     void givenValidSlot_whenUpdateSlot_thenReturnUpdated() throws Exception {
-        SlotDTO updated = new SlotDTO(1L, "SLOT002", Category.STANDARD, 200, null);
+        SlotDTO updated = new SlotDTO(1L, "SLOT002", Category.STANDARD, 200, null, null);
         when(slotService.updateSlot(eq(1L), any(SlotDTO.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/slots/1")
@@ -137,5 +136,35 @@ class SlotControllerTest {
 
         mockMvc.perform(delete("/api/slots/99"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testAssignStockUnitToSlot() throws Exception {
+        Long slotId = 1L;
+        Long stockUnitId = 1L;
+
+        when(slotService.assignStockUnitToSlot(slotId, stockUnitId)).thenReturn(slotDTO);
+
+        mockMvc.perform(patch("/api/slots/{slotId}/assign/{stockUnitId}", slotId, stockUnitId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(slotDTO.getId()));
+
+        verify(slotService).assignStockUnitToSlot(slotId, stockUnitId);
+    }
+
+    @Test
+    void testRemoveStockUnitFromSlot() throws Exception {
+        Long slotId = 1L;
+        Long stockUnitId = 1L;
+
+        when(slotService.removeStockUnitFromSlot(slotId, stockUnitId)).thenReturn(slotDTO);
+
+        mockMvc.perform(patch("/api/slots/{slotId}/remove-stock-unit/{stockUnitId}", slotId, stockUnitId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(slotDTO.getId()));
+
+        verify(slotService).removeStockUnitFromSlot(slotId, stockUnitId);
     }
 }

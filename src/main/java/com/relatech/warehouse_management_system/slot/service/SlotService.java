@@ -11,4 +11,6 @@ public interface SlotService {
     SlotDTO createSlot(SlotDTO slotDTO);
     SlotDTO updateSlot(Long slotId, SlotDTO slotDTO) throws Exception;
     void deleteSlot(Long slotId) throws ResourceNotFoundException;
+    SlotDTO assignStockUnitToSlot(Long slotId, Long stockUnitId) throws ResourceNotFoundException;
+    SlotDTO removeStockUnitFromSlot(Long slotId, Long stockUnitId) throws ResourceNotFoundException;
 }

@@ -33,7 +33,7 @@ class ProductIntegrationTest {
     private ObjectMapper objectMapper;
 
     private final ProductDTO productDTO = new ProductDTO(
-            null, "P001", "Paracetamolo", Category.STANDARD, "IT001"
+            null, "P001", "Paracetamolo", Category.STANDARD
     );
 
     @BeforeEach
@@ -65,8 +65,8 @@ class ProductIntegrationTest {
 
     @Test
     void givenExistingProducts_whenGetProductByCategory_thenReturnProduct() throws Exception {
-        ProductDTO product1 = new ProductDTO(null, "C001", "Tachipirina", Category.STANDARD, "IT5");
-        ProductDTO product2 = new ProductDTO(null, "C991", "Brufen", Category.FLAMMABLE, "EN6");
+        ProductDTO product1 = new ProductDTO(null, "C001", "Tachipirina", Category.STANDARD);
+        ProductDTO product2 = new ProductDTO(null, "C991", "Brufen", Category.FLAMMABLE);
         productService.createProduct(product1);
         productService.createProduct(product2);
 
@@ -103,7 +103,7 @@ class ProductIntegrationTest {
     void whenPostDuplicateMovie_thenReturnConflict() throws Exception {
         productService.createProduct(productDTO);
 
-        ProductDTO duplicate = new ProductDTO(null, "P001", "Brufen", Category.FLAMMABLE, "EN6");
+        ProductDTO duplicate = new ProductDTO(null, "P001", "Brufen", Category.FLAMMABLE);
 
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +113,7 @@ class ProductIntegrationTest {
 
     @Test
     void givenNewProductWithoutCode_whenPost_thenReturnBadRequest() throws Exception {
-        ProductDTO prodWithoutCode = new ProductDTO(null, null, "Brufen", Category.FLAMMABLE, "EN6");
+        ProductDTO prodWithoutCode = new ProductDTO(null, null, "Brufen", Category.FLAMMABLE);
 
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -136,23 +136,7 @@ class ProductIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(created)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Aspirina"))
-                .andExpect(jsonPath("$.code").value("P002"));
-    }
-
-    @Test
-    void givenExistingProduct_whenUpdateProductWithExistingCode_thenReturnConflict() throws Exception {
-        ProductDTO product1 = new ProductDTO(null, "C001", "Tachipirina", Category.STANDARD, "IT5");
-        ProductDTO product2 = new ProductDTO(null, "C991", "Brufen", Category.FLAMMABLE, "EN6");
-        ProductDTO first = productService.createProduct(product1);
-        ProductDTO toUpdate = productService.createProduct(product2);
-
-        product2.setCode(product1.getCode()); //duplicated code
-
-        mockMvc.perform(put("/api/products/{id}", toUpdate.getId().toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(product2)))
-                .andExpect(status().isConflict());
+                .andExpect(jsonPath("$.name").value("Aspirina"));
     }
 
     @Test

@@ -36,7 +36,7 @@ class ProductControllerTest {
     private ObjectMapper objectMapper;
 
     private final ProductDTO productDTO = new ProductDTO(
-            1L, "P001", "Paracetamolo", Category.STANDARD, "IT001"
+            1L, "P001", "Paracetamolo", Category.STANDARD
     );
 
     //  GET /api/products/{id}
@@ -68,8 +68,7 @@ class ProductControllerTest {
 
         mockMvc.perform(get("/api/products/code/P001"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Paracetamolo"))
-                .andExpect(jsonPath("$.nationalCode").value("IT001"));
+                .andExpect(jsonPath("$.name").value("Paracetamolo"));
     }
 
     @Test
@@ -122,7 +121,7 @@ class ProductControllerTest {
     @Test
     @DisplayName("PUT /api/products/{id} - should update product and return updated DTO")
     void givenProductExists_whenUpdate_thenReturnUpdated() throws Exception {
-        ProductDTO updated = new ProductDTO(1L, "P002", "Aspirina", Category.STANDARD, "IT002");
+        ProductDTO updated = new ProductDTO(1L, "P002", "Aspirina", Category.STANDARD);
         when(productService.updateProduct(eq(1L), any(ProductDTO.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/products/1")
