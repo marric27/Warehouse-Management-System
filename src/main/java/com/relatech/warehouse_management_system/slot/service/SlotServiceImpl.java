@@ -7,15 +7,12 @@ import com.relatech.warehouse_management_system.slot.entity.Slot;
 import com.relatech.warehouse_management_system.slot.mapper.SlotMapper;
 import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
 import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
-import com.relatech.warehouse_management_system.stockUnit.mapper.StockUnitMapper;
 import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class SlotServiceImpl implements SlotService {

@@ -22,5 +22,5 @@ public class SlotDTO {
     @NotNull(message = "The capacity cannot be null.")
     private int capacity;
     private ProductDTO product;
-    private List<StockUnitDTO> stockunits;
+    private List<StockUnitDTO> stockUnits;
 }

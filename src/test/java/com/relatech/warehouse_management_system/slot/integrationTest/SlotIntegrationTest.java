@@ -1,9 +1,11 @@
 package com.relatech.warehouse_management_system.slot.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
 import com.relatech.warehouse_management_system.slot.service.SlotService;
+import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRepository;
+import com.relatech.warehouse_management_system.stockUnit.service.StockUnitService;
 import com.relatech.warehouse_management_system.util.Category;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +15,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -31,15 +35,27 @@ class SlotIntegrationTest {
     private SlotService slotService;
 
     @Autowired
+    private StockUnitService stockUnitService;
+
+    @Autowired
     private SlotRepository slotRepository;
+
+    @Autowired
+    private StockUnitRepository stockUnitRepository;
 
     private final SlotDTO slotDTO = new SlotDTO(
             null, "SLOT001", Category.STANDARD, 100, null, null
     );
 
+    private final StockUnitDTO stockUnitDTO = new StockUnitDTO(
+            null, "LOT20251333", LocalDate.now().plusDays(30),
+            "PRD-APPLE-006", "SU-0000003331", 50, Category.STANDARD, null
+    );
+
     @BeforeEach
     void cleanDatabase() {
         slotRepository.deleteAll();
+        stockUnitRepository.deleteAll();
     }
 
     @Test
@@ -54,13 +70,7 @@ class SlotIntegrationTest {
 
     @Test
     void givenSlotExists_whenGetSlotById_thenReturnSlot() throws Exception {
-        String result = mockMvc.perform(post("/api/slots")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(slotDTO)))
-                .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
-
-        SlotDTO createdSlot = objectMapper.readValue(result, SlotDTO.class);
+        SlotDTO createdSlot = slotService.createSlot(slotDTO);
 
         mockMvc.perform(get("/api/slots/{id}", createdSlot.getId()))
                 .andExpect(status().isOk())
@@ -96,18 +106,13 @@ class SlotIntegrationTest {
 
     @Test
     void givenValidSlot_whenPost_thenReturnUpdatedObject() throws Exception {
-        String createResult = mockMvc.perform(post("/api/slots")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(slotDTO)))
-                .andReturn().getResponse().getContentAsString();
+        SlotDTO createdSlot = slotService.createSlot(slotDTO);
+        createdSlot.setCode("SLOT003");
+        createdSlot.setCapacity(30);
 
-        SlotDTO created = objectMapper.readValue(createResult, SlotDTO.class);
-        created.setCode("SLOT003");
-        created.setCapacity(30);
-
-        mockMvc.perform(put("/api/slots/{id}", created.getId())
+        mockMvc.perform(put("/api/slots/{id}", createdSlot.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(created)))
+                        .content(objectMapper.writeValueAsString(createdSlot)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.capacity").value(30))
                 .andExpect(jsonPath("$.code").value("SLOT003"));
@@ -117,30 +122,59 @@ class SlotIntegrationTest {
     void givenExistingProduct_whenUpdateProductWithExistingCode_thenReturnConflict() throws Exception {
         SlotDTO slotDTO1 = new SlotDTO(null, "SLOT001", Category.STANDARD, 100, null, null);
         SlotDTO slotDTO2 = new SlotDTO(null, "SLOT002", Category.STANDARD, 100, null, null);
+
         SlotDTO first = slotService.createSlot(slotDTO1);
         SlotDTO toUpdate = slotService.createSlot(slotDTO2);
 
-        slotDTO2.setCode(slotDTO1.getCode()); //duplicated code
+        toUpdate.setCode(first.getCode()); //duplicated code
 
         mockMvc.perform(put("/api/slots/{id}", toUpdate.getId().toString())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(slotDTO2)))
+                        .content(objectMapper.writeValueAsString(toUpdate)))
                 .andExpect(status().isConflict());
     }
 
     @Test
-    void givenId_whenDeleteProduct_thenReturnNoContent() throws Exception {
-        String createResult = mockMvc.perform(post("/api/slots")
+    void givenSlotAndStockUnit_whenAssign_thenReturnUpdatedSlot() throws Exception {
+        SlotDTO createdSlot = slotService.createSlot(slotDTO);
+        StockUnitDTO createdStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
+
+        mockMvc.perform(patch("/api/slots/{slotId}/assign/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(createdSlot.getId()))
+                .andExpect(jsonPath("$.stockUnits[0].id").value(createdStockUnit.getId()));
+    }
+
+    @Test
+    void givenAssignedStockUnit_whenRemove_thenReturnSlotWithoutStockUnit() throws Exception {
+        SlotDTO createdSlot = slotService.createSlot(slotDTO);
+        StockUnitDTO createdStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
+
+        mockMvc.perform(patch("/api/slots/{slotId}/assign/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(patch("/api/slots/{slotId}/remove-stock-unit/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.stockUnits").isEmpty());
+    }
+
+    @Test
+    void givenWrongCategory_whenAssign_thenReturnBadRequest() throws Exception {
+        SlotDTO createdSlot = slotService.createSlot(slotDTO);
+        StockUnitDTO createdStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
+
+        createdStockUnit.setCategory(Category.FLAMMABLE);
+
+        mockMvc.perform(put("/api/v1/stock-units/{id}", createdStockUnit.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(slotDTO)))
-                .andReturn().getResponse().getContentAsString();
+                        .content(objectMapper.writeValueAsString(createdStockUnit)))
+                .andExpect(status().isOk());
 
-        ProductDTO created = objectMapper.readValue(createResult, ProductDTO.class);
-
-        mockMvc.perform(delete("/api/slots/{id}", created.getId()))
-                .andExpect(status().isNoContent());
-
-        mockMvc.perform(get("/api/slots/{id}", created.getId()))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(patch("/api/slots/{slotId}/assign/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }

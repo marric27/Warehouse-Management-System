@@ -61,6 +61,9 @@ public class Slot {
         if (stockUnit == null) {
             throw new IllegalArgumentException("StockUnit cannot be null");
         }
+        if (stockUnit.getSlot() != null && stockUnit.getSlot() != this)
+            throw new IllegalArgumentException("StockUnit already assigned to another Slot");
+
         if (this.stockUnits == null) {
             this.stockUnits = new ArrayList<>();
         }

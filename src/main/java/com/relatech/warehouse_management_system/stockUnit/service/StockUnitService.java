@@ -1,8 +1,9 @@
 package com.relatech.warehouse_management_system.stockUnit.service;
 
+import java.util.List;
+
 import com.relatech.warehouse_management_system.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.stockUnit.mapper.StockUnitMapper;
 import org.springframework.data.domain.Page;

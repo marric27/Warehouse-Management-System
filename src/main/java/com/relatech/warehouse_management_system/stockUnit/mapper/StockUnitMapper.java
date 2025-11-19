@@ -2,10 +2,7 @@ package com.relatech.warehouse_management_system.stockUnit.mapper;
 
 import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
-
-
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 @Component

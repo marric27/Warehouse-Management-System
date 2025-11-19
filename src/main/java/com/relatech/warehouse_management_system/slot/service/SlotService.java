@@ -2,8 +2,6 @@ package com.relatech.warehouse_management_system.slot.service;
 
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
-import com.relatech.warehouse_management_system.slot.entity.Slot;
-import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
 
 import java.util.List;
 
