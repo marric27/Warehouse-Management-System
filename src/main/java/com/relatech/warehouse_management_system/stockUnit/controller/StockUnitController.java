@@ -2,7 +2,6 @@ package com.relatech.warehouse_management_system.stockUnit.controller;
 
 import com.relatech.warehouse_management_system.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.stockUnit.service.StockUnitService;
 import jakarta.validation.ValidationException;

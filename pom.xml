@@ -133,9 +133,9 @@
                             <goal>report</goal>
                         </goals>
                         <configuration>
-                            <!--excludes>
-                                <exclude>com/example/Application*</exclude>
-                            </excludes-->
+                            <excludes>
+                                <exclude>com/relatech/warehouse_management_system/WarehouseManagementSystemApplication*</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>

@@ -62,9 +62,9 @@ public class StockUnitIntegrationTest {
 
     @Test
     void givenStockUnitExists_whenGetStockUnitById_thenReturnStockUnit() throws Exception {
-        StockUnitDTO created = stockUnitService.createStockUnit(stockUnitDTO);
+        StockUnitDTO createdStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
 
-        mockMvc.perform(get("/api/v1/stock-units/{id}", created.getId()))
+        mockMvc.perform(get("/api/v1/stock-units/{id}", createdStockUnit.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.uniqueCode").value("UNIQUE001"))
                 .andExpect(jsonPath("$.quantity").value(50));
@@ -88,13 +88,13 @@ public class StockUnitIntegrationTest {
 
     @Test
     void givenValidStockUnit_whenUpdateStockUnit_thenReturnUpdatedObject() throws Exception {
-        StockUnitDTO created = stockUnitService.createStockUnit(stockUnitDTO);
-        created.setQuantity(100);
-        created.setBatchNumber("BN002");
+        StockUnitDTO createdStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
+        createdStockUnit.setQuantity(100);
+        createdStockUnit.setBatchNumber("BN002");
 
-        mockMvc.perform(put("/api/v1/stock-units/{id}", created.getId())
+        mockMvc.perform(put("/api/v1/stock-units/{id}", createdStockUnit.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(created)))
+                        .content(objectMapper.writeValueAsString(createdStockUnit)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(100))
                 .andExpect(jsonPath("$.batchNumber").value("BN002"));
@@ -102,12 +102,12 @@ public class StockUnitIntegrationTest {
 
     @Test
     void givenId_whenDeleteStockUnit_thenReturnNoContent() throws Exception {
-        StockUnitDTO created = stockUnitService.createStockUnit(stockUnitDTO);
+        StockUnitDTO createdStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
 
-        mockMvc.perform(delete("/api/v1/stock-units/{id}", created.getId()))
+        mockMvc.perform(delete("/api/v1/stock-units/{id}", createdStockUnit.getId()))
                 .andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/api/v1/stock-units/{id}", created.getId()))
+        mockMvc.perform(get("/api/v1/stock-units/{id}", createdStockUnit.getId()))
                 .andExpect(status().isNotFound());
     }
 }

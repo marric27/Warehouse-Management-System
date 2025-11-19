@@ -2,8 +2,10 @@ package com.relatech.warehouse_management_system.slot.serviceUnitTest;
 
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.entity.Product;
-import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.util.Category;import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
+import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
+import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRepository;
+import com.relatech.warehouse_management_system.util.Category;
+import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.slot.entity.Slot;
 import com.relatech.warehouse_management_system.slot.mapper.SlotMapper;
 import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
@@ -16,11 +18,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -31,18 +32,17 @@ class SlotServiceTest {
     private SlotRepository slotRepository;
 
     @Mock
-    private ProductRepository productRepository;
+    private StockUnitRepository stockUnitRepository;
 
     @InjectMocks
     private SlotServiceImpl slotService;
 
     private Slot slot;
     private SlotDTO slotDTO;
-    private Product product;
 
     @BeforeEach
     void setUp() {
-        product = new Product();
+        Product product = new Product();
         product.setCode("P001");
         product.setName("Paracetamolo");
         product.setCategory(Category.STANDARD);
@@ -156,4 +156,171 @@ class SlotServiceTest {
 
         verify(slotRepository, never()).deleteById(anyLong());
     }
+
+    @Test
+    void testAssignStockUnitToSlot_Success() throws ResourceNotFoundException {
+        Long slotId = 1L;
+        Long stockUnitId = 1L;
+
+        StockUnit stockUnit = new StockUnit();
+        stockUnit.setId(stockUnitId);
+        stockUnit.setCategory(Category.STANDARD);
+
+        when(slotRepository.findById(slotId)).thenReturn(Optional.of(slot));
+        when(stockUnitRepository.findById(stockUnitId)).thenReturn(Optional.of(stockUnit));
+        when(slotRepository.save(any(Slot.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        SlotDTO result = slotService.assignStockUnitToSlot(slotId, stockUnitId);
+
+        assertNotNull(result);
+        assertTrue(result.getStockUnits().stream().anyMatch(su -> su.getId().equals(stockUnitId)));
+
+        verify(slotRepository).findById(slotId);
+        verify(stockUnitRepository).findById(stockUnitId);
+        verify(slotRepository).save(slot);
+    }
+
+    @Test
+    void testAssignStockUnitToSlot_SlotNotFound() {
+        Long slotId = 1L;
+        Long stockUnitId = 1L;
+
+        when(slotRepository.findById(slotId)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> slotService.assignStockUnitToSlot(slotId, stockUnitId));
+
+        assertEquals("Slot not found with id: " + slotId, exception.getMessage());
+    }
+
+    @Test
+    void testAssignStockUnitToSlot_StockUnitNotFound() {
+        Long slotId = 1L;
+        Long stockUnitId = 1L;
+
+        Slot slot = new Slot();
+        slot.setId(slotId);
+
+        when(slotRepository.findById(slotId)).thenReturn(Optional.of(slot));
+        when(stockUnitRepository.findById(stockUnitId)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> slotService.assignStockUnitToSlot(slotId, stockUnitId));
+
+        assertEquals("Stock Unit not found with id: " + stockUnitId, exception.getMessage());
+    }
+
+    @Test
+    void testAssignStockUnitToSlot_CategoryMismatch() {
+        Long slotId = 1L;
+        Long stockUnitId = 1L;
+
+        StockUnit stockUnit = new StockUnit();
+        stockUnit.setId(stockUnitId);
+        stockUnit.setCategory(Category.FLAMMABLE);
+
+        when(slotRepository.findById(slotId)).thenReturn(Optional.of(slot));
+        when(stockUnitRepository.findById(stockUnitId)).thenReturn(Optional.of(stockUnit));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> slotService.assignStockUnitToSlot(slotId, stockUnitId));
+
+        assertEquals("StockUnit category not allowed in this Slot", exception.getMessage());
+    }
+
+    @Test
+    void testRemoveStockUnitFromSlot_Success() throws ResourceNotFoundException {
+        Long slotId = 1L;
+        Long stockUnitId = 1L;
+
+        StockUnit stockUnit = new StockUnit();
+        stockUnit.setId(stockUnitId);
+
+        List<StockUnit> stockUnits = new ArrayList<>();
+        stockUnits.add(stockUnit);
+
+        Slot slot = new Slot();
+        slot.setId(slotId);
+        slot.setStockUnits(stockUnits);
+
+        when(slotRepository.findById(slotId)).thenReturn(Optional.of(slot));
+        when(slotRepository.save(any(Slot.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        SlotDTO result = slotService.removeStockUnitFromSlot(slotId, stockUnitId);
+
+        assertNotNull(result);
+        assertTrue(result.getStockUnits().isEmpty(), "Lo stock unit dovrebbe essere rimosso");
+        assertNull(stockUnit.getSlot(), "Lo slot dello stock unit dovrebbe essere null");
+
+        verify(slotRepository).findById(slotId);
+        verify(slotRepository).save(slot);
+    }
+
+    @Test
+    void testRemoveStockUnitFromSlot_SlotNotFound() {
+        Long slotId = 1L;
+        Long stockUnitId = 1L;
+
+        when(slotRepository.findById(slotId)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> slotService.removeStockUnitFromSlot(slotId, stockUnitId));
+
+        assertEquals("Slot not found with id: " + slotId, exception.getMessage());
+    }
+
+    @Test
+    void testRemoveStockUnitFromSlot_StockUnitNotFound() {
+        Long slotId = 1L;
+        Long stockUnitId = 1L;
+
+        Slot slot = new Slot();
+        slot.setId(slotId);
+        slot.setStockUnits(new ArrayList<>()); // empty
+
+        when(slotRepository.findById(slotId)).thenReturn(Optional.of(slot));
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> slotService.removeStockUnitFromSlot(slotId, stockUnitId));
+
+        assertEquals("StockUnit not found with id: " + stockUnitId, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Given StockUnit already assigned to another Slot, when assign, then throw IllegalArgumentException")
+    void givenStockUnitAlreadyAssignedToAnotherSlot_whenAssign_thenThrowException() {
+        Long slotId = 1L;
+        Long stockUnitId = 1L;
+
+        // Target slot
+        Slot targetSlot = new Slot();
+        targetSlot.setId(slotId);
+        targetSlot.setAllowedCategory(Category.STANDARD);
+
+        // other slot with stock unit already assigned
+        Slot otherSlot = new Slot();
+        otherSlot.setId(99L);
+        otherSlot.setAllowedCategory(Category.STANDARD);
+
+        StockUnit stockUnit = new StockUnit();
+        stockUnit.setId(stockUnitId);
+        stockUnit.setCategory(Category.STANDARD);
+        stockUnit.setSlot(otherSlot); // already assigned to another slot
+
+        when(slotRepository.findById(slotId)).thenReturn(Optional.of(targetSlot));
+        when(stockUnitRepository.findById(stockUnitId)).thenReturn(Optional.of(stockUnit));
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> slotService.assignStockUnitToSlot(slotId, stockUnitId)
+        );
+
+        assertEquals("StockUnit already assigned to another Slot", ex.getMessage());
+
+        verify(slotRepository).findById(slotId);
+        verify(stockUnitRepository).findById(stockUnitId);
+        verify(slotRepository, never()).save(any());
+    }
+
+
 }

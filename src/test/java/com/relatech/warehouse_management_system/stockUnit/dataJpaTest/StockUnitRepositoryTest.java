@@ -1,10 +1,11 @@
-package com.relatech.warehouse_management_system.stockUnit.repository;
+package com.relatech.warehouse_management_system.stockUnit.dataJpaTest;
 
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import com.relatech.warehouse_management_system.slot.entity.Slot;
 import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
 import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
+import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRepository;
 import com.relatech.warehouse_management_system.util.Category;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class StockUnitRepositoryTest {
@@ -126,5 +128,83 @@ class StockUnitRepositoryTest {
         assertThat(saved.getSlot()).isNotNull();
         assertThat(saved.getSlot().getCode()).isEqualTo("SLOT001");
     }
+    @Test
+    void givenNullProduct_whenCanContain_thenReturnFalse() {
+        StockUnit su = StockUnit.builder()
+                .category(Category.STANDARD)
+                .build();
 
+        assertFalse(su.canContain(null));
+    }
+
+    @Test
+    void givenProductWithSameCategory_whenCanContain_thenReturnTrue() {
+        StockUnit su = StockUnit.builder()
+                .category(Category.STANDARD)
+                .build();
+
+        Product p = createTestProduct();
+
+        assertTrue(su.canContain(p));
+    }
+
+    @Test
+    void givenProductWithDifferentCategory_whenCanContain_thenReturnFalse() {
+        StockUnit su = StockUnit.builder()
+                .category(Category.STANDARD)
+                .build();
+
+        Product p = createTestProduct();
+        p.setCategory(Category.FLAMMABLE);
+
+        assertFalse(su.canContain(p));
+    }
+
+    @Test
+    void givenProductWithWrongCategory_whenAddProduct_thenThrowException() {
+        StockUnit su = StockUnit.builder()
+                .category(Category.STANDARD)
+                .build();
+
+        Product p = createTestProduct();
+        p.setCategory(Category.FLAMMABLE);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> su.addProduct(p)
+        );
+
+        assertEquals("Product category not allowed in this stock unit", ex.getMessage());
+    }
+
+    @Test
+    void givenDifferentProductAlreadyAssigned_whenAddProduct_thenThrowException() {
+        Product p = createTestProduct();
+        StockUnit su = StockUnit.builder()
+                .category(Category.STANDARD)
+                .product(p)
+                .build();
+
+        Product newProduct = new Product(null, "Code2", "newName", Category.STANDARD);
+
+        IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> su.addProduct(newProduct)
+        );
+
+        assertEquals("This stock unit already contains another product type", ex.getMessage());
+    }
+
+    @Test
+    void givenValidProduct_whenAddProduct_thenAssignCorrectly() {
+        StockUnit su = StockUnit.builder()
+                .category(Category.STANDARD)
+                .build();
+
+        Product p = createTestProduct();
+
+        su.addProduct(p);
+
+        assertEquals(p, su.getProduct());
+    }
 }

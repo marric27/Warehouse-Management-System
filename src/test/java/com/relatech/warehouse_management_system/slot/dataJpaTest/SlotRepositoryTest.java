@@ -2,6 +2,7 @@ package com.relatech.warehouse_management_system.slot.dataJpaTest;
 
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
+import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
 import com.relatech.warehouse_management_system.util.Category;
 import com.relatech.warehouse_management_system.slot.entity.Slot;
 import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
@@ -130,6 +132,36 @@ public class SlotRepositoryTest {
         slot.addProduct(p1);
 
         assertThrows(IllegalArgumentException.class, () -> slot.addProduct(p2));
+    }
+
+    @Test
+    void givenNullStockUnit_whenAddStockUnit_thenThrowException() {
+        Slot slot = Slot.builder()
+                .allowedCategory(Category.STANDARD)
+                .build();
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> slot.addStockUnit(null)
+        );
+        assertEquals("StockUnit cannot be null", exception.getMessage());
+    }
+
+    @Test
+    void givenWrongCategory_whenAddStockUnit_thenThrowException() {
+        Slot slot = Slot.builder()
+                .allowedCategory(Category.STANDARD)
+                .build();
+
+        StockUnit stockUnit = StockUnit.builder()
+                .category(Category.FLAMMABLE) // NON CONSENTITA
+                .build();
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> slot.addStockUnit(stockUnit)
+        );
+        assertEquals("Category not allowed in this slot", exception.getMessage());
     }
 }
 

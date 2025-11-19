@@ -24,8 +24,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -137,5 +136,35 @@ class SlotControllerTest {
 
         mockMvc.perform(delete("/api/slots/99"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testAssignStockUnitToSlot() throws Exception {
+        Long slotId = 1L;
+        Long stockUnitId = 1L;
+
+        when(slotService.assignStockUnitToSlot(slotId, stockUnitId)).thenReturn(slotDTO);
+
+        mockMvc.perform(patch("/api/slots/{slotId}/assign/{stockUnitId}", slotId, stockUnitId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(slotDTO.getId()));
+
+        verify(slotService).assignStockUnitToSlot(slotId, stockUnitId);
+    }
+
+    @Test
+    void testRemoveStockUnitFromSlot() throws Exception {
+        Long slotId = 1L;
+        Long stockUnitId = 1L;
+
+        when(slotService.removeStockUnitFromSlot(slotId, stockUnitId)).thenReturn(slotDTO);
+
+        mockMvc.perform(patch("/api/slots/{slotId}/remove-stock-unit/{stockUnitId}", slotId, stockUnitId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(slotDTO.getId()));
+
+        verify(slotService).removeStockUnitFromSlot(slotId, stockUnitId);
     }
 }
