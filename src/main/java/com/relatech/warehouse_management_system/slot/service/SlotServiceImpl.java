@@ -39,7 +39,7 @@ public class SlotServiceImpl implements SlotService {
     public SlotDTO getSlotById(Long id) throws ResourceNotFoundException {
         return slotRepository.findById(id)
                 .map(SlotMapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), id));
+                .orElseThrow(() -> new ResourceNotFoundException("Slot", id));
     }
 
     @Override
@@ -54,7 +54,7 @@ public class SlotServiceImpl implements SlotService {
     @Transactional
     public SlotDTO updateSlot(Long id, SlotDTO slotDTO) throws Exception {
         Slot existingSlot = slotRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), id));
+                .orElseThrow(() -> new ResourceNotFoundException("Slot", id));
 
         existingSlot.setCode(slotDTO.getCode());
         existingSlot.setCapacity(slotDTO.getCapacity());
@@ -73,7 +73,7 @@ public class SlotServiceImpl implements SlotService {
     @Transactional
     public void deleteSlot(Long id) throws ResourceNotFoundException {
         Slot slot = slotRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), id));
+                .orElseThrow(() -> new ResourceNotFoundException("Slot", id));
 
         if (slot.getProd() != null) {
             throw new IllegalStateException("Cannot delete slot because it contains a product");

@@ -54,7 +54,7 @@ public class StockUnitIntegrationTest {
     void givenStockUnitExists_whenGetAllStockUnits_thenReturnList() throws Exception {
         stockUnitService.createStockUnit(stockUnitDTO);
 
-        mockMvc.perform(get("/api/v1/stock-units"))
+        mockMvc.perform(get("/stock-units"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].uniqueCode").value("UNIQUE001"))
                 .andExpect(jsonPath("$[0].quantity").value(50));
@@ -64,7 +64,7 @@ public class StockUnitIntegrationTest {
     void givenStockUnitExists_whenGetStockUnitById_thenReturnStockUnit() throws Exception {
         StockUnitDTO createdStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
 
-        mockMvc.perform(get("/api/v1/stock-units/{id}", createdStockUnit.getId()))
+        mockMvc.perform(get("/stock-units/{id}", createdStockUnit.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.uniqueCode").value("UNIQUE001"))
                 .andExpect(jsonPath("$.quantity").value(50));
@@ -72,13 +72,13 @@ public class StockUnitIntegrationTest {
 
     @Test
     void givenNotExistingStockUnit_whenGetStockUnitById_thenReturnNotFound() throws Exception {
-        mockMvc.perform(get("/api/v1/stock-units/{id}", 999L))
+        mockMvc.perform(get("/stock-units/{id}", 999L))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void givenValidStockUnit_whenCreateStockUnit_thenReturnCreated() throws Exception {
-        mockMvc.perform(post("/api/v1/stock-units")
+        mockMvc.perform(post("/stock-units")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(stockUnitDTO)))
                 .andExpect(status().isOk())
@@ -92,7 +92,7 @@ public class StockUnitIntegrationTest {
         createdStockUnit.setQuantity(100);
         createdStockUnit.setBatchNumber("BN002");
 
-        mockMvc.perform(put("/api/v1/stock-units/{id}", createdStockUnit.getId())
+        mockMvc.perform(put("/stock-units/{id}", createdStockUnit.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createdStockUnit)))
                 .andExpect(status().isOk())
@@ -104,10 +104,10 @@ public class StockUnitIntegrationTest {
     void givenId_whenDeleteStockUnit_thenReturnNoContent() throws Exception {
         StockUnitDTO createdStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
 
-        mockMvc.perform(delete("/api/v1/stock-units/{id}", createdStockUnit.getId()))
+        mockMvc.perform(delete("/stock-units/{id}", createdStockUnit.getId()))
                 .andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/api/v1/stock-units/{id}", createdStockUnit.getId()))
+        mockMvc.perform(get("/stock-units/{id}", createdStockUnit.getId()))
                 .andExpect(status().isNotFound());
     }
 }

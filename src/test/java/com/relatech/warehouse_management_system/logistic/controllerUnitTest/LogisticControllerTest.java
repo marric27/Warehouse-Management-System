@@ -47,7 +47,7 @@ class LogisticControllerTest {
         Mockito.when(logisticService.assignProductToSlot(anyLong(), anyLong()))
                 .thenReturn(slotDTO);
 
-        mockMvc.perform(patch("/api/logistic/1/assign/1")
+        mockMvc.perform(patch("/logistic/1/assign/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
@@ -69,7 +69,7 @@ class LogisticControllerTest {
         Mockito.when(logisticService.removeProductFromSlot(anyLong()))
                 .thenReturn(slotDTO);
 
-        mockMvc.perform(patch("/api/logistic/1/remove-product")
+        mockMvc.perform(patch("/logistic/1/remove-product")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
@@ -81,7 +81,7 @@ class LogisticControllerTest {
         Mockito.when(logisticService.canSlotContainProduct(1L, 1L))
                 .thenReturn(true);
 
-        mockMvc.perform(get("/api/logistic/1/can-contain/1")
+        mockMvc.perform(get("/logistic/1/can-contain/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(true));
@@ -92,7 +92,7 @@ class LogisticControllerTest {
         Mockito.when(logisticService.assignProductToSlot(anyLong(), anyLong()))
                 .thenThrow(new ResourceNotFoundException("Slot", 999L));
 
-        mockMvc.perform(patch("/api/logistic/999/assign/1")
+        mockMvc.perform(patch("/logistic/999/assign/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -102,7 +102,7 @@ class LogisticControllerTest {
         Mockito.when(logisticService.removeProductFromSlot(anyLong()))
                 .thenThrow(new ResourceNotFoundException("Slot", 999L));
 
-        mockMvc.perform(patch("/api/logistic/999/remove-product")
+        mockMvc.perform(patch("/logistic/999/remove-product")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }

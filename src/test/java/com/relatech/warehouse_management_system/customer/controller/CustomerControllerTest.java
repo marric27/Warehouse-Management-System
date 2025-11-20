@@ -50,7 +50,7 @@ class CustomerControllerTest {
 
         when(customerService.createCustomer(any(CustomerDTO.class))).thenReturn(output);
 
-        mockMvc.perform(post("/api/v1/customers")
+        mockMvc.perform(post("/customers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(input)))
                 .andExpect(status().isOk())
@@ -70,7 +70,7 @@ class CustomerControllerTest {
                 .taxCode("MRRSSM80A01H501X")
                 .build();
 
-        mockMvc.perform(post("/api/v1/customers")
+        mockMvc.perform(post("/customers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(input)))
                 .andExpect(status().isBadRequest());
@@ -82,7 +82,7 @@ class CustomerControllerTest {
         CustomerDTO dto = CustomerDTO.builder().id(1L).name("Mario").build();
         when(customerService.getCustomerById(1L)).thenReturn(dto);
 
-        mockMvc.perform(get("/api/v1/customers/1"))
+        mockMvc.perform(get("/customers/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Mario"));
     }
@@ -92,7 +92,7 @@ class CustomerControllerTest {
     void whenGetCustomerByInvalidId_thenReturnsNotFound() throws Exception {
         when(customerService.getCustomerById(99L)).thenThrow(new ResourceNotFoundException("Customer", 99L));
 
-        mockMvc.perform(get("/api/v1/customers/99"))
+        mockMvc.perform(get("/customers/99"))
                 .andExpect(status().isNotFound());
     }
 
@@ -107,7 +107,7 @@ class CustomerControllerTest {
 
         when(customerService.getAllCustomersPaged(any(Pageable.class))).thenReturn(page);
 
-        mockMvc.perform(get("/api/v1/customers").param("page", "0").param("size", "10"))
+        mockMvc.perform(get("/customers").param("page", "0").param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(2))
                 .andExpect(jsonPath("$.content[0].name").value("Mario"));
@@ -125,7 +125,7 @@ class CustomerControllerTest {
 
         when(customerService.updateCustomer(eq(1L), any(CustomerDTO.class))).thenReturn(updated);
 
-        mockMvc.perform(put("/api/v1/customers/1")
+        mockMvc.perform(put("/customers/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(updateDto)))
                 .andExpect(status().isOk())
@@ -138,7 +138,7 @@ class CustomerControllerTest {
     void whenDeleteCustomer_thenNoContent() throws Exception {
         doNothing().when(customerService).deleteCustomer(1L);
 
-        mockMvc.perform(delete("/api/v1/customers/1"))
+        mockMvc.perform(delete("/customers/1"))
                 .andExpect(status().isNoContent());
     }
 
@@ -148,7 +148,7 @@ class CustomerControllerTest {
         List<CustomerDTO> results = List.of(CustomerDTO.builder().id(1L).name("Mario").build());
         when(customerService.searchCustomers("Mario")).thenReturn(results);
 
-        mockMvc.perform(get("/api/v1/customers/search").param("term", "Mario"))
+        mockMvc.perform(get("/customers/search").param("term", "Mario"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Mario"));
     }
@@ -160,7 +160,7 @@ class CustomerControllerTest {
         when(customerService.searchCustomers(null)).thenReturn(allCustomers);
         when(customerService.searchCustomers("")).thenReturn(allCustomers);
 
-        mockMvc.perform(get("/api/v1/customers/search"))
+        mockMvc.perform(get("/customers/search"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Mario"));
     }

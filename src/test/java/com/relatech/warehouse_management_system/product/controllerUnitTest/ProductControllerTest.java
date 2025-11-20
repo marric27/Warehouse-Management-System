@@ -39,92 +39,92 @@ class ProductControllerTest {
             1L, "P001", "Paracetamolo", Category.STANDARD
     );
 
-    //  GET /api/products/{id}
+    //  GET /products/{id}
     @Test
-    @DisplayName("GET /api/products/{id} - should return product by id")
+    @DisplayName("GET /products/{id} - should return product by id")
     void givenProductExists_whenGetById_thenReturnProduct() throws Exception {
         when(productService.getProductById(1L)).thenReturn(productDTO);
 
-        mockMvc.perform(get("/api/products/1"))
+        mockMvc.perform(get("/products/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("P001"))
                 .andExpect(jsonPath("$.name").value("Paracetamolo"));
     }
 
     @Test
-    @DisplayName("GET /api/products/{id} - should return 404 when not found")
+    @DisplayName("GET /products/{id} - should return 404 when not found")
     void givenProductNotFound_whenGetById_thenReturn404() throws Exception {
         when(productService.getProductById(99L)).thenThrow(new ResourceNotFoundException("Product",99L));
 
-        mockMvc.perform(get("/api/products/99"))
+        mockMvc.perform(get("/products/99"))
                 .andExpect(status().isNotFound());
     }
 
-    //  GET /api/products/code/{code}
+    //  GET /products/code/{code}
     @Test
-    @DisplayName("GET /api/products/code/{code} - should return product by code")
+    @DisplayName("GET /products/code/{code} - should return product by code")
     void givenProductExists_whenGetByCode_thenReturnProduct() throws Exception {
         when(productService.getProductByCode("P001")).thenReturn(productDTO);
 
-        mockMvc.perform(get("/api/products/code/P001"))
+        mockMvc.perform(get("/products/code/P001"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Paracetamolo"));
     }
 
     @Test
-    @DisplayName("GET /api/products/code/{code} - should return 404 when not found")
+    @DisplayName("GET /products/code/{code} - should return 404 when not found")
     void givenProductNotFound_whenGetByCode_thenReturn404() throws Exception {
         when(productService.getProductByCode("99")).thenThrow(new ResourceNotFoundException("Product",99));
 
-        mockMvc.perform(get("/api/products/code/99"))
+        mockMvc.perform(get("/products/code/99"))
                 .andExpect(status().isNotFound());
     }
 
-    //  GET /api/products
+    //  GET /products
     @Test
-    @DisplayName("GET /api/products - should return list of products")
+    @DisplayName("GET /products - should return list of products")
     void givenProductsExist_whenGetAll_thenReturnList() throws Exception {
         when(productService.getAllProducts()).thenReturn(List.of(productDTO));
 
-        mockMvc.perform(get("/api/products"))
+        mockMvc.perform(get("/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].code").value("P001"));
     }
 
-    //  GET /api/products/category/{category}
+    //  GET /products/category/{category}
     @Test
-    @DisplayName("GET /api/products/category/{category} - should return list by category")
+    @DisplayName("GET /products/category/{category} - should return list by category")
     void givenCategory_whenGetByCategory_thenReturnList() throws Exception {
         when(productService.getAllProductByProductCategory(Category.STANDARD))
                 .thenReturn(List.of(productDTO));
 
-        mockMvc.perform(get("/api/products/category/STANDARD"))
+        mockMvc.perform(get("/products/category/STANDARD"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].category").value("STANDARD"));
     }
 
-    //  POST /api/products
+    //  POST /products
     @Test
-    @DisplayName("POST /api/products - should create new product and return 201")
+    @DisplayName("POST /products - should create new product and return 201")
     void givenValidProduct_whenCreate_thenReturnCreated() throws Exception {
         when(productService.createProduct(any(ProductDTO.class))).thenReturn(productDTO);
 
-        mockMvc.perform(post("/api/products")
+        mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code").value("P001"));
     }
 
-    //  PUT /api/products/{id}
+    //  PUT /products/{id}
     @Test
-    @DisplayName("PUT /api/products/{id} - should update product and return updated DTO")
+    @DisplayName("PUT /products/{id} - should update product and return updated DTO")
     void givenProductExists_whenUpdate_thenReturnUpdated() throws Exception {
         ProductDTO updated = new ProductDTO(1L, "P002", "Aspirina", Category.STANDARD);
         when(productService.updateProduct(eq(1L), any(ProductDTO.class))).thenReturn(updated);
 
-        mockMvc.perform(put("/api/products/1")
+        mockMvc.perform(put("/products/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updated)))
                 .andExpect(status().isOk())
@@ -133,34 +133,34 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/products/{id} - should return 404 when product not found")
+    @DisplayName("PUT /products/{id} - should return 404 when product not found")
     void givenProductNotFound_whenUpdate_thenReturn404() throws Exception {
         when(productService.updateProduct(eq(99L), any(ProductDTO.class)))
                 .thenThrow(new ResourceNotFoundException("Product",99L));
 
-        mockMvc.perform(put("/api/products/99")
+        mockMvc.perform(put("/products/99")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productDTO)))
                 .andExpect(status().isNotFound());
     }
 
-    //  DELETE /api/products/{id}
+    //  DELETE /products/{id}
     @Test
-    @DisplayName("DELETE /api/products/{id} - should delete and return no content")
+    @DisplayName("DELETE /products/{id} - should delete and return no content")
     void givenProductExists_whenDelete_thenReturnNoContent() throws Exception {
         doNothing().when(productService).deleteProduct(1L);
 
-        mockMvc.perform(delete("/api/products/1"))
+        mockMvc.perform(delete("/products/1"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    @DisplayName("DELETE /api/products/{id} - should return 404 when product not found")
+    @DisplayName("DELETE /products/{id} - should return 404 when product not found")
     void givenProductNotFound_whenDelete_thenReturn404() throws Exception {
         Mockito.doThrow(new ResourceNotFoundException("Product",99L))
                 .when(productService).deleteProduct(99L);
 
-        mockMvc.perform(delete("/api/products/99"))
+        mockMvc.perform(delete("/products/99"))
                 .andExpect(status().isNotFound());
     }
 }
