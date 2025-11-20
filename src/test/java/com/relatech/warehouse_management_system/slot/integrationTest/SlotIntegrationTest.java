@@ -49,7 +49,7 @@ class SlotIntegrationTest {
 
     private final StockUnitDTO stockUnitDTO = new StockUnitDTO(
             null, "LOT20251333", LocalDate.now().plusDays(30),
-            "PRD-APPLE-006", "SU-0000003331", 50, Category.STANDARD, null
+            "PRD-APPLE-006", "SU-0000003331", 50, Category.STANDARD, null,null
     );
 
     @BeforeEach

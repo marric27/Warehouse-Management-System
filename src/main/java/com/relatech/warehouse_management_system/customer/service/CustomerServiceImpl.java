@@ -60,11 +60,6 @@ public class CustomerServiceImpl implements CustomerService {
         return customersPage.map(customerMapper::toDTO);
     }
 
-    @Override
-    public Page<CustomerDTO> getAllCustomersPaged(Pageable pageable) {
-        Page<Customer> customersPage = customerRepository.findAll(pageable);
-        return customersPage.map(customerMapper::toDTO);
-    }
 
     @Override
     @Transactional(timeout = 5, propagation = Propagation.REQUIRED)
