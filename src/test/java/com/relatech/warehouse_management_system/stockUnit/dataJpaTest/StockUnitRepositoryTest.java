@@ -128,6 +128,7 @@ class StockUnitRepositoryTest {
         assertThat(saved.getSlot()).isNotNull();
         assertThat(saved.getSlot().getCode()).isEqualTo("SLOT001");
     }
+
     @Test
     void givenNullProduct_whenCanContain_thenReturnFalse() {
         StockUnit su = StockUnit.builder()

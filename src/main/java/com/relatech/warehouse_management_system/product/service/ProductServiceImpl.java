@@ -55,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void deleteProduct(Long id) throws ResourceNotFoundException {
-        if(!productRepository.existsById(id)) throw new ResourceNotFoundException(this.getClass().getName(), id);
+        if (!productRepository.existsById(id)) throw new ResourceNotFoundException(this.getClass().getName(), id);
 
         productRepository.deleteById(id);
     }

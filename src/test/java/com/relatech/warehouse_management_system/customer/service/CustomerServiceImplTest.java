@@ -123,38 +123,38 @@ class CustomerServiceImplTest {
         assertEquals(1, resultEmpty.size());
     }
 
-        @Test
-        @DisplayName("Create Customer - Success if no duplicates")
-        void whenCreateCustomerWithNoDuplicates_thenPersistsAndReturnsDTO() throws Exception {
-            CustomerDTO dto = CustomerDTO.builder()
-                    .name("Mario")
-                    .surname("Rossi")
-                    .shippingAddress("Via Roma 1")
-                    .billingAddress("Via Milano 2")
-                    .email("mail@rossi.com")
-                    .taxCode("MRRSSM80A01H501X")
-                    .build();
+    @Test
+    @DisplayName("Create Customer - Success if no duplicates")
+    void whenCreateCustomerWithNoDuplicates_thenPersistsAndReturnsDTO() throws Exception {
+        CustomerDTO dto = CustomerDTO.builder()
+                .name("Mario")
+                .surname("Rossi")
+                .shippingAddress("Via Roma 1")
+                .billingAddress("Via Milano 2")
+                .email("mail@rossi.com")
+                .taxCode("MRRSSM80A01H501X")
+                .build();
 
-            when(repository.findByEmail("mail@rossi.com")).thenReturn(Optional.empty());
-            when(repository.findByTaxCode("MRRSSM80A01H501X")).thenReturn(Optional.empty());
+        when(repository.findByEmail("mail@rossi.com")).thenReturn(Optional.empty());
+        when(repository.findByTaxCode("MRRSSM80A01H501X")).thenReturn(Optional.empty());
 
-            Customer entity = Customer.builder()
-                    .name("Mario")
-                    .surname("Rossi")
-                    .shippingAddress("Via Roma 1")
-                    .billingAddress("Via Milano 2")
-                    .email("mail@rossi.com")
-                    .taxCode("MRRSSM80A01H501X")
-                    .build();
+        Customer entity = Customer.builder()
+                .name("Mario")
+                .surname("Rossi")
+                .shippingAddress("Via Roma 1")
+                .billingAddress("Via Milano 2")
+                .email("mail@rossi.com")
+                .taxCode("MRRSSM80A01H501X")
+                .build();
 
-            when(mapper.toEntity(dto)).thenReturn(entity);
-            when(repository.save(entity)).thenReturn(entity);
-            when(mapper.toDTO(entity)).thenReturn(dto);
+        when(mapper.toEntity(dto)).thenReturn(entity);
+        when(repository.save(entity)).thenReturn(entity);
+        when(mapper.toDTO(entity)).thenReturn(dto);
 
-            CustomerDTO result = service.createCustomer(dto);
-            assertEquals("Mario", result.getName());
-            verify(repository).save(entity);
-        }
+        CustomerDTO result = service.createCustomer(dto);
+        assertEquals("Mario", result.getName());
+        verify(repository).save(entity);
+    }
 
     @Test
     @DisplayName("Create Customer - Duplicate Email")
@@ -175,65 +175,65 @@ class CustomerServiceImplTest {
 
 
     @Test
-        @DisplayName("Create Customer - Duplicate TaxCode")
-        void whenCreateCustomerWithDuplicateTaxCode_thenThrows() {
-            CustomerDTO dto = CustomerDTO.builder()
-                    .name("Mario")
-                    .surname("Rossi")
-                    .shippingAddress("Via Roma 1")
-                    .billingAddress("Via Milano 2")
-                    .email("mail@rossi.com")
-                    .taxCode("MRRSSM80A01H501X")
-                    .build();
+    @DisplayName("Create Customer - Duplicate TaxCode")
+    void whenCreateCustomerWithDuplicateTaxCode_thenThrows() {
+        CustomerDTO dto = CustomerDTO.builder()
+                .name("Mario")
+                .surname("Rossi")
+                .shippingAddress("Via Roma 1")
+                .billingAddress("Via Milano 2")
+                .email("mail@rossi.com")
+                .taxCode("MRRSSM80A01H501X")
+                .build();
 
-            when(repository.findByEmail("mail@rossi.com")).thenReturn(Optional.empty());
-            when(repository.findByTaxCode("MRRSSM80A01H501X")).thenReturn(Optional.of(new Customer()));
+        when(repository.findByEmail("mail@rossi.com")).thenReturn(Optional.empty());
+        when(repository.findByTaxCode("MRRSSM80A01H501X")).thenReturn(Optional.of(new Customer()));
 
-            assertThrows(DuplicateResourceException.class, () -> service.createCustomer(dto));
-        }
-
-        @Test
-        @DisplayName("Get All Customers - Returns mapped list")
-        void whenGetAllCustomers_thenReturnsMappedList() {
-            Customer c = Customer.builder()
-                    .name("Mario")
-                    .surname("Rossi")
-                    .shippingAddress("Via Roma 1")
-                    .billingAddress("Via Milano 2")
-                    .email("mail@rossi.com")
-                    .taxCode("MRRSSM80A01H501X")
-                    .build();
-            when(repository.findAll()).thenReturn(List.of(c));
-            when(mapper.toDTO(c)).thenReturn(CustomerDTO.builder().name("Mario").build());
-
-            List<CustomerDTO> dtos = service.getAllCustomers();
-            assertEquals(1, dtos.size());
-            assertEquals("Mario", dtos.get(0).getName());
-            verify(mapper).toDTO(c);
-        }
-
-        @Test
-        @DisplayName("Search Customers - Null Term Returns All")
-        void whenSearchCustomersWithNullTerm_thenGetAllCustomersCalled() {
-            Customer c = Customer.builder().name("Mario").build();
-            when(repository.findAll()).thenReturn(List.of(c));
-            when(mapper.toDTO(c)).thenReturn(CustomerDTO.builder().name("Mario").build());
-
-            List<CustomerDTO> result = service.searchCustomers(null);
-            assertEquals(1, result.size());
-        }
-
-        @Test
-        @DisplayName("Search Customers - Matching Term")
-        void whenSearchCustomersWithTerm_thenSearchByTermCalled() {
-            Customer c = Customer.builder().name("Mario").build();
-            when(repository.searchByTerm("Mario")).thenReturn(List.of(c));
-            when(mapper.toDTO(c)).thenReturn(CustomerDTO.builder().name("Mario").build());
-
-            List<CustomerDTO> result = service.searchCustomers("Mario");
-            assertEquals(1, result.size());
-            assertEquals("Mario", result.get(0).getName());
-        }
+        assertThrows(DuplicateResourceException.class, () -> service.createCustomer(dto));
     }
+
+    @Test
+    @DisplayName("Get All Customers - Returns mapped list")
+    void whenGetAllCustomers_thenReturnsMappedList() {
+        Customer c = Customer.builder()
+                .name("Mario")
+                .surname("Rossi")
+                .shippingAddress("Via Roma 1")
+                .billingAddress("Via Milano 2")
+                .email("mail@rossi.com")
+                .taxCode("MRRSSM80A01H501X")
+                .build();
+        when(repository.findAll()).thenReturn(List.of(c));
+        when(mapper.toDTO(c)).thenReturn(CustomerDTO.builder().name("Mario").build());
+
+        List<CustomerDTO> dtos = service.getAllCustomers();
+        assertEquals(1, dtos.size());
+        assertEquals("Mario", dtos.get(0).getName());
+        verify(mapper).toDTO(c);
+    }
+
+    @Test
+    @DisplayName("Search Customers - Null Term Returns All")
+    void whenSearchCustomersWithNullTerm_thenGetAllCustomersCalled() {
+        Customer c = Customer.builder().name("Mario").build();
+        when(repository.findAll()).thenReturn(List.of(c));
+        when(mapper.toDTO(c)).thenReturn(CustomerDTO.builder().name("Mario").build());
+
+        List<CustomerDTO> result = service.searchCustomers(null);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    @DisplayName("Search Customers - Matching Term")
+    void whenSearchCustomersWithTerm_thenSearchByTermCalled() {
+        Customer c = Customer.builder().name("Mario").build();
+        when(repository.searchByTerm("Mario")).thenReturn(List.of(c));
+        when(mapper.toDTO(c)).thenReturn(CustomerDTO.builder().name("Mario").build());
+
+        List<CustomerDTO> result = service.searchCustomers("Mario");
+        assertEquals(1, result.size());
+        assertEquals("Mario", result.get(0).getName());
+    }
+}
 
 

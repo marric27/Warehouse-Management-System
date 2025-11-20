@@ -34,9 +34,6 @@ public class StockUnitServiceTest {
     private StockUnitRepository stockUnitRepository;
 
     @InjectMocks
-    private SlotServiceImpl slotService;
-
-    @InjectMocks
     private StockUnitServiceImpl stockUnitService;
 
     private StockUnit stockUnit;

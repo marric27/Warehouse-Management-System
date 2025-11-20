@@ -18,6 +18,7 @@ public class CustomerMapper {
                 .taxCode(entity.getTaxCode())
                 .build();
     }
+
     public Customer toEntity(CustomerDTO dto) {
         if (dto == null) return null;
         return Customer.builder()

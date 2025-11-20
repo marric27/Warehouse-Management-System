@@ -40,7 +40,7 @@ public class StockUnitController {
     }
 
     @GetMapping("/paged")
-    public ResponseEntity<Page<StockUnitDTO>> getAllStockUnitsPaged (@PageableDefault(page = 0, size = 10) Pageable pageable){
+    public ResponseEntity<Page<StockUnitDTO>> getAllStockUnitsPaged(@PageableDefault(page = 0, size = 10) Pageable pageable) {
         log.info("Request to fetch all stock units paged: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
         Page<StockUnitDTO> stockUnits = stockUnitService.getAllStockUnitsPaged(pageable);
         return ResponseEntity.ok(stockUnits);

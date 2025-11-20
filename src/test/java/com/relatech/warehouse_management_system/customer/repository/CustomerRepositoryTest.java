@@ -92,6 +92,7 @@ class CustomerRepositoryTest {
         Optional<Customer> found = repository.findById(saved.getId());
         assertFalse(found.isPresent());
     }
+
     @Test
     @DisplayName("Find By Email - Success")
     void whenFindByEmail_thenReturn() {

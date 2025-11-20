@@ -5,7 +5,8 @@ import com.relatech.warehouse_management_system.exception.ResourceNotFoundExcept
 import com.relatech.warehouse_management_system.product.controller.ProductController;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.product.service.ProductService;
-import com.relatech.warehouse_management_system.util.Category;import org.junit.jupiter.api.DisplayName;
+import com.relatech.warehouse_management_system.util.Category;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ class ProductControllerTest {
     @Test
     @DisplayName("GET /api/products/{id} - should return 404 when not found")
     void givenProductNotFound_whenGetById_thenReturn404() throws Exception {
-        when(productService.getProductById(99L)).thenThrow(new ResourceNotFoundException("Product",99L));
+        when(productService.getProductById(99L)).thenThrow(new ResourceNotFoundException("Product", 99L));
 
         mockMvc.perform(get("/api/products/99"))
                 .andExpect(status().isNotFound());
@@ -74,7 +75,7 @@ class ProductControllerTest {
     @Test
     @DisplayName("GET /api/products/code/{code} - should return 404 when not found")
     void givenProductNotFound_whenGetByCode_thenReturn404() throws Exception {
-        when(productService.getProductByCode("99")).thenThrow(new ResourceNotFoundException("Product",99));
+        when(productService.getProductByCode("99")).thenThrow(new ResourceNotFoundException("Product", 99));
 
         mockMvc.perform(get("/api/products/code/99"))
                 .andExpect(status().isNotFound());
@@ -136,7 +137,7 @@ class ProductControllerTest {
     @DisplayName("PUT /api/products/{id} - should return 404 when product not found")
     void givenProductNotFound_whenUpdate_thenReturn404() throws Exception {
         when(productService.updateProduct(eq(99L), any(ProductDTO.class)))
-                .thenThrow(new ResourceNotFoundException("Product",99L));
+                .thenThrow(new ResourceNotFoundException("Product", 99L));
 
         mockMvc.perform(put("/api/products/99")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -157,7 +158,7 @@ class ProductControllerTest {
     @Test
     @DisplayName("DELETE /api/products/{id} - should return 404 when product not found")
     void givenProductNotFound_whenDelete_thenReturn404() throws Exception {
-        Mockito.doThrow(new ResourceNotFoundException("Product",99L))
+        Mockito.doThrow(new ResourceNotFoundException("Product", 99L))
                 .when(productService).deleteProduct(99L);
 
         mockMvc.perform(delete("/api/products/99"))

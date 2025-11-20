@@ -32,7 +32,7 @@ public class LogisticController {
     public ResponseEntity<SlotDTO> removeProductFromSlot(@PathVariable Long id) throws ResourceNotFoundException {
         log.info("Received PATCH request for remove product from slot with ID {} ", id);
         SlotDTO slotDTO = logisticService.removeProductFromSlot(id);
-        log.info("Successfully removed product from slot: {}",id);
+        log.info("Successfully removed product from slot: {}", id);
         return ResponseEntity.ok(slotDTO);
     }
 
@@ -44,7 +44,7 @@ public class LogisticController {
     ) throws ResourceNotFoundException {
         log.info("Received GET request to check if slot with ID {} can contain product with ID {}", slotId, productId);
         boolean canContain = logisticService.canSlotContainProduct(slotId, productId);
-        log.info("slot with ID {} can contain product with ID {}: {}",slotId, productId, canContain);
+        log.info("slot with ID {} can contain product with ID {}: {}", slotId, productId, canContain);
         return ResponseEntity.ok(canContain);
     }
 }
