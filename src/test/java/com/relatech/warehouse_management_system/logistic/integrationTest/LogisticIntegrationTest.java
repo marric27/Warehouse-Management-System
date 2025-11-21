@@ -59,7 +59,7 @@ class LogisticIntegrationTest {
         ProductDTO productDTO = productService.createProduct(this.productDTO);
         Product product = ProductMapper.toEntity(productDTO);
 
-        mockMvc.perform(patch("/api/logistic/" + slot.getId() + "/assign/" + product.getId())
+        mockMvc.perform(patch("/logistic/" + slot.getId() + "/assign/" + product.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(slot.getId()))
@@ -79,7 +79,7 @@ class LogisticIntegrationTest {
         slotDTO.setProduct(productDTO);
         slotService.updateSlot(slot.getId(), slotDTO);
 
-        mockMvc.perform(patch("/api/logistic/" + slot.getId() + "/remove-product")
+        mockMvc.perform(patch("/logistic/" + slot.getId() + "/remove-product")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(slot.getId()))
@@ -92,7 +92,7 @@ class LogisticIntegrationTest {
         Slot slot = SlotMapper.toEntity(slotDTO);
         ProductDTO productDTO = productService.createProduct(this.productDTO);
         Product product = ProductMapper.toEntity(productDTO);
-        mockMvc.perform(get("/api/logistic/" + slot.getId() + "/can-contain/" + product.getId())
+        mockMvc.perform(get("/logistic/" + slot.getId() + "/can-contain/" + product.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(true));
@@ -105,7 +105,7 @@ class LogisticIntegrationTest {
         Product product = ProductMapper.toEntity(productDTO);
 
         Long invalidSlotId = 999L;
-        mockMvc.perform(patch("/api/logistic/" + invalidSlotId + "/assign/" + product.getId())
+        mockMvc.perform(patch("/logistic/" + invalidSlotId + "/assign/" + product.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -113,7 +113,7 @@ class LogisticIntegrationTest {
     @Test
     void removeProductFromSlot_ShouldReturnNotFound_WhenSlotDoesNotExist() throws Exception {
         Long invalidSlotId = 999L;
-        mockMvc.perform(patch("/api/logistic/" + invalidSlotId + "/remove-product")
+        mockMvc.perform(patch("/logistic/" + invalidSlotId + "/remove-product")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -124,7 +124,7 @@ class LogisticIntegrationTest {
         Product product = ProductMapper.toEntity(productDTO);
 
         Long invalidSlotId = 999L;
-        mockMvc.perform(get("/api/logistic/" + invalidSlotId + "/can-contain/" + product.getId())
+        mockMvc.perform(get("/logistic/" + invalidSlotId + "/can-contain/" + product.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }

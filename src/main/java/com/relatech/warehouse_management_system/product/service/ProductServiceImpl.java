@@ -23,7 +23,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO getProductById(Long id) throws ResourceNotFoundException {
         return productRepository.findById(id)
                 .map(ProductMapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), id));
+                .orElseThrow(() -> new ResourceNotFoundException("Product", id));
     }
 
     @Override
@@ -31,7 +31,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO getProductByCode(String code) throws ResourceNotFoundException {
         return productRepository.findByCode(code)
                 .map(ProductMapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), code));
+                .orElseThrow(() -> new ResourceNotFoundException("Product", code));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) throws Exception {
         Product existing = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(this.getClass().getName(), id));
+                .orElseThrow(() -> new ResourceNotFoundException("Product", id));
 
         existing.setName(productDTO.getName());
 
@@ -55,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void deleteProduct(Long id) throws ResourceNotFoundException {
-        if(!productRepository.existsById(id)) throw new ResourceNotFoundException(this.getClass().getName(), id);
+        if(!productRepository.existsById(id)) throw new ResourceNotFoundException("Product", id);
 
         productRepository.deleteById(id);
     }

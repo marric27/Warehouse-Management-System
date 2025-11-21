@@ -3,6 +3,7 @@ package com.relatech.warehouse_management_system.logistic.controller;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.logistic.service.LogisticService;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/logistic")
+@RequestMapping("/logistic")
+@Tag(name = "Logistic Management", description = "APIs for managing logistic")
 public class LogisticController {
     @Autowired
     private LogisticService logisticService;

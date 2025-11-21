@@ -4,6 +4,7 @@ import com.relatech.warehouse_management_system.exception.DuplicateResourceExcep
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.stockUnit.service.StockUnitService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-@RequestMapping("/api/v1/stock-units")
+@RequestMapping("/stock-units")
+@Tag(name = "Stock Unit Management", description = "APIs for managing stock units")
 public class StockUnitController {
 
     private final StockUnitService stockUnitService;

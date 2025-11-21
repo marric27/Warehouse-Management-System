@@ -62,7 +62,7 @@ class SlotIntegrationTest {
     void givenSlotExists_whenGetAllSlots_thenReturnList() throws Exception {
         slotService.createSlot(slotDTO);
 
-        mockMvc.perform(get("/api/slots"))
+        mockMvc.perform(get("/slots"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].code").value("SLOT001"))
                 .andExpect(jsonPath("$[0].capacity").value(100));
@@ -72,7 +72,7 @@ class SlotIntegrationTest {
     void givenSlotExists_whenGetSlotById_thenReturnSlot() throws Exception {
         SlotDTO createdSlot = slotService.createSlot(slotDTO);
 
-        mockMvc.perform(get("/api/slots/{id}", createdSlot.getId()))
+        mockMvc.perform(get("/slots/{id}", createdSlot.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("SLOT001"))
                 .andExpect(jsonPath("$.capacity").value(100));
@@ -80,13 +80,13 @@ class SlotIntegrationTest {
 
     @Test
     void givenNotExistingSlot_whenGetSlotById_thenReturnNotFound() throws Exception {
-        mockMvc.perform(get("/api/slots/{id}", 999L))
+        mockMvc.perform(get("/slots/{id}", 999L))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void givenValidSlot_whenCreateSlot_thenReturnCreated() throws Exception {
-        mockMvc.perform(post("/api/slots")
+        mockMvc.perform(post("/slots")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(slotDTO)))
                 .andExpect(status().isOk())
@@ -98,7 +98,7 @@ class SlotIntegrationTest {
     void givenNewSlotWithoutCode_whenPost_thenReturnBadRequest() throws Exception {
         SlotDTO slotWithoutCode = new SlotDTO(null, null, Category.FLAMMABLE, 10, null, null);
 
-        mockMvc.perform(post("/api/products")
+        mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(slotWithoutCode)))
                 .andExpect(status().isBadRequest());
@@ -110,7 +110,7 @@ class SlotIntegrationTest {
         createdSlot.setCode("SLOT003");
         createdSlot.setCapacity(30);
 
-        mockMvc.perform(put("/api/slots/{id}", createdSlot.getId())
+        mockMvc.perform(put("/slots/{id}", createdSlot.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createdSlot)))
                 .andExpect(status().isOk())
@@ -128,7 +128,7 @@ class SlotIntegrationTest {
 
         toUpdate.setCode(first.getCode()); //duplicated code
 
-        mockMvc.perform(put("/api/slots/{id}", toUpdate.getId().toString())
+        mockMvc.perform(put("/slots/{id}", toUpdate.getId().toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(toUpdate)))
                 .andExpect(status().isConflict());
@@ -139,7 +139,7 @@ class SlotIntegrationTest {
         SlotDTO createdSlot = slotService.createSlot(slotDTO);
         StockUnitDTO createdStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
 
-        mockMvc.perform(patch("/api/slots/{slotId}/assign/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
+        mockMvc.perform(patch("/slots/{slotId}/assign/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(createdSlot.getId()))
@@ -151,11 +151,11 @@ class SlotIntegrationTest {
         SlotDTO createdSlot = slotService.createSlot(slotDTO);
         StockUnitDTO createdStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
 
-        mockMvc.perform(patch("/api/slots/{slotId}/assign/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
+        mockMvc.perform(patch("/slots/{slotId}/assign/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(patch("/api/slots/{slotId}/remove-stock-unit/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
+        mockMvc.perform(patch("/slots/{slotId}/remove-stock-unit/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.stockUnits").isEmpty());
@@ -168,12 +168,12 @@ class SlotIntegrationTest {
 
         createdStockUnit.setCategory(Category.FLAMMABLE);
 
-        mockMvc.perform(put("/api/v1/stock-units/{id}", createdStockUnit.getId())
+        mockMvc.perform(put("/stock-units/{id}", createdStockUnit.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createdStockUnit)))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(patch("/api/slots/{slotId}/assign/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
+        mockMvc.perform(patch("/slots/{slotId}/assign/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }

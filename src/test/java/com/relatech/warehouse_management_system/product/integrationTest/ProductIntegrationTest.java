@@ -45,7 +45,7 @@ class ProductIntegrationTest {
     void givenExistingProduct_whenGetProductByCode_thenReturnProduct() throws Exception {
         productService.createProduct(productDTO);
 
-        mockMvc.perform(get("/api/products/code/{code}", "P001"))
+        mockMvc.perform(get("/products/code/{code}", "P001"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("P001"))
                 .andExpect(jsonPath("$.name").value("Paracetamolo"));
@@ -53,13 +53,13 @@ class ProductIntegrationTest {
 
     @Test
     void givenNotExistingProduct_whenGetProductById_thenReturnNotFound() throws Exception {
-        mockMvc.perform(get("/api/products/{id}", 99L))
+        mockMvc.perform(get("/products/{id}", 99L))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void givenNotExistingProduct_whenGetProductByCode_thenReturnNotFound() throws Exception {
-        mockMvc.perform(get("/api/products/code/{code}", "P999"))
+        mockMvc.perform(get("/products/code/{code}", "P999"))
                 .andExpect(status().isNotFound());
     }
 
@@ -70,7 +70,7 @@ class ProductIntegrationTest {
         productService.createProduct(product1);
         productService.createProduct(product2);
 
-        mockMvc.perform(get("/api/products/category/{category}", "STANDARD"))
+        mockMvc.perform(get("/products/category/{category}", "STANDARD"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].code").value("C001"))
                 .andExpect(jsonPath("$[0].name").value("Tachipirina"));
@@ -78,12 +78,12 @@ class ProductIntegrationTest {
 
     @Test
     void givenProductExists_whenGetAllProducts_thenReturnList() throws Exception {
-        mockMvc.perform(post("/api/products")
+        mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productDTO)))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/api/products"))
+        mockMvc.perform(get("/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].code").value("P001"))
                 .andExpect(jsonPath("$[0].name").value("Paracetamolo"));
@@ -91,7 +91,7 @@ class ProductIntegrationTest {
 
     @Test
     void givenValidProduct_whenCreateProduct_thenReturnCreated() throws Exception {
-        mockMvc.perform(post("/api/products")
+        mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productDTO)))
                 .andExpect(status().isCreated())
@@ -105,7 +105,7 @@ class ProductIntegrationTest {
 
         ProductDTO duplicate = new ProductDTO(null, "P001", "Brufen", Category.FLAMMABLE);
 
-        mockMvc.perform(post("/api/products")
+        mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(duplicate)))
                 .andExpect(status().isConflict());
@@ -115,7 +115,7 @@ class ProductIntegrationTest {
     void givenNewProductWithoutCode_whenPost_thenReturnBadRequest() throws Exception {
         ProductDTO prodWithoutCode = new ProductDTO(null, null, "Brufen", Category.FLAMMABLE);
 
-        mockMvc.perform(post("/api/products")
+        mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(prodWithoutCode)))
                 .andExpect(status().isBadRequest());
@@ -123,7 +123,7 @@ class ProductIntegrationTest {
 
     @Test
     void givenValidProduct_whenUpdateProduct_thenReturnUpdatedObject() throws Exception {
-        String createResult = mockMvc.perform(post("/api/products")
+        String createResult = mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productDTO)))
                 .andReturn().getResponse().getContentAsString();
@@ -132,7 +132,7 @@ class ProductIntegrationTest {
         created.setName("Aspirina");
         created.setCode("P002");
 
-        mockMvc.perform(put("/api/products/{id}", created.getId())
+        mockMvc.perform(put("/products/{id}", created.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(created)))
                 .andExpect(status().isOk())
@@ -141,17 +141,17 @@ class ProductIntegrationTest {
 
     @Test
     void givenId_whenDeleteProduct_thenReturnNoContent() throws Exception {
-        String createResult = mockMvc.perform(post("/api/products")
+        String createResult = mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productDTO)))
                 .andReturn().getResponse().getContentAsString();
 
         ProductDTO created = objectMapper.readValue(createResult, ProductDTO.class);
 
-        mockMvc.perform(delete("/api/products/{id}", created.getId()))
+        mockMvc.perform(delete("/products/{id}", created.getId()))
                 .andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/api/products/{id}", created.getId()))
+        mockMvc.perform(get("/products/{id}", created.getId()))
                 .andExpect(status().isNotFound());
     }
 }

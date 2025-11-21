@@ -44,61 +44,61 @@ class SlotControllerTest {
             1L, "SLOT001", Category.STANDARD, 100, null, null
     );
 
-    //  GET /api/slots
+    //  GET /slots
     @Test
-    @DisplayName("GET /api/slots - should return list of slots")
+    @DisplayName("GET /slots - should return list of slots")
     void givenSlotsExist_whenGetAllSlots_thenReturnList() throws Exception {
         when(slotService.getAllSlots()).thenReturn(List.of(slotDTO));
 
-        mockMvc.perform(get("/api/slots"))
+        mockMvc.perform(get("/slots"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].code", is("SLOT001")))
                 .andExpect(jsonPath("$[0].capacity", is(100)));
     }
 
-    //  GET /api/slots/{id}
+    //  GET /slots/{id}
     @Test
-    @DisplayName("GET /api/slots/{id} - should return slot by id")
+    @DisplayName("GET /slots/{id} - should return slot by id")
     void givenSlotExists_whenGetSlotById_thenReturnSlot() throws Exception {
         when(slotService.getSlotById(1L)).thenReturn(slotDTO);
 
-        mockMvc.perform(get("/api/slots/1"))
+        mockMvc.perform(get("/slots/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code", is("SLOT001")))
                 .andExpect(jsonPath("$.capacity", is(100)));
     }
 
     @Test
-    @DisplayName("GET /api/slots/{id} - should return 404 when not found")
+    @DisplayName("GET /slots/{id} - should return 404 when not found")
     void givenSlotNotFound_whenGetSlotById_thenReturnNotFound() throws Exception {
         when(slotService.getSlotById(99L)).thenThrow(new ResourceNotFoundException("Slot", 99L));
 
-        mockMvc.perform(get("/api/slots/99"))
+        mockMvc.perform(get("/slots/99"))
                 .andExpect(status().isNotFound());
     }
 
-    //  POST /api/slots
+    //  POST /slots
     @Test
-    @DisplayName("POST /api/slots - should create new slot")
+    @DisplayName("POST /slots - should create new slot")
     void givenValidSlot_whenCreateSlot_thenReturnCreated() throws Exception {
         when(slotService.createSlot(any(SlotDTO.class))).thenReturn(slotDTO);
 
-        mockMvc.perform(post("/api/slots")
+        mockMvc.perform(post("/slots")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(slotDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code", is("SLOT001")));
     }
 
-    //  PUT /api/slots/{id}
+    //  PUT /slots/{id}
     @Test
-    @DisplayName("PUT /api/slots/{id} - should update slot")
+    @DisplayName("PUT /slots/{id} - should update slot")
     void givenValidSlot_whenUpdateSlot_thenReturnUpdated() throws Exception {
         SlotDTO updated = new SlotDTO(1L, "SLOT002", Category.STANDARD, 200, null, null);
         when(slotService.updateSlot(eq(1L), any(SlotDTO.class))).thenReturn(updated);
 
-        mockMvc.perform(put("/api/slots/1")
+        mockMvc.perform(put("/slots/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updated)))
                 .andExpect(status().isOk())
@@ -107,34 +107,34 @@ class SlotControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/slots/{id} - should return 404 when slot not found")
+    @DisplayName("PUT /slots/{id} - should return 404 when slot not found")
     void givenSlotNotFound_whenUpdateSlot_thenReturnNotFound() throws Exception {
         when(slotService.updateSlot(eq(99L), any(SlotDTO.class)))
                 .thenThrow(new ResourceNotFoundException("Slot", 99L));
 
-        mockMvc.perform(put("/api/slots/99")
+        mockMvc.perform(put("/slots/99")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(slotDTO)))
                 .andExpect(status().isNotFound());
     }
 
-    //  DELETE /api/slots/{id}
+    //  DELETE /slots/{id}
     @Test
-    @DisplayName("DELETE /api/slots/{id} - should delete slot and return no content")
+    @DisplayName("DELETE /slots/{id} - should delete slot and return no content")
     void givenSlotExists_whenDeleteSlot_thenReturnNoContent() throws Exception {
         doNothing().when(slotService).deleteSlot(1L);
 
-        mockMvc.perform(delete("/api/slots/1"))
+        mockMvc.perform(delete("/slots/1"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    @DisplayName("DELETE /api/slots/{id} - should return 404 when slot not found")
+    @DisplayName("DELETE /slots/{id} - should return 404 when slot not found")
     void givenSlotNotFound_whenDeleteSlot_thenReturnNotFound() throws Exception {
         Mockito.doThrow(new ResourceNotFoundException("Slot", 99L))
                 .when(slotService).deleteSlot(99L);
 
-        mockMvc.perform(delete("/api/slots/99"))
+        mockMvc.perform(delete("/slots/99"))
                 .andExpect(status().isNotFound());
     }
 
@@ -145,7 +145,7 @@ class SlotControllerTest {
 
         when(slotService.assignStockUnitToSlot(slotId, stockUnitId)).thenReturn(slotDTO);
 
-        mockMvc.perform(patch("/api/slots/{slotId}/assign/{stockUnitId}", slotId, stockUnitId)
+        mockMvc.perform(patch("/slots/{slotId}/assign/{stockUnitId}", slotId, stockUnitId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(slotDTO.getId()));
@@ -160,7 +160,7 @@ class SlotControllerTest {
 
         when(slotService.removeStockUnitFromSlot(slotId, stockUnitId)).thenReturn(slotDTO);
 
-        mockMvc.perform(patch("/api/slots/{slotId}/remove-stock-unit/{stockUnitId}", slotId, stockUnitId)
+        mockMvc.perform(patch("/slots/{slotId}/remove-stock-unit/{stockUnitId}", slotId, stockUnitId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(slotDTO.getId()));

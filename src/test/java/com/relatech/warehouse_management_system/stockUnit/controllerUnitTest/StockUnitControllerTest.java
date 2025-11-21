@@ -51,12 +51,12 @@ class StockUnitControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/stock-units - create stock unit")
+    @DisplayName("POST /stock-units - create stock unit")
     void testCreateStockUnit() throws Exception {
         StockUnitDTO dto = buildStockUnitDTO();
         Mockito.when(stockUnitService.createStockUnit(any(StockUnitDTO.class))).thenReturn(dto);
 
-        mockMvc.perform(post("/api/v1/stock-units")
+        mockMvc.perform(post("/stock-units")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
@@ -64,55 +64,55 @@ class StockUnitControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/stock-units - get all stock units")
+    @DisplayName("GET /stock-units - get all stock units")
     void testGetAllStockUnits() throws Exception {
         StockUnitDTO dto = buildStockUnitDTO();
         Mockito.when(stockUnitService.getAllStockUnits()).thenReturn(Collections.singletonList(dto));
 
-        mockMvc.perform(get("/api/v1/stock-units"))
+        mockMvc.perform(get("/stock-units"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].batchNumber").value("BN001"));
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/stock-units/{stockUnitId}/assign/{productId} - assign product")
+    @DisplayName("PATCH /stock-units/{stockUnitId}/assign/{productId} - assign product")
     void testAssignProductToStockUnit() throws Exception {
         StockUnitDTO dto = buildStockUnitDTO();
         Mockito.when(stockUnitService.assignProductToStockUnit(eq(1L), eq(2L))).thenReturn(dto);
 
-        mockMvc.perform(patch("/api/v1/stock-units/1/assign/2"))
+        mockMvc.perform(patch("/stock-units/1/assign/2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.uniqueCode").value("UNIQUE-001"));
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/stock-units/{stockUnitId}/remove-product - remove product")
+    @DisplayName("PATCH /stock-units/{stockUnitId}/remove-product - remove product")
     void testRemoveProductFromStockUnit() throws Exception {
         StockUnitDTO dto = buildStockUnitDTO();
         dto.setProductCode(null); // simulate product removed
         Mockito.when(stockUnitService.removeProductFromStockUnit(1L)).thenReturn(dto);
 
-        mockMvc.perform(patch("/api/v1/stock-units/1/remove-product"))
+        mockMvc.perform(patch("/stock-units/1/remove-product"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.productCode").doesNotExist());
     }
 
     @Test
-    @DisplayName("DELETE /api/v1/stock-units/{id} - delete stock unit")
+    @DisplayName("DELETE /stock-units/{id} - delete stock unit")
     void testDeleteStockUnit() throws Exception {
         Mockito.doNothing().when(stockUnitService).deleteStockUnit(1L);
 
-        mockMvc.perform(delete("/api/v1/stock-units/1"))
+        mockMvc.perform(delete("/stock-units/1"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    @DisplayName("PUT /api/v1/stock-units/{id} - update stock unit")
+    @DisplayName("PUT /stock-units/{id} - update stock unit")
     void testUpdateStockUnit() throws Exception {
         StockUnitDTO dto = buildStockUnitDTO();
         Mockito.when(stockUnitService.updateStockUnit(eq(1L), any(StockUnitDTO.class))).thenReturn(dto);
 
-        mockMvc.perform(put("/api/v1/stock-units/1")
+        mockMvc.perform(put("/stock-units/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
@@ -120,22 +120,22 @@ class StockUnitControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/stock-units - return empty list")
+    @DisplayName("GET /stock-units - return empty list")
     void testGetAllStockUnits_Empty() throws Exception {
         Mockito.when(stockUnitService.getAllStockUnits()).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/api/v1/stock-units"))
+        mockMvc.perform(get("/stock-units"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/stock-units/{id}/assign/{productId} - not found")
+    @DisplayName("PATCH /stock-units/{id}/assign/{productId} - not found")
     void testAssignProductNotFound() throws Exception {
         Mockito.when(stockUnitService.assignProductToStockUnit(eq(1L), eq(2L)))
                 .thenThrow(new ResourceNotFoundException("StockUnit", 1L));
 
-        mockMvc.perform(patch("/api/v1/stock-units/1/assign/2"))
+        mockMvc.perform(patch("/stock-units/1/assign/2"))
                 .andExpect(status().isNotFound());
     }
 }

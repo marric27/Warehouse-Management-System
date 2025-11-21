@@ -3,6 +3,7 @@ package com.relatech.warehouse_management_system.customer.controller;
 import com.relatech.warehouse_management_system.customer.dto.CustomerDTO;
 import com.relatech.warehouse_management_system.customer.service.CustomerService;
 import com.relatech.warehouse_management_system.exception.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/customers")
+@RequestMapping("/customers")
+@Tag(name = "Customer Management", description = "APIs for managing customers")
 @RequiredArgsConstructor
 @Slf4j
 @Validated
