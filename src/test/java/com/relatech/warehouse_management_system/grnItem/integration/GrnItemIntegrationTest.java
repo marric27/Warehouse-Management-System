@@ -12,9 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DisplayName("GrnItem API Extended Integration Tests")
+@DisplayName("GrnItem API Integration Tests")
 class GrnItemIntegrationTest {
 
     @Autowired
@@ -36,15 +33,11 @@ class GrnItemIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-
     @BeforeEach
     void setup() {
         grnItemRepository.deleteAll();
     }
 
-    // ---------------------------------------------------------
-    // Helper DTO
-    // ---------------------------------------------------------
     private GrnItemDto createDto() {
         GrnItemDto dto = new GrnItemDto();
         dto.setProductCode("P001");
@@ -57,11 +50,9 @@ class GrnItemIntegrationTest {
         return dto;
     }
 
-    // ---------------------------------------------------------
-    // POST /grn-items (Create)
-    // ---------------------------------------------------------
     @Test
-    void testCreateGrnItem() throws Exception {
+    @DisplayName("givenValidGrnItem_whenCreateGrnItem_thenReturnsCreatedItem")
+    void givenValidGrnItem_whenCreateGrnItem_thenReturnsCreatedItem() throws Exception {
         GrnItemDto dto = createDto();
 
         mockMvc.perform(post("/grn-items")
@@ -73,11 +64,9 @@ class GrnItemIntegrationTest {
         assertThat(grnItemRepository.count()).isEqualTo(1);
     }
 
-    // ---------------------------------------------------------
-    // GET /grn-items
-    // ---------------------------------------------------------
     @Test
-    void testGetAll() throws Exception {
+    @DisplayName("givenGrnItemsExist_whenGetAllGrnItems_thenReturnsList")
+    void givenGrnItemsExist_whenGetAllGrnItems_thenReturnsList() throws Exception {
         grnItemRepository.save(
                 com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper.toEntity(createDto())
         );
@@ -87,11 +76,9 @@ class GrnItemIntegrationTest {
                 .andExpect(jsonPath("$[0].productCode").value("P001"));
     }
 
-    // ---------------------------------------------------------
-    // GET /grn-items/{id}
-    // ---------------------------------------------------------
     @Test
-    void testGetById() throws Exception {
+    @DisplayName("givenGrnItemExists_whenGetGrnItemById_thenReturnsItem")
+    void givenGrnItemExists_whenGetGrnItemById_thenReturnsItem() throws Exception {
         var saved = grnItemRepository.save(
                 com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper.toEntity(createDto())
         );
@@ -101,11 +88,9 @@ class GrnItemIntegrationTest {
                 .andExpect(jsonPath("$.productCode").value("P001"));
     }
 
-    // ---------------------------------------------------------
-    // PUT /grn-items/{id}
-    // ---------------------------------------------------------
     @Test
-    void testUpdateGrnItem() throws Exception {
+    @DisplayName("givenGrnItemExists_whenUpdateGrnItem_thenReturnsUpdatedItem")
+    void givenGrnItemExists_whenUpdateGrnItem_thenReturnsUpdatedItem() throws Exception {
         var saved = grnItemRepository.save(
                 com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper.toEntity(createDto())
         );
@@ -120,11 +105,9 @@ class GrnItemIntegrationTest {
                 .andExpect(jsonPath("$.productCode").value("UPDATED"));
     }
 
-    // ---------------------------------------------------------
-    // DELETE /grn-items/{id}
-    // ---------------------------------------------------------
     @Test
-    void testDeleteGrnItem() throws Exception {
+    @DisplayName("givenGrnItemExists_whenDeleteGrnItem_thenItemIsDeleted")
+    void givenGrnItemExists_whenDeleteGrnItem_thenItemIsDeleted() throws Exception {
         var saved = grnItemRepository.save(
                 com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper.toEntity(createDto())
         );

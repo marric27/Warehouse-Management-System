@@ -16,9 +16,6 @@ class GrnItemRepositoryTest {
     @Autowired
     private GrnItemRepository grnItemRepository;
 
-    // -----------------------------------------------------
-    // Helper per creare un GRN Item di test
-    // -----------------------------------------------------
     private GrnItem createTestGrnItem() {
         GrnItem item = new GrnItem();
         item.setProductCode("P001");
@@ -32,7 +29,8 @@ class GrnItemRepositoryTest {
     }
 
     @Test
-    void testSaveAndFindById() {
+    @DisplayName("givenValidGrnItem_whenSaveAndFindById_thenReturnsSameEntity")
+    void givenValidGrnItem_whenSaveAndFindById_thenReturnsSameEntity() {
         GrnItem saved = grnItemRepository.save(createTestGrnItem());
 
         assertThat(saved.getId()).isNotNull();
@@ -43,7 +41,8 @@ class GrnItemRepositoryTest {
     }
 
     @Test
-    void testUpdate() {
+    @DisplayName("givenExistingGrnItem_whenUpdate_thenValuesAreChanged")
+    void givenExistingGrnItem_whenUpdate_thenValuesAreChanged() {
         GrnItem saved = grnItemRepository.save(createTestGrnItem());
 
         saved.setProductCode("UPDATED");
@@ -56,7 +55,8 @@ class GrnItemRepositoryTest {
     }
 
     @Test
-    void testDelete() {
+    @DisplayName("givenExistingGrnItem_whenDelete_thenEntityIsRemoved")
+    void givenExistingGrnItem_whenDelete_thenEntityIsRemoved() {
         GrnItem saved = grnItemRepository.save(createTestGrnItem());
         Long id = saved.getId();
 
