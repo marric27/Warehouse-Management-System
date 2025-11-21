@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
     private ApiError buildError(HttpStatus status, Exception ex, HttpServletRequest req) {
         return new ApiError(LocalDateTime.now(), status.value(), status.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
     }
@@ -39,6 +40,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ApiError> handleConflict(ConflictException ex, HttpServletRequest req) {
         log.error("ConflictException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(buildError(HttpStatus.CONFLICT, ex, req));
+    }
+
+    @ExceptionHandler(GrnWithItemsException.class)
+    public ResponseEntity<ApiError> handleGrnWithItems(GrnWithItemsException ex, HttpServletRequest req) {
+        log.error("GrnWithItemsException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(buildError(HttpStatus.CONFLICT, ex, req));
     }
 
@@ -101,6 +108,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex, req));
     }
-
-
 }
