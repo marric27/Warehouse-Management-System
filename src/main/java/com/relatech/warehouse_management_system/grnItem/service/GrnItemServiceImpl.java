@@ -6,6 +6,7 @@ import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
 import com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper;
 import com.relatech.warehouse_management_system.grnItem.repository.GrnItemRepository;
+import com.relatech.warehouse_management_system.util.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -84,10 +85,10 @@ public class GrnItemServiceImpl implements GrnItemService {
 
         if (ciList != null && !ciList.isEmpty()) {
             boolean allClosed = ciList.stream()
-                    .allMatch(ci -> ci.getState() == State.CLOSED);
+                    .allMatch(ci -> ci.getState() == State.PUTAWAY);
 
             if (allClosed) {
-                grnItem.setState(State.CLOSED);
+                grnItem.setState(State.PUTAWAY);
             }
         }
     }
