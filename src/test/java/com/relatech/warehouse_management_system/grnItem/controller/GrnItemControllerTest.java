@@ -38,9 +38,6 @@ class GrnItemControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // -----------------------------------------------------
-    // Helper DTO
-    // -----------------------------------------------------
     private GrnItemDto createDto() {
         GrnItemDto dto = new GrnItemDto();
         dto.setProductCode("P001");
@@ -53,11 +50,8 @@ class GrnItemControllerTest {
         return dto;
     }
 
-    // -----------------------------------------------------
-    // POST /grn-items
-    // -----------------------------------------------------
     @Test
-    void testCreateGrnItem() throws Exception {
+    void givenValidGrnItem_whenCreateGrnItem_thenReturnsCreatedItem() throws Exception {
         GrnItemDto dto = createDto();
 
         Mockito.when(grnItemService.createGrnItem(any(GrnItemDto.class)))
@@ -70,11 +64,8 @@ class GrnItemControllerTest {
                 .andExpect(jsonPath("$.productCode").value("P001"));
     }
 
-    // -----------------------------------------------------
-    // GET /grn-items
-    // -----------------------------------------------------
     @Test
-    void testGetAllGrnItems() throws Exception {
+    void givenGrnItemsExist_whenGetAllGrnItems_thenReturnsList() throws Exception {
         Mockito.when(grnItemService.getAllGrnItems())
                 .thenReturn(List.of(createDto()));
 
@@ -83,11 +74,8 @@ class GrnItemControllerTest {
                 .andExpect(jsonPath("$[0].productCode").value("P001"));
     }
 
-    // -----------------------------------------------------
-    // GET /grn-items/{id}
-    // -----------------------------------------------------
     @Test
-    void testGetGrnItemById() throws Exception {
+    void givenGrnItemExists_whenGetGrnItemById_thenReturnsItem() throws Exception {
         Mockito.when(grnItemService.getGrnItemById(1L))
                 .thenReturn(createDto());
 
@@ -97,7 +85,7 @@ class GrnItemControllerTest {
     }
 
     @Test
-    void testGetGrnItemById_NotFound() throws Exception {
+    void givenGrnItemDoesNotExist_whenGetGrnItemById_thenReturnsNotFound() throws Exception {
         Mockito.when(grnItemService.getGrnItemById(99L))
                 .thenThrow(new ResourceNotFoundException("GrnItem", 99L));
 
@@ -105,11 +93,8 @@ class GrnItemControllerTest {
                 .andExpect(status().isNotFound()); // serve global handler per JSON
     }
 
-    // -----------------------------------------------------
-    // PUT /grn-items/{id}
-    // -----------------------------------------------------
     @Test
-    void testUpdateGrnItem() throws Exception {
+    void givenGrnItemExists_whenUpdateGrnItem_thenReturnsUpdatedItem() throws Exception {
         GrnItemDto dto = createDto();
         dto.setProductCode("UPDATED");
 
@@ -123,11 +108,8 @@ class GrnItemControllerTest {
                 .andExpect(jsonPath("$.productCode").value("UPDATED"));
     }
 
-    // -----------------------------------------------------
-    // DELETE /grn-items/{id}
-    // -----------------------------------------------------
     @Test
-    void testDeleteGrnItem() throws Exception {
+    void givenGrnItemExists_whenDeleteGrnItem_thenReturnsNoContent() throws Exception {
         mockMvc.perform(delete("/grn-items/1"))
                 .andExpect(status().isNoContent());
     }

@@ -31,26 +31,21 @@ class GrnItemServiceImplTest {
     @InjectMocks
     private GrnItemServiceImpl grnItemService;
 
-    // ---------------------------
-    // Helper per creare DTO
-    // ---------------------------
     private GrnItemDto createValidDto() {
         GrnItemDto dto = new GrnItemDto();
         dto.setProductCode("P001");
         dto.setExpectedQty(100);
         dto.setCompliantQty(80);
         dto.setNotCompliantQty(20);
-        dto.setReceivedQty(100); // valido
+        dto.setReceivedQty(100);
         dto.setState(State.OPEN);
         dto.setCheckingInfoList(null);
         return dto;
     }
 
-    // ---------------------------
-    // Test createGrnItem
-    // ---------------------------
     @Test
-    void testCreateGrnItem_ValidQuantities() {
+    @DisplayName("givenValidGrnItemDto_whenCreateGrnItem_thenReturnsSavedDto")
+    void givenValidGrnItemDto_whenCreateGrnItem_thenReturnsSavedDto() {
         GrnItemDto dto = createValidDto();
         GrnItem entity = GrnItemMapper.toEntity(dto);
 
@@ -64,24 +59,22 @@ class GrnItemServiceImplTest {
     }
 
     @Test
-    void testCreateGrnItem_InvalidQuantities_ThrowsError() {
+    @DisplayName("givenInvalidReceivedQty_whenCreateGrnItem_thenThrowsIllegalArgumentException")
+    void givenInvalidReceivedQty_whenCreateGrnItem_thenThrowsIllegalArgumentException() {
         GrnItemDto dto = createValidDto();
-        dto.setReceivedQty(50); // ❌ NON valido
+        dto.setReceivedQty(50);
 
         assertThatThrownBy(() -> grnItemService.createGrnItem(dto))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("receivedQty deve essere uguale");
     }
 
-    // ---------------------------
-    // Test update state when all CheckingInfo = PUTAWAY
-    // ---------------------------
     @Test
-    void testUpdateState_WhenAllCheckingInfoArePutaway() throws Exception {
+    @DisplayName("givenCheckingInfoAllPutaway_whenUpdateGrnItem_thenStateBecomesPutaway")
+    void givenCheckingInfoAllPutaway_whenUpdateGrnItem_thenStateBecomesPutaway() throws Exception {
         GrnItem existing = GrnItemMapper.toEntity(createValidDto());
         existing.setId(1L);
 
-        // Setting CheckingInfo
         CheckingInfo ci1 = new CheckingInfo();
         ci1.setState(State.PUTAWAY);
 
@@ -104,11 +97,9 @@ class GrnItemServiceImplTest {
         assertThat(result.getState()).isEqualTo(State.PUTAWAY);
     }
 
-    // ---------------------------
-    // Test getById
-    // ---------------------------
     @Test
-    void testGetById_NotFound() {
+    @DisplayName("givenGrnItemDoesNotExist_whenGetById_thenThrowsResourceNotFoundException")
+    void givenGrnItemDoesNotExist_whenGetById_thenThrowsResourceNotFoundException() {
         when(grnItemRepository.findById(1L))
                 .thenReturn(Optional.empty());
 
@@ -116,11 +107,9 @@ class GrnItemServiceImplTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    // ---------------------------
-    // Test delete
-    // ---------------------------
     @Test
-    void testDeleteGrnItem() throws Exception {
+    @DisplayName("givenGrnItemExists_whenDeleteGrnItem_thenRepositoryDeleteIsCalled")
+    void givenGrnItemExists_whenDeleteGrnItem_thenRepositoryDeleteIsCalled() throws Exception {
         GrnItem existing = GrnItemMapper.toEntity(createValidDto());
         existing.setId(1L);
 
