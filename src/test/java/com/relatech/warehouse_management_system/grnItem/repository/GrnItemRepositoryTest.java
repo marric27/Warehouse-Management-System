@@ -18,6 +18,7 @@ class GrnItemRepositoryTest {
 
     private GrnItem createTestGrnItem() {
         GrnItem item = new GrnItem();
+        item.setCode("Item-001");
         item.setProductCode("P001");
         item.setExpectedQty(100);
         item.setReceivedQty(90);
@@ -37,6 +38,7 @@ class GrnItemRepositoryTest {
 
         GrnItem found = grnItemRepository.findById(saved.getId()).orElse(null);
         assertThat(found).isNotNull();
+        assertThat(found.getCode()).isEqualTo("Item-001");
         assertThat(found.getProductCode()).isEqualTo("P001");
     }
 

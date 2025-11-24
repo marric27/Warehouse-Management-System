@@ -40,6 +40,7 @@ class GrnItemControllerTest {
 
     private GrnItemDto createDto() {
         GrnItemDto dto = new GrnItemDto();
+        dto.setCode("Item-001");
         dto.setProductCode("P001");
         dto.setExpectedQty(100);
         dto.setCompliantQty(80);
