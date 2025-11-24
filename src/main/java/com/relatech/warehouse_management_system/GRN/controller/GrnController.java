@@ -1,7 +1,6 @@
 package com.relatech.warehouse_management_system.GRN.controller;
 
 import com.relatech.warehouse_management_system.GRN.dto.GrnDTO;
-import com.relatech.warehouse_management_system.GRN.entity.GRN;
 import com.relatech.warehouse_management_system.GRN.mapper.GrnMapper;
 import com.relatech.warehouse_management_system.GRN.service.GrnService;
 import com.relatech.warehouse_management_system.exception.DuplicateResourceException;
@@ -38,8 +37,9 @@ public class GrnController {
 
     @PostMapping
     public ResponseEntity<GrnDTO> createGRN(@Valid @RequestBody GrnDTO dto) throws DuplicateResourceException {
-        log.info("Request to create GRN for supplier: {}", dto.getSupplier());
+        log.info("Received POST request to create GRN for supplier: {}", dto.getSupplier());
         GrnDTO created = grnService.createGRN(dto);
+        log.info("GRN created with ID: {}", created.getId());
         return ResponseEntity.ok(created);
     }
 
@@ -48,15 +48,22 @@ public class GrnController {
             @ParameterObject
             @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        log.info("Request to fetch paginated GRN list: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
+        log.info("Received GET request for paginated GRNs: page={}, size={}",
+                pageable.getPageNumber(), pageable.getPageSize());
+
         Page<GrnDTO> grnPage = grnService.getAllGRNsPaged(pageable);
+
+        log.info("Returning {} GRNs (page {})",
+                grnPage.getNumberOfElements(), pageable.getPageNumber());
+
         return ResponseEntity.ok(grnPage);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<GrnDTO> getGRNById(@PathVariable String id) throws ResourceNotFoundException {
-        log.info("Request to fetch GRN with id: {}", id);
+        log.info("Received GET request for GRN with ID: {}", id);
         GrnDTO dto = grnService.getGRNById(id);
+        log.info("Returning GRN: {}", dto);
         return ResponseEntity.ok(dto);
     }
 
@@ -66,15 +73,26 @@ public class GrnController {
             @ParameterObject
             @PageableDefault(size = 50) Pageable pageable
     ) throws ResourceNotFoundException {
-        log.info("Request to fetch items for GRN: {}. Page size: {}", id, pageable.getPageSize());
+
+        log.info("Received GET request for items of GRN {} (page size: {})",
+                id, pageable.getPageSize());
+
         Page<GrnItemDto> itemsPage = grnService.findItemsByGrnId(id, pageable);
+
+        log.info("Returning {} items for GRN {}",
+                itemsPage.getNumberOfElements(), id);
+
         return ResponseEntity.ok(itemsPage);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GrnDTO> updateGRN(@PathVariable String id, @Valid @RequestBody GrnDTO dto) throws ResourceNotFoundException {
-        log.info("Request to update GRN with id: {}", id);
+    public ResponseEntity<GrnDTO> updateGRN(@PathVariable String id, @Valid @RequestBody GrnDTO dto)
+            throws ResourceNotFoundException {
+
+        log.info("Received PUT request to update GRN with ID: {}", id);
         GrnDTO updated = grnService.updateGRN(id, dto);
+        log.info("GRN {} updated successfully", id);
+
         return ResponseEntity.ok(updated);
     }
 
@@ -83,22 +101,31 @@ public class GrnController {
             @PathVariable String id,
             @RequestParam String status
     ) throws ResourceNotFoundException {
-        log.info("Request to update status for GRN {} to {}", id, status);
-        GrnDTO entity = grnService.updateStatus(id, status);
-        return ResponseEntity.ok(entity);
+
+        log.info("Received PATCH request to update status of GRN {} to {}", id, status);
+        GrnDTO updated = grnService.updateStatus(id, status);
+        log.info("Status of GRN {} updated to {}", id, status);
+
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGRN(@PathVariable String id) throws ResourceNotFoundException, GrnWithItemsException {
-        log.info("Request to delete GRN with id: {}", id);
+    public ResponseEntity<Void> deleteGRN(@PathVariable String id)
+            throws ResourceNotFoundException, GrnWithItemsException {
+
+        log.info("Received DELETE request for GRN with ID: {}", id);
         grnService.deleteById(id);
+        log.info("GRN {} deleted successfully", id);
+
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<GrnDTO>> searchGrns(@RequestParam(name = "term", required = false) String term) {
-        log.info("Request to search GRNs with term: {}", term);
+        log.info("Received GET request to search GRNs with term: '{}'", term);
         List<GrnDTO> results = grnService.searchGrns(term);
+        log.info("Found {} GRNs matching term '{}'", results.size(), term);
+
         return ResponseEntity.ok(results);
     }
 }
