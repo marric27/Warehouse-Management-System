@@ -17,7 +17,6 @@ import java.time.LocalDate;
 @Schema(description = "Data transfer object representing a stock unit")
 public class StockUnitDTO {
 
-    @Schema(description = "Database-generated unique identifier", example = "1")
     private Long id;
 
     @Schema(description = "Batch number or lot identifier", example = "BN-2025A")

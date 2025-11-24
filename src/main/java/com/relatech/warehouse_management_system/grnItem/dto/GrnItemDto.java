@@ -15,8 +15,11 @@ import java.util.List;
 @Schema(description = "DTO for GRN item")
 public class GrnItemDto {
 
-    @Schema(description = "Unique ID of the GRN item", example = "1")
     private Long id;
+
+    @NotBlank(message = "The code cannot be empty or null.")
+    @Schema(description = "Unique ID of the GRN item", example = "Item-1")
+    private String code;
 
     @NotBlank(message = "Product code cannot be blank")
     @Schema(description = "Product code", example = "PROD-001")

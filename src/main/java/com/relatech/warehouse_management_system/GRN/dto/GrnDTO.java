@@ -18,8 +18,11 @@ import java.util.List;
 @Schema(description = "Request/Response DTO for Goods Receipt Note")
 public class GrnDTO {
 
-    @Schema(description = "GRN unique identifier", example = "GRN-001")
-    private String id;
+    private Long id;
+
+    @NotBlank(message = "The code cannot be empty or null.")
+    @Schema(description = "Unique ID of the GRN", example = "GRN-001")
+    private String code;
 
     @NotBlank(message = "Supplier cannot be blank")
     @Length(min = 1, max = 100, message = "Supplier name must be between 1 and 100 characters")

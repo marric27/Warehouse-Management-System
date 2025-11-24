@@ -3,6 +3,7 @@ package com.relatech.warehouse_management_system.grnItem.controller;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.grnItem.service.GrnItemService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/grn-items")
+@Tag(name = "Grn items Management", description = "APIs for managing grn items")
 public class GrnItemController {
 
     @Autowired

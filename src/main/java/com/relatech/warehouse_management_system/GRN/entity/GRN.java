@@ -10,15 +10,19 @@ import java.util.List;
 
 @Entity
 @Table(name = "grn")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 public class GRN {
 
     @Id
-    @Column(name = "id", nullable = false, length = 50)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "grn_code", nullable = false, unique = true)
+    private String code;
 
     @Column(name = "supplier", nullable = false, length = 100)
     private String supplier;

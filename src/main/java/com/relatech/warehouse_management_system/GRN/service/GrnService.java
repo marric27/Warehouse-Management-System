@@ -11,12 +11,12 @@ import java.util.List;
 
 public interface GrnService {
     GrnDTO createGRN(GrnDTO grnDTO) throws DuplicateResourceException;
-    GrnDTO getGRNById(String id) throws ResourceNotFoundException;
+    GrnDTO getGRNById(Long id) throws ResourceNotFoundException;
     List<GrnDTO> getAllGRNs();
     Page<GrnDTO> getAllGRNsPaged(Pageable pageable);
-    GrnDTO updateGRN(String id, GrnDTO grnDTO) throws ResourceNotFoundException;
-    void deleteById(String id) throws ResourceNotFoundException, GrnWithItemsException;
-    Page<GrnItemDto> findItemsByGrnId(String grnId, Pageable pageable) throws ResourceNotFoundException;
-    GrnDTO updateStatus(String grnId, String status) throws ResourceNotFoundException;
+    GrnDTO updateGRN(Long id, GrnDTO grnDTO) throws ResourceNotFoundException;
+    void deleteById(Long id) throws ResourceNotFoundException, GrnWithItemsException;
+    Page<GrnItemDto> findItemsByGrnId(Long grnId, Pageable pageable) throws ResourceNotFoundException;
+    GrnDTO updateStatus(Long grnId, String status) throws ResourceNotFoundException;
     List<GrnDTO> searchGrns(String term);
 }

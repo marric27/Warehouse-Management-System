@@ -9,17 +9,17 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface GrnRepository extends JpaRepository<GRN, String> {
+public interface GrnRepository extends JpaRepository<GRN, Long> {
 
-    @Query("SELECT g FROM GRN g WHERE LOWER(g.supplier) LIKE LOWER(CONCAT('%', :term, '%')) " +
-            "OR LOWER(g.id) LIKE LOWER(CONCAT('%', :term, '%'))")
+    @Query("SELECT g FROM GRN g WHERE LOWER(g.supplier) LIKE LOWER(CONCAT('%', :term, '%'))")
     List<GRN> searchByTerm(@Param("term") String term);
+
 
     /**
      * (Optional) paginated search example.
      */
-    @Query("SELECT g FROM GRN g WHERE LOWER(g.supplier) LIKE LOWER(CONCAT('%', :term, '%')) " +
-            "OR LOWER(g.id) LIKE LOWER(CONCAT('%', :term, '%'))")
+    @Query("SELECT g FROM GRN g WHERE LOWER(g.supplier) LIKE LOWER(CONCAT('%', :term, '%'))")
     Page<GRN> searchByTerm(@Param("term") String term, Pageable pageable);
+
 }
 

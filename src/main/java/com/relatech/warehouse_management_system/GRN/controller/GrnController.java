@@ -60,7 +60,7 @@ public class GrnController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GrnDTO> getGRNById(@PathVariable String id) throws ResourceNotFoundException {
+    public ResponseEntity<GrnDTO> getGRNById(@PathVariable Long id) throws ResourceNotFoundException {
         log.info("Received GET request for GRN with ID: {}", id);
         GrnDTO dto = grnService.getGRNById(id);
         log.info("Returning GRN: {}", dto);
@@ -69,7 +69,7 @@ public class GrnController {
 
     @GetMapping("/{id}/items")
     public ResponseEntity<Page<GrnItemDto>> getGRNItems(
-            @PathVariable String id,
+            @PathVariable Long id,
             @ParameterObject
             @PageableDefault(size = 50) Pageable pageable
     ) throws ResourceNotFoundException {
@@ -86,7 +86,7 @@ public class GrnController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GrnDTO> updateGRN(@PathVariable String id, @Valid @RequestBody GrnDTO dto)
+    public ResponseEntity<GrnDTO> updateGRN(@PathVariable Long id, @Valid @RequestBody GrnDTO dto)
             throws ResourceNotFoundException {
 
         log.info("Received PUT request to update GRN with ID: {}", id);
@@ -98,7 +98,7 @@ public class GrnController {
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<GrnDTO> updateGRNStatus(
-            @PathVariable String id,
+            @PathVariable Long id,
             @RequestParam String status
     ) throws ResourceNotFoundException {
 
@@ -110,7 +110,7 @@ public class GrnController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGRN(@PathVariable String id)
+    public ResponseEntity<Void> deleteGRN(@PathVariable Long id)
             throws ResourceNotFoundException, GrnWithItemsException {
 
         log.info("Received DELETE request for GRN with ID: {}", id);

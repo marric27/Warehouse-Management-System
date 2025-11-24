@@ -15,6 +15,7 @@ public class GrnItemMapper {
 
         return GrnItemDto.builder()
                 .id(grnItem.getId())
+                .code(grnItem.getCode())
                 .productCode(grnItem.getProductCode())
                 .expectedQty(grnItem.getExpectedQty())
                 .receivedQty(grnItem.getReceivedQty())
@@ -32,6 +33,7 @@ public class GrnItemMapper {
 
         GrnItem grnItem = new GrnItem();
         grnItem.setId(grnItemDto.getId());
+        grnItem.setCode(grnItemDto.getCode());
         grnItem.setProductCode(grnItemDto.getProductCode());
         grnItem.setExpectedQty(grnItemDto.getExpectedQty());
         grnItem.setReceivedQty(grnItemDto.getReceivedQty());

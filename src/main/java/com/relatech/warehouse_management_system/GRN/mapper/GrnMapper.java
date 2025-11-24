@@ -20,6 +20,7 @@ public class GrnMapper {
         }
         return GrnDTO.builder()
                 .id(entity.getId())
+                .code(entity.getCode())
                 .supplier(entity.getSupplier())
                 .receivingDate(entity.getReceivingDate())
                 .state(entity.getState() != null ? entity.getState().name() : null)
@@ -34,6 +35,7 @@ public class GrnMapper {
         }
         return GRN.builder()
                 .id(dto.getId())
+                .code(dto.getCode())
                 .supplier(dto.getSupplier())
                 .receivingDate(dto.getReceivingDate())
                 .state(State.OPEN) // Default state on creation

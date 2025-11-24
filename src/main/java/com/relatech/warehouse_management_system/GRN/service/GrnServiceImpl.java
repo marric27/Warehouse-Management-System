@@ -34,11 +34,6 @@ public class GrnServiceImpl implements GrnService {
     public GrnDTO createGRN(GrnDTO grnDTO) throws DuplicateResourceException {
         log.debug("Creating new GRN with ID: {}", grnDTO.getId());
 
-        if (grnRepository.existsById(grnDTO.getId())) {
-            log.warn("GRN with ID {} already exists", grnDTO.getId());
-            throw new DuplicateResourceException("GRN", "id", grnDTO.getId());
-        }
-
         GRN entity = grnMapper.toEntity(grnDTO);
         GRN saved = grnRepository.save(entity);
         log.info("GRN created successfully with ID: {}", saved.getId());
@@ -46,7 +41,7 @@ public class GrnServiceImpl implements GrnService {
     }
 
     @Override
-    public GrnDTO getGRNById(String id) throws ResourceNotFoundException {
+    public GrnDTO getGRNById(Long id) throws ResourceNotFoundException {
         log.debug("Fetching GRN with ID: {}", id);
         GRN entity = grnRepository.findById(id)
                 .orElseThrow(() -> {
@@ -73,7 +68,7 @@ public class GrnServiceImpl implements GrnService {
 
     @Override
     @Transactional(timeout = 5, propagation = Propagation.REQUIRED)
-    public GrnDTO updateGRN(String id, GrnDTO grnDTO) throws ResourceNotFoundException {
+    public GrnDTO updateGRN(Long id, GrnDTO grnDTO) throws ResourceNotFoundException {
         log.debug("Updating GRN with ID: {}", id);
 
         GRN existing = grnRepository.findById(id)
@@ -92,7 +87,7 @@ public class GrnServiceImpl implements GrnService {
 
     @Override
     @Transactional(rollbackFor = {ResourceNotFoundException.class, GrnWithItemsException.class}, propagation = Propagation.REQUIRES_NEW)
-    public void deleteById(String id) throws ResourceNotFoundException, GrnWithItemsException {
+    public void deleteById(Long id) throws ResourceNotFoundException, GrnWithItemsException {
         log.debug("Deleting GRN with ID: {}", id);
 
         GRN grn = grnRepository.findById(id)
@@ -103,7 +98,7 @@ public class GrnServiceImpl implements GrnService {
 
         if (grn.getItems() != null && !grn.getItems().isEmpty()) {
             log.warn("Cannot delete GRN {} as it has associated items", id);
-            throw new GrnWithItemsException(id);
+            throw new GrnWithItemsException(""+id);
         }
 
         grnRepository.delete(grn);
@@ -111,7 +106,7 @@ public class GrnServiceImpl implements GrnService {
     }
 
     @Override
-    public Page<GrnItemDto> findItemsByGrnId(String grnId, Pageable pageable) throws ResourceNotFoundException {
+    public Page<GrnItemDto> findItemsByGrnId(Long grnId, Pageable pageable) throws ResourceNotFoundException {
         log.debug("Fetching items for GRN: {}", grnId);
 
         GRN grn = grnRepository.findById(grnId)
@@ -133,7 +128,7 @@ public class GrnServiceImpl implements GrnService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public GrnDTO updateStatus(String grnId, String status) throws ResourceNotFoundException {
+    public GrnDTO updateStatus(Long grnId, String status) throws ResourceNotFoundException {
         log.debug("Updating status for GRN {} to {}", grnId, status);
 
         GRN entity = grnRepository.findById(grnId)

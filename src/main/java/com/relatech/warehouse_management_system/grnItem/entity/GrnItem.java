@@ -7,7 +7,8 @@ import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -17,8 +18,10 @@ public class GrnItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
+
+    @Column(name = "grn_item_code", nullable = false, unique = true)
+    private String code;
 
     @Column(name = "product_code", nullable = false, length = 50)
     private String productCode;
