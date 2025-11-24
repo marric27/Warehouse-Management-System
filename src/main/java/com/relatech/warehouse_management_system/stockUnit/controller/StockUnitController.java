@@ -31,6 +31,7 @@ public class StockUnitController {
     public ResponseEntity<StockUnitDTO> createStockUnit(@RequestBody StockUnitDTO dto) throws DuplicateResourceException, ValidationException {
         log.info("Request to create stock unit with uniqueCode: {}", dto.getUniqueCode());
         StockUnitDTO created = stockUnitService.createStockUnit(dto);
+        log.info("Stock unit created with ID: {}", created.getId());
         return ResponseEntity.ok(created);
     }
 
@@ -38,6 +39,7 @@ public class StockUnitController {
     public ResponseEntity<List<StockUnitDTO>> getAllStockUnits() {
         log.info("Request to fetch all stock units");
         List<StockUnitDTO> stockUnits = stockUnitService.getAllStockUnits();
+        log.info("Returning stock units: {}", stockUnits);
         return ResponseEntity.ok(stockUnits);
     }
 
@@ -52,6 +54,7 @@ public class StockUnitController {
     public ResponseEntity<StockUnitDTO> getStockUnitById(@PathVariable Long id) throws ResourceNotFoundException {
         log.info("Request to fetch stock unit by ID {}", id);
         StockUnitDTO stockUnit = stockUnitService.getStockUnitById(id);
+        log.info("Returning slot: {}", stockUnit);
         return ResponseEntity.ok(stockUnit);
     }
 
@@ -59,6 +62,7 @@ public class StockUnitController {
     public ResponseEntity<StockUnitDTO> updateStockUnit(@PathVariable Long id, @RequestBody StockUnitDTO dto) throws ResourceNotFoundException, ValidationException {
         log.info("Request to update stock unit with ID: {}", id);
         StockUnitDTO updated = stockUnitService.updateStockUnit(id, dto);
+        log.info("stock unit updated: {} (ID: {})", updated, id);
         return ResponseEntity.ok(updated);
     }
 
@@ -66,6 +70,7 @@ public class StockUnitController {
     public ResponseEntity<Void> deleteStockUnit(@PathVariable Long id) throws ResourceNotFoundException {
         log.info("Request to delete stock unit with ID: {}", id);
         stockUnitService.deleteStockUnit(id);
+        log.info("Stock unit with ID: {} deleted successfully", id);
         return ResponseEntity.noContent().build();
     }
 

@@ -30,6 +30,7 @@ public class GRN {
     @Column(name = "state", nullable = false, length = 20)
     private State state;
 
-    @OneToMany(mappedBy = "grn", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "grn_id")
     private List<GrnItem> items;
 }

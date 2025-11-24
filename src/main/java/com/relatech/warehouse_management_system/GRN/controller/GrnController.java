@@ -25,7 +25,7 @@ import java.util.List;
  * REST Controller for managing Goods Receipt Notes.
  */
 @RestController
-@RequestMapping("/api/grn")
+@RequestMapping("/grn")
 @Tag(name = "GRN Management", description = "APIs for managing Goods Receipt Notes")
 @RequiredArgsConstructor
 @Slf4j

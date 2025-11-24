@@ -6,6 +6,7 @@ import com.relatech.warehouse_management_system.GRN.mapper.GrnMapper;
 import com.relatech.warehouse_management_system.GRN.repository.GrnRepository;
 import com.relatech.warehouse_management_system.exception.*;
 import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper;
 import com.relatech.warehouse_management_system.util.State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -120,7 +121,7 @@ public class GrnServiceImpl implements GrnService {
                 });
 
         List<GrnItemDto> items = (grn.getItems() != null)
-                ? grn.getItems().stream().map(grnMapper::toItemDto).toList()
+                ? grn.getItems().stream().map(GrnItemMapper::toDto).toList()
                 : List.of();
 
         int start = (int) pageable.getOffset();

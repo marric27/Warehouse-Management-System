@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.stockUnit.dto;
 
-import com.relatech.warehouse_management_system.product.entity.Product;
-import com.relatech.warehouse_management_system.slot.entity.Slot;
+import com.relatech.warehouse_management_system.product.dto.ProductDTO;
+import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.util.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
@@ -47,9 +47,9 @@ public class StockUnitDTO {
     private Category category;
 
     @Schema(description = "Associated product details")
-    private Product product;
+    private ProductDTO productDto;
 
     @Schema(description = "Storage slot information")
-    private Slot slot;
+    private SlotDTO slotDto;
 
 }

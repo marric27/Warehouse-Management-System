@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@DisplayName("CustomerRepository - CRUD and Query Tests")
+@DisplayName("GrnItemRepository - CRUD and Query Tests")
 class GrnItemRepositoryTest {
 
     @Autowired
