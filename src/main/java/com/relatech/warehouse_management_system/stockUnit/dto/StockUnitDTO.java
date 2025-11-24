@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Builder
 @Schema(description = "Data transfer object representing a stock unit")
 public class StockUnitDTO {
-
+    @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
     @Schema(description = "Batch number or lot identifier", example = "BN-2025A")

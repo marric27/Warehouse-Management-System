@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Schema(description = "Data transfer object representing a storage slot")
 public class SlotDTO {
-
+    @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
     @Schema(description = "Unique code of the slot", example = "SLOT-001")

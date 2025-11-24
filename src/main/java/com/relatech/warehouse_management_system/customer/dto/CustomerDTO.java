@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class CustomerDTO {
+    @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
     @Schema (description = "Unique identifier of the customer" , example = "123")

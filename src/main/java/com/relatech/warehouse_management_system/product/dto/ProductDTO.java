@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @Schema(description = "Data transfer object representing a product")
 public class ProductDTO {
-
+    @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
     @Schema(description = "Unique product code", example = "PRD-00123")

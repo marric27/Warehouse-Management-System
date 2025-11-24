@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @Schema(description = "DTO for GRN item")
 public class GrnItemDto {
-
+    @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
     @NotBlank(message = "The code cannot be empty or null.")

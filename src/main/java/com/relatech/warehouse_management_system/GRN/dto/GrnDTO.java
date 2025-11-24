@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 @Schema(description = "Request/Response DTO for Goods Receipt Note")
 public class GrnDTO {
-
+    @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
     @NotBlank(message = "The code cannot be empty or null.")
