@@ -26,7 +26,7 @@ public class GrnMapper {
                 .id(entity.getId())
                 .supplier(entity.getSupplier())
                 .receivingDate(entity.getReceivingDate())
-                .status(entity.getStatus() != null ? entity.getStatus().name() : null)
+                .state(entity.getState() != null ? entity.getState().name() : null)
                 .items(toItemsDtoList(entity.getItems()))
                 .build();
     }
@@ -40,7 +40,7 @@ public class GrnMapper {
                 .id(dto.getId())
                 .supplier(dto.getSupplier())
                 .receivingDate(dto.getReceivingDate())
-                .status(State.OPEN) // Default status on creation
+                .state(State.OPEN) // Default state on creation
                 .items(toItemsEntityList(dto.getItems()))
                 .build();
 
@@ -81,7 +81,7 @@ public class GrnMapper {
                 .receivedQty(entity.getReceivedQty())
                 .compliantQty(entity.getCompliantQty())
                 .notCompliantQty(entity.getNotCompliantQty())
-                .status(entity.getStatus() != null ? entity.getStatus().name() : null)
+                .state(entity.getState() != null ? entity.getState() : null)
                 .build();
     }
 
@@ -97,7 +97,7 @@ public class GrnMapper {
                 .receivedQty(dto.getReceivedQty())
                 .compliantQty(dto.getCompliantQty())
                 .notCompliantQty(dto.getNotCompliantQty())
-                .status(State.OPEN)
+                .state(State.OPEN)
                 .build();
     }
 }

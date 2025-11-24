@@ -31,7 +31,7 @@ public class GrnDTO {
     private LocalDate receivingDate;
 
     @Schema(description = "GRN status", example = "OPEN")
-    private String status;
+    private String state;
 
     @Valid
     @Schema(description = "List of items in the GRN")

@@ -1,8 +1,12 @@
 package com.relatech.warehouse_management_system.grnItem.dto;
 
+import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.util.State;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.*;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -34,7 +38,9 @@ public class GrnItemDto {
     @Schema(description = "Quantity failing quality checks", example = "5")
     private int notCompliantQty;
 
-    @Schema(description = "Status of the GRN item", example = "OPEN")
-    private String status;
+    @Schema(description = "State of the GRN item", example = "OPEN")
+    private State state;
+
+    private List<CheckingInfo> checkingInfoList;
 }
 

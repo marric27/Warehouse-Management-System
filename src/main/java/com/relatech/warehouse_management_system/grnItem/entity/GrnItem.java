@@ -1,9 +1,12 @@
 package com.relatech.warehouse_management_system.grnItem.entity;
 
 import com.relatech.warehouse_management_system.GRN.entity.GRN;
+import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.util.State;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -38,6 +41,9 @@ public class GrnItem {
     private int notCompliantQty;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
-    private State status;
+    @Column(name = "state", nullable = false, length = 20)
+    private State state;
+
+    @OneToMany
+    private List<CheckingInfo> checkingInfoList;
 }

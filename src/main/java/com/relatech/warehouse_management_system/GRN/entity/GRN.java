@@ -27,8 +27,8 @@ public class GRN {
     private LocalDate receivingDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
-    private State status;
+    @Column(name = "state", nullable = false, length = 20)
+    private State state;
 
     @OneToMany(mappedBy = "grn", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<GrnItem> items;

@@ -142,7 +142,7 @@ public class GrnServiceImpl implements GrnService {
                 });
 
         try {
-            entity.setStatus(State.valueOf(status));
+            entity.setState(State.valueOf(status));
             GRN saved = grnRepository.save(entity);
             log.info("Status updated for GRN {} to {}", grnId, status);
             return grnMapper.toDto(saved);
