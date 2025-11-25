@@ -24,5 +24,5 @@ public interface CheckingInfoService {
     CheckingInfo setStockUnit(Long checkingInfoId, Long stockUnitId) throws ResourceNotFoundException;
 
     @Transactional
-    CheckingInfo updateCheckingInfoState(Long checkingInfoId, State newState);
+    CheckingInfo updateCheckingInfoState(Long checkingInfoId, State newState) throws ResourceNotFoundException;
 }

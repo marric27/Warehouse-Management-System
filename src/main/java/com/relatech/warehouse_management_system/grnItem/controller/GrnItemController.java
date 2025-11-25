@@ -2,7 +2,10 @@ package com.relatech.warehouse_management_system.grnItem.controller;
 
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
+import com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper;
 import com.relatech.warehouse_management_system.grnItem.service.GrnItemService;
+import com.relatech.warehouse_management_system.util.State;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -73,4 +76,9 @@ public class GrnItemController {
         return ResponseEntity.ok(result);
     }
 
+    @PutMapping("/{id}/state")
+    public ResponseEntity<GrnItemDto> updateState(@PathVariable Long id, @RequestParam State state) throws ResourceNotFoundException {
+        GrnItem updatedGrnItemState = grnItemService.updateGrnItemState(id, state);
+        return ResponseEntity.ok(GrnItemMapper.toDto(updatedGrnItemState));
+    }
 }

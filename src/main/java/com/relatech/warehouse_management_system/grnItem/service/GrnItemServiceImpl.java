@@ -2,18 +2,22 @@ package com.relatech.warehouse_management_system.grnItem.service;
 
 import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.checkingInfo.repository.CheckingInfoRepository;
+import com.relatech.warehouse_management_system.event.GrnItemStateUpdatedEvent;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
 import com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper;
 import com.relatech.warehouse_management_system.grnItem.repository.GrnItemRepository;
 import com.relatech.warehouse_management_system.util.State;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 //@Transactional(readOnly = true) //TODO
 public class GrnItemServiceImpl implements GrnItemService {
@@ -24,12 +28,14 @@ public class GrnItemServiceImpl implements GrnItemService {
     @Autowired
     private CheckingInfoRepository checkingInfoRepository;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
     @Override
     public GrnItemDto createGrnItem(GrnItemDto grnItemDto) {
         GrnItem grnItem = GrnItemMapper.toEntity(grnItemDto);
 
         validateAndCalculateReceivedQty(grnItem);
-        updateStateBasedOnCheckingInfo(grnItem);
 
         GrnItem savedItem = grnItemRepository.save(grnItem);
         return GrnItemMapper.toDto(savedItem);
@@ -63,7 +69,6 @@ public class GrnItemServiceImpl implements GrnItemService {
         existingGrnItem.setCheckingInfoList(grnItemDto.getCheckingInfoList());
 
         validateAndCalculateReceivedQty(existingGrnItem);
-        updateStateBasedOnCheckingInfo(existingGrnItem);
 
         GrnItem updatedItem = grnItemRepository.save(existingGrnItem);
         return GrnItemMapper.toDto(updatedItem);
@@ -95,16 +100,18 @@ public class GrnItemServiceImpl implements GrnItemService {
         }
     }
 
-    private void updateStateBasedOnCheckingInfo(GrnItem grnItem) {
-        List<CheckingInfo> ciList = grnItem.getCheckingInfoList();
+    @Override
+    @Transactional
+    public GrnItem updateGrnItemState(Long grnItemId, State newState) throws ResourceNotFoundException {
+        GrnItem grnItem = grnItemRepository.findById(grnItemId)
+                .orElseThrow(() -> new ResourceNotFoundException("GrnItem", grnItemId));
 
-        if (ciList != null && !ciList.isEmpty()) {
-            boolean allClosed = ciList.stream()
-                    .allMatch(ci -> ci.getState() == State.PUTAWAY);
+        grnItem.setState(newState);
+        grnItemRepository.save(grnItem);
 
-            if (allClosed) {
-                grnItem.setState(State.PUTAWAY);
-            }
-        }
+        eventPublisher.publishEvent(new GrnItemStateUpdatedEvent(grnItem));
+        log.info("Publish new event GrnItemStateUpdatedEvent");
+
+        return grnItem;
     }
 }

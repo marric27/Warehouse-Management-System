@@ -4,19 +4,22 @@ import com.relatech.warehouse_management_system.checkingInfo.dto.CheckingInfoDto
 import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.checkingInfo.mapper.CheckingInfoMapper;
 import com.relatech.warehouse_management_system.checkingInfo.repository.CheckingInfoRepository;
+import com.relatech.warehouse_management_system.event.CheckingInfoUpdatedEvent;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
 import com.relatech.warehouse_management_system.grnItem.repository.GrnItemRepository;
 import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
 import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRepository;
 import com.relatech.warehouse_management_system.util.State;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -24,14 +27,14 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
 
     private final CheckingInfoRepository checkingInfoRepository;
     private final StockUnitRepository stockUnitRepository;
-    private final CheckingInfoMapper mapper;
     private final GrnItemRepository grnItemRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
     public CheckingInfoDto create(CheckingInfoDto dto) {
-        CheckingInfo saved = checkingInfoRepository.save(mapper.toEntity(dto));
-        return mapper.toDto(saved);
+        CheckingInfo saved = checkingInfoRepository.save(CheckingInfoMapper.toEntity(dto));
+        return CheckingInfoMapper.toDto(saved);
     }
 
     @Override
@@ -48,13 +51,13 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
         existing.setStockUnitId(dto.getStockUnitId());
 
         CheckingInfo saved = checkingInfoRepository.save(existing);
-        return mapper.toDto(saved);
+        return CheckingInfoMapper.toDto(saved);
     }
 
     @Override
     public CheckingInfoDto getById(Long id) throws ResourceNotFoundException {
         return checkingInfoRepository.findById(id)
-                .map(mapper::toDto)
+                .map(CheckingInfoMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("CheckingInfo", id));
     }
 
@@ -62,7 +65,7 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
     public List<CheckingInfoDto> getAll() {
         return checkingInfoRepository.findAll()
                 .stream()
-                .map(mapper::toDto)
+                .map(CheckingInfoMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -89,25 +92,15 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
 
     @Override
     @Transactional
-    public CheckingInfo updateCheckingInfoState(Long checkingInfoId, State newState) {
-        // Recupera la checking info
+    public CheckingInfo updateCheckingInfoState(Long checkingInfoId, State newState) throws ResourceNotFoundException {
         CheckingInfo ci = checkingInfoRepository.findById(checkingInfoId)
-                .orElseThrow(() -> new RuntimeException("CheckingInfo non trovata"));
+                .orElseThrow(() -> new ResourceNotFoundException("CheckingInfo", checkingInfoId));
 
         ci.setState(newState);
         checkingInfoRepository.save(ci);
 
-        // Recupera tutte le checking info del GrnItem
-        GrnItem grnItem = ci.getGrnItem();
-        List<CheckingInfo> allCIs = checkingInfoRepository.findByGrnItemId(grnItem.getId());
-
-        // Controlla se tutte le CI sono closed
-        boolean allClosed = allCIs.stream().allMatch(c -> c.getState() == State.PUTAWAY);
-
-        if (allClosed && grnItem.getState() != State.PUTAWAY) {
-            grnItem.setState(State.PUTAWAY);
-            grnItemRepository.save(grnItem);
-        }
+        eventPublisher.publishEvent(new CheckingInfoUpdatedEvent(ci));
+        log.info("Publish new event CheckingInfoUpdatedEvent");
 
         return ci;
     }

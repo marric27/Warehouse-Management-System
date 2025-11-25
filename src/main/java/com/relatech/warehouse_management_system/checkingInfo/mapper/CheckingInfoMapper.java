@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CheckingInfoMapper {
 
-    public CheckingInfoDto toDto(CheckingInfo entity) {
+    public static CheckingInfoDto toDto(CheckingInfo entity) {
         if (entity == null) return null;
 
         return CheckingInfoDto.builder()
@@ -22,7 +22,7 @@ public class CheckingInfoMapper {
                 .build();
     }
 
-    public CheckingInfo toEntity(CheckingInfoDto dto) {
+    public static CheckingInfo toEntity(CheckingInfoDto dto) {
         if (dto == null) return null;
 
         CheckingInfo ci = new CheckingInfo();

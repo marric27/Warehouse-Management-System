@@ -2,6 +2,7 @@ package com.relatech.warehouse_management_system.checkingInfo.controller;
 
 import com.relatech.warehouse_management_system.checkingInfo.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.checkingInfo.mapper.CheckingInfoMapper;
 import com.relatech.warehouse_management_system.checkingInfo.service.CheckingInfoService;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.util.State;
@@ -70,8 +71,8 @@ public class CheckingInfoController {
     }
 
     @PutMapping("/{id}/state")
-    public ResponseEntity<CheckingInfo> updateState(@PathVariable Long id, @RequestParam State state) {
+    public ResponseEntity<CheckingInfoDto> updateState(@PathVariable Long id, @RequestParam State state) throws ResourceNotFoundException {
         CheckingInfo updatedCI = checkingInfoService.updateCheckingInfoState(id, state);
-        return ResponseEntity.ok(updatedCI);
+        return ResponseEntity.ok(CheckingInfoMapper.toDto(updatedCI));
     }
 }
