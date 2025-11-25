@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class GrnMapper {
 
-    public GrnDTO toDto(GRN entity) {
+    public static GrnDTO toDto(GRN entity) {
         if (entity == null) {
             log.warn("Attempting to map null GRN entity to DTO");
             return null;
@@ -28,7 +28,7 @@ public class GrnMapper {
                 .build();
     }
 
-    public GRN toEntity(GrnDTO dto) {
+    public static GRN toEntity(GrnDTO dto) {
         if (dto == null) {
             log.warn("Attempting to map null GrnDTO to entity");
             return null;

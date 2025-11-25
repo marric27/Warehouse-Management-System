@@ -1,6 +1,7 @@
 package com.relatech.warehouse_management_system.GRN.service;
 
 import com.relatech.warehouse_management_system.GRN.dto.GrnDTO;
+import com.relatech.warehouse_management_system.GRN.entity.GRN;
 import com.relatech.warehouse_management_system.exception.*;
 import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
 import org.springframework.data.domain.Page;
@@ -19,4 +20,6 @@ public interface GrnService {
     Page<GrnItemDto> findItemsByGrnId(Long grnId, Pageable pageable) throws ResourceNotFoundException;
     GrnDTO updateStatus(Long grnId, String status) throws ResourceNotFoundException;
     List<GrnDTO> searchGrns(String term);
+
+    GrnDTO addItemsToGrn(Long grnId, List<Long> itemIds) throws ResourceNotFoundException;
 }

@@ -1,6 +1,7 @@
 package com.relatech.warehouse_management_system.grnItem.service;
 
 import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.checkingInfo.repository.CheckingInfoRepository;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
@@ -9,6 +10,7 @@ import com.relatech.warehouse_management_system.grnItem.repository.GrnItemReposi
 import com.relatech.warehouse_management_system.util.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +20,9 @@ public class GrnItemServiceImpl implements GrnItemService {
 
     @Autowired
     private GrnItemRepository grnItemRepository;
+
+    @Autowired
+    private CheckingInfoRepository checkingInfoRepository;
 
     @Override
     public GrnItemDto createGrnItem(GrnItemDto grnItemDto) {
@@ -69,6 +74,16 @@ public class GrnItemServiceImpl implements GrnItemService {
         GrnItem grnItem = grnItemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("GrnItem", id));
         grnItemRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public GrnItemDto addCheckinginfoToGrnitem(Long grnitemId, List<Long> ciIds) throws ResourceNotFoundException {
+        GrnItem grnItem = grnItemRepository.findById(grnitemId)
+                .orElseThrow(() -> new ResourceNotFoundException("GrnItem", grnitemId));
+        List<CheckingInfo> checkingInfoList = checkingInfoRepository.findAllById(ciIds);
+        grnItem.addCInfos(checkingInfoList);
+        return GrnItemMapper.toDto(grnItemRepository.save(grnItem));
     }
 
     private void validateAndCalculateReceivedQty(GrnItem grnItem) {

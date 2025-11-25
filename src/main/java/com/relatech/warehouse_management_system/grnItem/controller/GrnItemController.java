@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.grnItem.controller;
 
+import com.relatech.warehouse_management_system.GRN.dto.GrnDTO;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.grnItem.service.GrnItemService;
@@ -64,4 +65,13 @@ public class GrnItemController {
         log.info("GRN Item with ID {} deleted successfully", id);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{grnItemId}/checking-info")
+    public ResponseEntity<GrnItemDto> addCheckingInfoToGrnItem(@PathVariable Long grnItemId, @RequestBody List<Long> checkingInfoIds) throws ResourceNotFoundException {
+        log.info("Received PATCH request for assign checking-info {} to grn item with ID {} ", checkingInfoIds, grnItemId);
+        GrnItemDto result = grnItemService.addCheckinginfoToGrnitem(grnItemId, checkingInfoIds);
+        log.info("Successfully assigned checking-info: {} to grn item: {}", checkingInfoIds, grnItemId);
+        return ResponseEntity.ok(result);
+    }
+
 }

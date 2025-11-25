@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,7 +35,25 @@ public class GRN {
     @Column(name = "state", nullable = false, length = 20)
     private State state;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany
     @JoinColumn(name = "grn_id")
     private List<GrnItem> items;
+
+    public void addItem(GrnItem item) {
+        if (this.items == null) {
+            this.items = new ArrayList<>();
+        }
+        items.add(item);
+        item.setGrn(this);
+    }
+
+    public void addItems(List<GrnItem> itemList) {
+        for (GrnItem item : itemList) {
+            addItem(item); // this will set grn for each item
+        }
+    }
+
+    public void removeItem(GrnItem item) {
+        items.remove(item);
+    }
 }

@@ -44,6 +44,7 @@ public class GrnItemDto {
     @Schema(description = "State of the GRN item", example = "OPEN")
     private State state;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private List<CheckingInfo> checkingInfoList;
 }
 

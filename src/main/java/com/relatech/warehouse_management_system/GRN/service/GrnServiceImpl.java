@@ -6,7 +6,9 @@ import com.relatech.warehouse_management_system.GRN.mapper.GrnMapper;
 import com.relatech.warehouse_management_system.GRN.repository.GrnRepository;
 import com.relatech.warehouse_management_system.exception.*;
 import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
 import com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper;
+import com.relatech.warehouse_management_system.grnItem.repository.GrnItemRepository;
 import com.relatech.warehouse_management_system.util.State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,17 +29,17 @@ import java.util.List;
 public class GrnServiceImpl implements GrnService {
 
     private final GrnRepository grnRepository;
-    private final GrnMapper grnMapper;
+    private final GrnItemRepository grnItemRepository;
 
     @Override
     @Transactional(rollbackFor = DuplicateResourceException.class, propagation = Propagation.REQUIRED)
     public GrnDTO createGRN(GrnDTO grnDTO) throws DuplicateResourceException {
         log.debug("Creating new GRN with ID: {}", grnDTO.getId());
 
-        GRN entity = grnMapper.toEntity(grnDTO);
+        GRN entity = GrnMapper.toEntity(grnDTO);
         GRN saved = grnRepository.save(entity);
         log.info("GRN created successfully with ID: {}", saved.getId());
-        return grnMapper.toDto(saved);
+        return GrnMapper.toDto(saved);
     }
 
     @Override
@@ -48,14 +50,14 @@ public class GrnServiceImpl implements GrnService {
                     log.warn("GRN not found with ID: {}", id);
                     return new ResourceNotFoundException("GRN", id);
                 });
-        return grnMapper.toDto(entity);
+        return GrnMapper.toDto(entity);
     }
 
     @Override
     public List<GrnDTO> getAllGRNs() {
         log.debug("Fetching all GRNs");
         return grnRepository.findAll().stream()
-                .map(grnMapper::toDto)
+                .map(GrnMapper::toDto)
                 .toList();
     }
 
@@ -63,7 +65,7 @@ public class GrnServiceImpl implements GrnService {
     public Page<GrnDTO> getAllGRNsPaged(Pageable pageable) {
         log.debug("Fetching paginated GRNs: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
         Page<GRN> grnPage = grnRepository.findAll(pageable);
-        return grnPage.map(grnMapper::toDto);
+        return grnPage.map(GrnMapper::toDto);
     }
 
     @Override
@@ -82,7 +84,7 @@ public class GrnServiceImpl implements GrnService {
 
         GRN saved = grnRepository.save(existing);
         log.info("GRN updated successfully with ID: {}", saved.getId());
-        return grnMapper.toDto(saved);
+        return GrnMapper.toDto(saved);
     }
 
     @Override
@@ -141,7 +143,7 @@ public class GrnServiceImpl implements GrnService {
             entity.setState(State.valueOf(status));
             GRN saved = grnRepository.save(entity);
             log.info("Status updated for GRN {} to {}", grnId, status);
-            return grnMapper.toDto(saved);
+            return GrnMapper.toDto(saved);
         } catch (IllegalArgumentException e) {
             log.warn("Invalid status value: {}", status);
             throw new IllegalArgumentException("Invalid status: " + status, e);
@@ -157,7 +159,17 @@ public class GrnServiceImpl implements GrnService {
         }
 
         return grnRepository.searchByTerm(term).stream()
-                .map(grnMapper::toDto)
+                .map(GrnMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public GrnDTO addItemsToGrn(Long grnId, List<Long> itemIds) throws ResourceNotFoundException {
+        GRN grn = grnRepository.findById(grnId)
+                .orElseThrow(() -> new ResourceNotFoundException("GRN", grnId));
+        List<GrnItem> items = grnItemRepository.findAllById(itemIds);
+        grn.addItems(items);
+        return GrnMapper.toDto(grnRepository.save(grn));
     }
 }

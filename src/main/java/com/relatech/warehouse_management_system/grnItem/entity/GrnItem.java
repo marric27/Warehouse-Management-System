@@ -1,10 +1,12 @@
 package com.relatech.warehouse_management_system.grnItem.entity;
 
+import com.relatech.warehouse_management_system.GRN.entity.GRN;
 import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.util.State;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -42,6 +44,30 @@ public class GrnItem {
     @Column(name = "state", nullable = false, length = 20)
     private State state;
 
-    @OneToMany
+    @ManyToOne
+    @JoinColumn(name = "grn_id")
+    private GRN grn;
+
+    @OneToMany(mappedBy = "grnItem")
     private List<CheckingInfo> checkingInfoList;
+
+    public void addCInfo(CheckingInfo ci) {
+        if (this.checkingInfoList == null) {
+            this.checkingInfoList = new ArrayList<>();
+        }
+        checkingInfoList.add(ci);
+        ci.setGrnItem(this);
+    }
+
+    public void addCInfos(List<CheckingInfo> checkingInfoList) {
+        for (CheckingInfo ci : checkingInfoList) {
+            addCInfo(ci); // this will set grn for each item
+        }
+    }
+
+    public void removeItem(CheckingInfo ci) {
+        checkingInfoList.remove(ci);
+    }
+
+
 }

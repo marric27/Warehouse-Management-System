@@ -22,7 +22,6 @@ public class GrnItemMapper {
                 .compliantQty(grnItem.getCompliantQty())
                 .notCompliantQty(grnItem.getNotCompliantQty())
                 .state(grnItem.getState())
-                .checkingInfoList(grnItem.getCheckingInfoList())
                 .build();
     }
 

@@ -40,4 +40,7 @@ public class CheckingInfoDto {
     @NotNull(message = "StockUnitId cannot be null")
     @Schema(description = "Soft reference to the associated StockUnit ID", example = "5")
     private Long stockUnitId;
+
+    @Schema(description = "reference to the associated GRN Item ID", example = "5")
+    private Long grnItemId;
 }

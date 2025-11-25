@@ -18,6 +18,7 @@ public class CheckingInfoMapper {
                 .quantity(entity.getQuantity())
                 .state(entity.getState())
                 .stockUnitId(entity.getStockUnitId())
+                .grnItemId(entity.getGrnItem() != null ? entity.getGrnItem().getId() : null)
                 .build();
     }
 

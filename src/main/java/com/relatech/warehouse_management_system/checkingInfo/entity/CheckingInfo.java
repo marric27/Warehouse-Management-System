@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.checkingInfo.entity;
 
+import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
 import com.relatech.warehouse_management_system.util.State;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -31,6 +32,10 @@ public class CheckingInfo {
     @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false, length = 20)
     private State state;
+
+    @ManyToOne
+    @JoinColumn(name = "grn_item_id")
+    private GrnItem grnItem;
 
 
     private Long stockUnitId;
