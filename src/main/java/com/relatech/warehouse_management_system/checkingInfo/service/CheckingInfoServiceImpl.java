@@ -85,9 +85,13 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
                 .orElseThrow(() -> new ResourceNotFoundException("CheckingInfo", checkingInfoId));
         StockUnit stockUnit = stockUnitRepository.findById(stockUnitId)
                         .orElseThrow(() -> new ResourceNotFoundException("Stock Unit", stockUnitId));
-
         ci.setStockUnit(stockUnitId);
-        return checkingInfoRepository.save(ci);
+        updateCheckingInfoState(checkingInfoId, State.PUTAWAY); // TODO o checked? chiedere
+
+        eventPublisher.publishEvent(new CheckingInfoUpdatedEvent(ci));
+        log.info("Published CheckingInfoUpdatedEvent for CheckingInfo {}", ci.getId());
+
+        return ci;
     }
 
     @Override
