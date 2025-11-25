@@ -1,7 +1,6 @@
 package com.relatech.warehouse_management_system.GRN.service;
 
 import com.relatech.warehouse_management_system.GRN.dto.GrnDTO;
-import com.relatech.warehouse_management_system.GRN.entity.GRN;
 import com.relatech.warehouse_management_system.exception.*;
 import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
 import org.springframework.data.domain.Page;

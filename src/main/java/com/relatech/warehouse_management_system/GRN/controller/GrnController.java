@@ -7,7 +7,6 @@ import com.relatech.warehouse_management_system.exception.DuplicateResourceExcep
 import com.relatech.warehouse_management_system.exception.GrnWithItemsException;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

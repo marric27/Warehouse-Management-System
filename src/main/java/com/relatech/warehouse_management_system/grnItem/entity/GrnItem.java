@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.grnItem.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.relatech.warehouse_management_system.GRN.entity.GRN;
 import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.util.State;
@@ -49,6 +50,7 @@ public class GrnItem {
     private GRN grn;
 
     @OneToMany(mappedBy = "grnItem")
+    @JsonIgnore
     private List<CheckingInfo> checkingInfoList;
 
     public void addCInfo(CheckingInfo ci) {

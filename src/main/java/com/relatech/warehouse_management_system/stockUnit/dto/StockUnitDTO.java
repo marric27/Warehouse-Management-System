@@ -45,10 +45,10 @@ public class StockUnitDTO {
     @NotNull(message = "Category is required")
     private Category category;
 
-    @Schema(description = "Associated product details")
+    @Schema(description = "Associated product details", accessMode = Schema.AccessMode.READ_ONLY)
     private ProductDTO productDto;
 
-    @Schema(description = "Storage slot information")
+    @Schema(description = "Storage slot information", accessMode = Schema.AccessMode.READ_ONLY)
     private SlotDTO slotDto;
 
 }

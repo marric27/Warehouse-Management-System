@@ -37,6 +37,18 @@ public class CheckingInfo {
     @JoinColumn(name = "grn_item_id")
     private GrnItem grnItem;
 
-
+    @Column(name = "stock_unit_id")
     private Long stockUnitId;
+
+    public void setStockUnit(Long stockUnitId) {
+        this.stockUnitId = stockUnitId;
+    }
+
+    public Long getStockUnit() {
+        return this.stockUnitId;
+    }
+
+    public void removeStockUnit() {
+        this.stockUnitId = null;
+    }
 }

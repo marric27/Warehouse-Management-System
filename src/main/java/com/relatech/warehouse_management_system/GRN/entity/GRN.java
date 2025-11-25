@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.GRN.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
 import com.relatech.warehouse_management_system.util.State;
 import jakarta.persistence.*;
@@ -37,6 +38,7 @@ public class GRN {
 
     @OneToMany
     @JoinColumn(name = "grn_id")
+    @JsonIgnore
     private List<GrnItem> items;
 
     public void addItem(GrnItem item) {

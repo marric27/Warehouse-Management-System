@@ -1,7 +1,10 @@
 package com.relatech.warehouse_management_system.checkingInfo.service;
 
 import com.relatech.warehouse_management_system.checkingInfo.dto.CheckingInfoDto;
+import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.util.State;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,4 +19,10 @@ public interface CheckingInfoService {
     List<CheckingInfoDto> getAll();
 
     void delete(Long id) throws ResourceNotFoundException;
+
+    @Transactional
+    CheckingInfo setStockUnit(Long checkingInfoId, Long stockUnitId) throws ResourceNotFoundException;
+
+    @Transactional
+    CheckingInfo updateCheckingInfoState(Long checkingInfoId, State newState);
 }
