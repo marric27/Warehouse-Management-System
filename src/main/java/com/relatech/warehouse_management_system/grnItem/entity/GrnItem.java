@@ -49,7 +49,7 @@ public class GrnItem {
     @JoinColumn(name = "grn_id")
     private GRN grn;
 
-    @OneToMany(mappedBy = "grnItem")
+    @OneToMany(mappedBy = "grnItem", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<CheckingInfo> checkingInfoList;
 

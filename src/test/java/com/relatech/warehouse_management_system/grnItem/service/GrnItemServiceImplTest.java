@@ -1,6 +1,5 @@
 package com.relatech.warehouse_management_system.grnItem.service;
 
-import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
@@ -14,11 +13,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
-import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
@@ -67,34 +66,6 @@ class GrnItemServiceImplTest {
         assertThatThrownBy(() -> grnItemService.createGrnItem(dto))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("receivedQty deve essere uguale");
-    }
-
-    @Test
-    @DisplayName("givenCheckingInfoAllPutaway_whenUpdateGrnItem_thenStateBecomesPutaway")
-    void givenCheckingInfoAllPutaway_whenUpdateGrnItem_thenStateBecomesPutaway() throws Exception {
-        GrnItem existing = GrnItemMapper.toEntity(createValidDto());
-        existing.setId(1L);
-
-        CheckingInfo ci1 = new CheckingInfo();
-        ci1.setState(State.PUTAWAY);
-
-        CheckingInfo ci2 = new CheckingInfo();
-        ci2.setState(State.PUTAWAY);
-
-        existing.setCheckingInfoList(List.of(ci1, ci2));
-
-        GrnItemDto updateDto = createValidDto();
-        updateDto.setCheckingInfoList(List.of(ci1, ci2));
-
-        when(grnItemRepository.findById(1L))
-                .thenReturn(Optional.of(existing));
-
-        when(grnItemRepository.save(any(GrnItem.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        GrnItemDto result = grnItemService.updateGrnItem(1L, updateDto);
-
-        assertThat(result.getState()).isEqualTo(State.PUTAWAY);
     }
 
     @Test

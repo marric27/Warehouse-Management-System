@@ -37,7 +37,6 @@ public class CheckingInfoDto {
     @Schema(description = "State of the checking info", example = "OPEN")
     private State state;
 
-    @NotNull(message = "StockUnitId cannot be null")
     @Schema(description = "Soft reference to the associated StockUnit ID", example = "5")
     private Long stockUnitId;
 

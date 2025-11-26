@@ -65,7 +65,7 @@ public class CheckingInfoController {
     }
 
     @PutMapping("/{id}/set-stock-unit/{stockUnitId}")
-    public ResponseEntity<CheckingInfo> setStockUnit(@PathVariable Long id, @PathVariable Long stockUnitId) throws ResourceNotFoundException {
+    public ResponseEntity<CheckingInfo> setStockUnit(@PathVariable Long id, @PathVariable Long stockUnitId) throws Exception {
         CheckingInfo updated = checkingInfoService.setStockUnit(id, stockUnitId);
         return ResponseEntity.ok(updated);
     }

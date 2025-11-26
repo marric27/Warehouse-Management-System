@@ -54,8 +54,8 @@ class SlotIntegrationTest {
 
     @BeforeEach
     void cleanDatabase() {
-        slotRepository.deleteAll();
         stockUnitRepository.deleteAll();
+        slotRepository.deleteAll();
     }
 
     @Test

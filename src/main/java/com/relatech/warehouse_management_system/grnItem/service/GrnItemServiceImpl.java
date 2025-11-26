@@ -2,7 +2,6 @@ package com.relatech.warehouse_management_system.grnItem.service;
 
 import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.checkingInfo.repository.CheckingInfoRepository;
-import com.relatech.warehouse_management_system.event.GrnItemStateUpdatedEvent;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
@@ -11,7 +10,6 @@ import com.relatech.warehouse_management_system.grnItem.repository.GrnItemReposi
 import com.relatech.warehouse_management_system.util.State;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +25,6 @@ public class GrnItemServiceImpl implements GrnItemService {
 
     @Autowired
     private CheckingInfoRepository checkingInfoRepository;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
 
     @Override
     public GrnItemDto createGrnItem(GrnItemDto grnItemDto) {
@@ -86,18 +81,15 @@ public class GrnItemServiceImpl implements GrnItemService {
     public GrnItemDto addCheckinginfoToGrnitem(Long grnitemId, List<Long> ciIds) throws ResourceNotFoundException {
         GrnItem grnItem = grnItemRepository.findById(grnitemId)
                 .orElseThrow(() -> new ResourceNotFoundException("GrnItem", grnitemId));
+
+        log.info("Assigning checkinginfo {} to grnitem {}", ciIds.getFirst(), grnitemId);
+
         List<CheckingInfo> checkingInfoList = checkingInfoRepository.findAllById(ciIds);
         grnItem.addCInfos(checkingInfoList);
-        return GrnItemMapper.toDto(grnItemRepository.save(grnItem));
-    }
+    
+        checkIfExpectedQtyIsAssigned(grnItem);
 
-    private void validateAndCalculateReceivedQty(GrnItem grnItem) {
-        int calculated = grnItem.getCompliantQty() + grnItem.getNotCompliantQty();
-        if (grnItem.getReceivedQty() != calculated) {
-            throw new IllegalArgumentException(
-                    "receivedQty deve essere uguale a compliantQty + notCompliantQty"
-            );
-        }
+        return GrnItemMapper.toDto(grnItemRepository.save(grnItem));
     }
 
     @Override
@@ -107,11 +99,27 @@ public class GrnItemServiceImpl implements GrnItemService {
                 .orElseThrow(() -> new ResourceNotFoundException("GrnItem", grnItemId));
 
         grnItem.setState(newState);
-        grnItemRepository.save(grnItem);
+        log.info("Updated GrnItem {} to state {}", grnItem.getId(), newState);
+        return grnItemRepository.save(grnItem);
+    }
 
-        eventPublisher.publishEvent(new GrnItemStateUpdatedEvent(grnItem));
-        log.info("Publish new event GrnItemStateUpdatedEvent");
+    private void checkIfExpectedQtyIsAssigned(GrnItem grnItem) throws ResourceNotFoundException {
+        int totalAssigned = grnItem.getCheckingInfoList()
+                .stream()
+                .mapToInt(CheckingInfo::getQuantity)
+                .sum();
 
-        return grnItem;
+        if (totalAssigned == grnItem.getExpectedQty() && grnItem.getState() == State.OPEN) {
+            updateGrnItemState(grnItem.getId(), State.CHECKED);
+        }
+    }
+
+    private void validateAndCalculateReceivedQty(GrnItem grnItem) {
+        int calculated = grnItem.getCompliantQty() + grnItem.getNotCompliantQty();
+        if (grnItem.getReceivedQty() != calculated) {
+            throw new IllegalArgumentException(
+                    "receivedQty deve essere uguale a compliantQty + notCompliantQty"
+            );
+        }
     }
 }

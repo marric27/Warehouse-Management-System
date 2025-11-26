@@ -4,7 +4,6 @@ import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
 import com.relatech.warehouse_management_system.util.State;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

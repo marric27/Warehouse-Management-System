@@ -21,7 +21,7 @@ public interface CheckingInfoService {
     void delete(Long id) throws ResourceNotFoundException;
 
     @Transactional
-    CheckingInfo setStockUnit(Long checkingInfoId, Long stockUnitId) throws ResourceNotFoundException;
+    CheckingInfo setStockUnit(Long checkingInfoId, Long stockUnitId) throws Exception;
 
     @Transactional
     CheckingInfo updateCheckingInfoState(Long checkingInfoId, State newState) throws ResourceNotFoundException;

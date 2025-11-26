@@ -78,7 +78,7 @@ public class SlotServiceImpl implements SlotService {
         if (slot.getProd() != null) {
             throw new IllegalStateException("Cannot delete slot because it contains a product");
         }
-        if (!slot.getStockUnits().isEmpty()) {
+        if (slot.getStockUnits() != null && !slot.getStockUnits().isEmpty()) {
             throw new IllegalStateException("Cannot delete slot because it contains stock units");
         }
 
