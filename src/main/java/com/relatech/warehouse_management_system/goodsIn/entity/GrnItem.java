@@ -1,7 +1,6 @@
-package com.relatech.warehouse_management_system.grnItem.entity;
+package com.relatech.warehouse_management_system.goodsIn.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.relatech.warehouse_management_system.GRN.entity.GRN;
 import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.util.State;
 import jakarta.persistence.*;

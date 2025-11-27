@@ -1,6 +1,6 @@
-package com.relatech.warehouse_management_system.grnItem.repository;
+package com.relatech.warehouse_management_system.goodsIn.repository;
 
-import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
+import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

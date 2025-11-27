@@ -1,15 +1,14 @@
 package com.relatech.warehouse_management_system.checkingInfo.service;
 
-import com.relatech.warehouse_management_system.GRN.entity.GRN;
-import com.relatech.warehouse_management_system.GRN.repository.GrnRepository;
+import com.relatech.warehouse_management_system.goodsIn.entity.GRN;
+import com.relatech.warehouse_management_system.goodsIn.repository.GrnRepository;
 import com.relatech.warehouse_management_system.checkingInfo.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.checkingInfo.mapper.CheckingInfoMapper;
 import com.relatech.warehouse_management_system.checkingInfo.repository.CheckingInfoRepository;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
-import com.relatech.warehouse_management_system.grnItem.repository.GrnItemRepository;
-import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRepository;
+import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
+import com.relatech.warehouse_management_system.goodsIn.repository.GrnItemRepository;
 import com.relatech.warehouse_management_system.util.State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 public class CheckingInfoServiceImpl implements CheckingInfoService {
 
     private final CheckingInfoRepository checkingInfoRepository;
-    private final StockUnitRepository stockUnitRepository;
     private final GrnItemRepository grnItemRepository;
     private final GrnRepository grnRepository;
 
@@ -85,10 +83,8 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
                 .orElseThrow(() -> new ResourceNotFoundException("CheckingInfo", checkingInfoId));
 
         if (ci.getGrnItem() != null) {
-
             ci.setStockUnit(stockUnitId);
             updateCheckingInfoState(checkingInfoId, State.PUTAWAY);
-
             checkAllCIPutawayForGi(ci.getGrnItem());
         }
         else
@@ -116,7 +112,7 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
 
     //TODO potrei anche non esporlo ma usarlo solo internamente
     @Override
-    //@Transactional
+    @Transactional
     public CheckingInfo updateCheckingInfoState(Long checkingInfoId, State newState) throws ResourceNotFoundException {
         log.info("Updating checkinginfo {} to state {}", checkingInfoId, newState);
         CheckingInfo ci = checkingInfoRepository.findById(checkingInfoId)

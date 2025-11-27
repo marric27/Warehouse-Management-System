@@ -1,8 +1,8 @@
-package com.relatech.warehouse_management_system.GRN.service;
+package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
-import com.relatech.warehouse_management_system.GRN.dto.GrnDTO;
+import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnDTO;
 import com.relatech.warehouse_management_system.exception.*;
-import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnItemDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

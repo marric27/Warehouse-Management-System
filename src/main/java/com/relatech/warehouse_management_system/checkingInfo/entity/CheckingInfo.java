@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.checkingInfo.entity;
 
-import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
+import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.util.State;
 import jakarta.persistence.*;
 import lombok.Getter;

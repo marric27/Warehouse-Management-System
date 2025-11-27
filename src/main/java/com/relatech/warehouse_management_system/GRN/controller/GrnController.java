@@ -1,12 +1,12 @@
 package com.relatech.warehouse_management_system.GRN.controller;
 
-import com.relatech.warehouse_management_system.GRN.dto.GrnDTO;
-import com.relatech.warehouse_management_system.GRN.mapper.GrnMapper;
-import com.relatech.warehouse_management_system.GRN.service.GrnService;
+import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnDTO;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnMapper;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
 import com.relatech.warehouse_management_system.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.exception.GrnWithItemsException;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnItemDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

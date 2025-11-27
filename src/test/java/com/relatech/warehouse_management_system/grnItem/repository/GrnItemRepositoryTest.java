@@ -1,8 +1,9 @@
 package com.relatech.warehouse_management_system.grnItem.repository;
 
+import com.relatech.warehouse_management_system.goodsIn.repository.GrnItemRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
+import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.util.State;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

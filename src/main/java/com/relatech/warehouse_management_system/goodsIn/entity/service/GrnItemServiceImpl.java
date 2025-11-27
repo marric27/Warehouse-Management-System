@@ -1,12 +1,12 @@
-package com.relatech.warehouse_management_system.grnItem.service;
+package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
 import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.checkingInfo.repository.CheckingInfoRepository;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
-import com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper;
-import com.relatech.warehouse_management_system.grnItem.repository.GrnItemRepository;
+import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
+import com.relatech.warehouse_management_system.goodsIn.repository.GrnItemRepository;
 import com.relatech.warehouse_management_system.util.State;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,12 +82,11 @@ public class GrnItemServiceImpl implements GrnItemService {
         GrnItem grnItem = grnItemRepository.findById(grnitemId)
                 .orElseThrow(() -> new ResourceNotFoundException("GrnItem", grnitemId));
 
-        log.info("Assigning checkinginfo {} to grnitem {}", ciIds.getFirst(), grnitemId);
-
         List<CheckingInfo> checkingInfoList = checkingInfoRepository.findAllById(ciIds);
         grnItem.addCInfos(checkingInfoList);
-    
-        checkIfExpectedQtyIsAssigned(grnItem);
+        log.info("Assigned checkinginfo {} to grnitem {}", ciIds.getFirst(), grnitemId);
+
+        checkIfExpectedQtyIsSatisfied(grnItem);
 
         return GrnItemMapper.toDto(grnItemRepository.save(grnItem));
     }
@@ -103,7 +102,7 @@ public class GrnItemServiceImpl implements GrnItemService {
         return grnItemRepository.save(grnItem);
     }
 
-    private void checkIfExpectedQtyIsAssigned(GrnItem grnItem) throws ResourceNotFoundException {
+    private void checkIfExpectedQtyIsSatisfied(GrnItem grnItem) throws ResourceNotFoundException {
         int totalAssigned = grnItem.getCheckingInfoList()
                 .stream()
                 .mapToInt(CheckingInfo::getQuantity)

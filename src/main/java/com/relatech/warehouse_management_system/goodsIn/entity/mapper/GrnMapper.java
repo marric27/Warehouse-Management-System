@@ -1,8 +1,7 @@
-package com.relatech.warehouse_management_system.GRN.mapper;
+package com.relatech.warehouse_management_system.goodsIn.entity.mapper;
 
-import com.relatech.warehouse_management_system.GRN.dto.GrnDTO;
-import com.relatech.warehouse_management_system.GRN.entity.GRN;
-import com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper;
+import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnDTO;
+import com.relatech.warehouse_management_system.goodsIn.entity.GRN;
 import com.relatech.warehouse_management_system.util.State;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

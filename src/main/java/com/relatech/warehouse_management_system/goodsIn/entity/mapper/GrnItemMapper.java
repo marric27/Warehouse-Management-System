@@ -1,7 +1,7 @@
-package com.relatech.warehouse_management_system.grnItem.mapper;
+package com.relatech.warehouse_management_system.goodsIn.entity.mapper;
 
-import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
+import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 
 import java.util.Collections;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.relatech.warehouse_management_system.grnItem.dto;
+package com.relatech.warehouse_management_system.goodsIn.entity.dto;
 
 import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.util.State;

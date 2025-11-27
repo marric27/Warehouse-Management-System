@@ -1,8 +1,8 @@
-package com.relatech.warehouse_management_system.grnItem.service;
+package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
-import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
+import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.util.State;
 
 import java.util.List;

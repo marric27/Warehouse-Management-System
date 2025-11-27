@@ -1,10 +1,11 @@
 package com.relatech.warehouse_management_system.grnItem.service;
 
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
-import com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper;
-import com.relatech.warehouse_management_system.grnItem.repository.GrnItemRepository;
+import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemServiceImpl;
+import com.relatech.warehouse_management_system.goodsIn.repository.GrnItemRepository;
 import com.relatech.warehouse_management_system.util.State;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Optional;
 

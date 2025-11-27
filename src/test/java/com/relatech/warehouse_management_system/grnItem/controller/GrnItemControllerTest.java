@@ -4,8 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.grnItem.service.GrnItemService;
+import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.util.State;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

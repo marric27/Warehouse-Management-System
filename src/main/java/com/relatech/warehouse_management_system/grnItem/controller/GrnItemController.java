@@ -1,10 +1,10 @@
 package com.relatech.warehouse_management_system.grnItem.controller;
 
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
-import com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper;
-import com.relatech.warehouse_management_system.grnItem.service.GrnItemService;
+import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.util.State;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

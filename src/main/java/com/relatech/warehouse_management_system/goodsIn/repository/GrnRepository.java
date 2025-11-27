@@ -1,6 +1,6 @@
-package com.relatech.warehouse_management_system.GRN.repository;
+package com.relatech.warehouse_management_system.goodsIn.repository;
 
-import com.relatech.warehouse_management_system.GRN.entity.GRN;
+import com.relatech.warehouse_management_system.goodsIn.entity.GRN;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

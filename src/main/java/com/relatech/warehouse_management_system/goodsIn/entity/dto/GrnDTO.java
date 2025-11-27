@@ -1,6 +1,5 @@
-package com.relatech.warehouse_management_system.GRN.dto;
+package com.relatech.warehouse_management_system.goodsIn.entity.dto;
 
-import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;

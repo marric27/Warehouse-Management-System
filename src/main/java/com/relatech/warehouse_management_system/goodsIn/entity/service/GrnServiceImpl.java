@@ -1,14 +1,14 @@
-package com.relatech.warehouse_management_system.GRN.service;
+package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
-import com.relatech.warehouse_management_system.GRN.dto.GrnDTO;
-import com.relatech.warehouse_management_system.GRN.entity.GRN;
-import com.relatech.warehouse_management_system.GRN.mapper.GrnMapper;
-import com.relatech.warehouse_management_system.GRN.repository.GrnRepository;
+import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnDTO;
+import com.relatech.warehouse_management_system.goodsIn.entity.GRN;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnMapper;
+import com.relatech.warehouse_management_system.goodsIn.repository.GrnRepository;
 import com.relatech.warehouse_management_system.exception.*;
-import com.relatech.warehouse_management_system.grnItem.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.grnItem.entity.GrnItem;
-import com.relatech.warehouse_management_system.grnItem.mapper.GrnItemMapper;
-import com.relatech.warehouse_management_system.grnItem.repository.GrnItemRepository;
+import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
+import com.relatech.warehouse_management_system.goodsIn.repository.GrnItemRepository;
 import com.relatech.warehouse_management_system.util.State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
