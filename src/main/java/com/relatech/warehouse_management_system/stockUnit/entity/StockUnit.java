@@ -42,7 +42,6 @@ public class StockUnit {
     @Column(name = "product_category", nullable = false)
     private Category category;
 
-    //@Setter(AccessLevel.NONE)
     @ManyToOne
     @JoinColumn(name = "product_id")
     @OnDelete(action = OnDeleteAction.SET_NULL)

@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.stockUnit.mapper;
 
+import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
 import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ public class StockUnitMapper {
                 .uniqueCode(entity.getUniqueCode())
                 .quantity(entity.getQuantity())
                 .category(entity.getCategory())
-                .product(entity.getSlot() != null ? entity.getProduct() : null)
+                .productDto(entity.getProduct() != null ? ProductMapper.toDto(entity.getProduct()) : null)
                 .build();
     }
 
@@ -30,7 +31,7 @@ public class StockUnitMapper {
                 .uniqueCode(dto.getUniqueCode())
                 .quantity(dto.getQuantity())
                 .category(dto.getCategory())
-                .product(dto.getProduct() != null ? dto.getProduct() : null)
+                .product(dto.getProductDto() != null ? ProductMapper.toEntity(dto.getProductDto()) : null)
                 .build();
     }
 

@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.stockUnit.dto;
 
-import com.relatech.warehouse_management_system.product.entity.Product;
-import com.relatech.warehouse_management_system.slot.entity.Slot;
+import com.relatech.warehouse_management_system.product.dto.ProductDTO;
+import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.util.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
@@ -16,8 +16,7 @@ import java.time.LocalDate;
 @Builder
 @Schema(description = "Data transfer object representing a stock unit")
 public class StockUnitDTO {
-
-    @Schema(description = "Database-generated unique identifier", example = "1")
+    @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
     @Schema(description = "Batch number or lot identifier", example = "BN-2025A")
@@ -46,10 +45,10 @@ public class StockUnitDTO {
     @NotNull(message = "Category is required")
     private Category category;
 
-    @Schema(description = "Associated product details")
-    private Product product;
+    @Schema(description = "Associated product details", accessMode = Schema.AccessMode.READ_ONLY)
+    private ProductDTO productDto;
 
-    @Schema(description = "Storage slot information")
-    private Slot slot;
+    @Schema(description = "Storage slot information", accessMode = Schema.AccessMode.READ_ONLY)
+    private SlotDTO slotDto;
 
 }

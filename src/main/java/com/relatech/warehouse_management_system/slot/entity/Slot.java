@@ -39,7 +39,7 @@ public class Slot {
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private Product prod;
 
-    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "slot")
     private List<StockUnit> stockUnits;
 
     public boolean canContain(Product p) {
