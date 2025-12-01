@@ -38,6 +38,13 @@ public class GrnItemServiceImpl implements GrnItemService {
     }
 
     @Override
+    public GrnItemDto getGrnItemByCode(String code) throws ResourceNotFoundException {
+        return grnItemRepository.findByCode(code)
+                .map(grnItemMapper::toDto)
+                .orElseThrow(() -> new ResourceNotFoundException("GrnItem", code));
+    }
+
+    @Override
     @Transactional
     public GrnItemDto updateGrnItem(Long id, GrnItemDto grnItemDto) throws ResourceNotFoundException {
         GrnItem existingGrnItem = grnItemRepository.findById(id)

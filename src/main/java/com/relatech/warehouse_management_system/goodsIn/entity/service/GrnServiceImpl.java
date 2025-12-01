@@ -41,6 +41,17 @@ public class GrnServiceImpl implements GrnService {
     }
 
     @Override
+    public GrnDTO getGRNByCode(String code) throws ResourceNotFoundException {
+        log.debug("Fetching GRN with code: {}", code);
+        GRN entity = grnRepository.findByCode(code)
+                .orElseThrow(() -> {
+                    log.warn("GRN not found with code: {}", code);
+                    return new ResourceNotFoundException("GRN", code);
+                });
+        return grnMapper.toDto(entity);
+    }
+
+    @Override
     public List<GrnDTO> getAllGRNs() {
         log.debug("Fetching all GRNs");
         return grnRepository.findAll().stream()

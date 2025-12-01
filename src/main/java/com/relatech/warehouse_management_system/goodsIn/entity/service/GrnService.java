@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface GrnService {
     GrnDTO getGRNById(Long id) throws ResourceNotFoundException;
+    GrnDTO getGRNByCode(String code) throws ResourceNotFoundException;
     List<GrnDTO> getAllGRNs();
     Page<GrnDTO> getAllGRNsPaged(Pageable pageable);
     GrnDTO updateGRN(Long id, GrnDTO grnDTO) throws ResourceNotFoundException;
