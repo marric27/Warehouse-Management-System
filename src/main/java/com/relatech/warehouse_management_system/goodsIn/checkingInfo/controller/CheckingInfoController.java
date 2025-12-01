@@ -1,11 +1,11 @@
-package com.relatech.warehouse_management_system.checkingInfo.controller;
+package com.relatech.warehouse_management_system.goodsIn.checkingInfo.controller;
 
-import com.relatech.warehouse_management_system.checkingInfo.dto.CheckingInfoDto;
-import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
-import com.relatech.warehouse_management_system.checkingInfo.mapper.CheckingInfoMapper;
-import com.relatech.warehouse_management_system.checkingInfo.service.CheckingInfoService;
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.util.State;
+import com.relatech.warehouse_management_system.goodsIn.checkingInfo.dto.CheckingInfoDto;
+import com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.goodsIn.checkingInfo.mapper.CheckingInfoMapper;
+import com.relatech.warehouse_management_system.goodsIn.checkingInfo.service.CheckingInfoService;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.util.State;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

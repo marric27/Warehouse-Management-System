@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.slot.controller;
 
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.slot.service.SlotService;
 import io.swagger.v3.oas.annotations.tags.Tag;

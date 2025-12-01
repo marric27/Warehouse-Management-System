@@ -1,6 +1,6 @@
-package com.relatech.warehouse_management_system.checkingInfo.repository;
+package com.relatech.warehouse_management_system.goodsIn.checkingInfo.repository;
 
-import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity.CheckingInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

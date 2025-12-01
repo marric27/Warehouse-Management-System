@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.product.entity;
 
-import com.relatech.warehouse_management_system.util.Category;
+import com.relatech.warehouse_management_system.common.util.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

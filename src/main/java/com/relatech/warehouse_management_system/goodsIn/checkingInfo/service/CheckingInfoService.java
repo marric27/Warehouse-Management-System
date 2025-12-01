@@ -1,9 +1,9 @@
-package com.relatech.warehouse_management_system.checkingInfo.service;
+package com.relatech.warehouse_management_system.goodsIn.checkingInfo.service;
 
-import com.relatech.warehouse_management_system.checkingInfo.dto.CheckingInfoDto;
-import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.util.State;
+import com.relatech.warehouse_management_system.goodsIn.checkingInfo.dto.CheckingInfoDto;
+import com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.util.State;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

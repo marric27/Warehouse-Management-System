@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.stockUnit.entity;
 
-import com.relatech.warehouse_management_system.util.Category;
+import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.slot.entity.Slot;
 import jakarta.persistence.*;

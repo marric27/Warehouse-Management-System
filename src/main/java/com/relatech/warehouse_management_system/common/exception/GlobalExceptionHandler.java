@@ -1,4 +1,4 @@
-package com.relatech.warehouse_management_system.exception;
+package com.relatech.warehouse_management_system.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;

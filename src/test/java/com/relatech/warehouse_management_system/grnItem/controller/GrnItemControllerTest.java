@@ -3,10 +3,10 @@ package com.relatech.warehouse_management_system.grnItem.controller;
 import org.junit.jupiter.api.DisplayName;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
-import com.relatech.warehouse_management_system.util.State;
+import com.relatech.warehouse_management_system.common.util.State;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

@@ -1,4 +1,4 @@
-package com.relatech.warehouse_management_system.goodsIn.entity.dto;
+package com.relatech.warehouse_management_system.goodsIn.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;

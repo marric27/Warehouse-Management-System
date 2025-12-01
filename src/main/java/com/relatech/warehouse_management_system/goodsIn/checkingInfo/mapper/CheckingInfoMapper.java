@@ -1,7 +1,7 @@
-package com.relatech.warehouse_management_system.checkingInfo.mapper;
+package com.relatech.warehouse_management_system.goodsIn.checkingInfo.mapper;
 
-import com.relatech.warehouse_management_system.checkingInfo.dto.CheckingInfoDto;
-import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.goodsIn.checkingInfo.dto.CheckingInfoDto;
+import com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity.CheckingInfo;
 import org.springframework.stereotype.Component;
 
 @Component

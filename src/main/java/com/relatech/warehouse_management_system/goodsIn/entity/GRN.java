@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.goodsIn.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.relatech.warehouse_management_system.util.State;
+import com.relatech.warehouse_management_system.common.util.State;
 import jakarta.persistence.*;
 import lombok.*;
 

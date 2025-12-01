@@ -1,12 +1,12 @@
 package com.relatech.warehouse_management_system.grnItem.service;
 
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemServiceImpl;
-import com.relatech.warehouse_management_system.goodsIn.repository.GrnItemRepository;
-import com.relatech.warehouse_management_system.util.State;
+import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnItemRepository;
+import com.relatech.warehouse_management_system.common.util.State;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

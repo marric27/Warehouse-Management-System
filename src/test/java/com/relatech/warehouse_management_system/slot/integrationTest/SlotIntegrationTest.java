@@ -6,7 +6,7 @@ import com.relatech.warehouse_management_system.slot.service.SlotService;
 import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRepository;
 import com.relatech.warehouse_management_system.stockUnit.service.StockUnitService;
-import com.relatech.warehouse_management_system.util.Category;
+import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

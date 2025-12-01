@@ -1,3 +1,4 @@
+/*
 package com.relatech.warehouse_management_system.grnItem.controller;
 
 import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
@@ -82,3 +83,4 @@ public class GrnItemController {
         return ResponseEntity.ok(GrnItemMapper.toDto(updatedGrnItemState));
     }
 }
+*/

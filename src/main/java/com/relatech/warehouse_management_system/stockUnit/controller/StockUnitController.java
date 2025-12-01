@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.stockUnit.controller;
 
-import com.relatech.warehouse_management_system.exception.DuplicateResourceException;
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.stockUnit.service.StockUnitService;
 import io.swagger.v3.oas.annotations.tags.Tag;

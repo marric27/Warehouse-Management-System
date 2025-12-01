@@ -1,4 +1,4 @@
-package com.relatech.warehouse_management_system.config;
+package com.relatech.warehouse_management_system.common.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

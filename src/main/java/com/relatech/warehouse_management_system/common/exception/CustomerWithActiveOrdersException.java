@@ -1,4 +1,4 @@
-package com.relatech.warehouse_management_system.exception;
+package com.relatech.warehouse_management_system.common.exception;
 
 public class CustomerWithActiveOrdersException extends Exception {
     public CustomerWithActiveOrdersException(Long customerId) {

@@ -1,4 +1,6 @@
+/*
 package com.relatech.warehouse_management_system.GRN.controller;
+
 
 import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnDTO;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnMapper;
@@ -21,9 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * REST Controller for managing Goods Receipt Notes.
- */
+
 @RestController
 @RequestMapping("/grn")
 @Tag(name = "GRN Management", description = "APIs for managing Goods Receipt Notes")
@@ -136,5 +136,6 @@ public class GrnController {
         log.info("Successfully assigned grn items: {} to grn: {}", itemIds, id);
         return ResponseEntity.ok(grnDTO);
     }
-
 }
+
+ */

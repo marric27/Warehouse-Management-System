@@ -1,7 +1,7 @@
-package com.relatech.warehouse_management_system.goodsIn.entity.dto;
+package com.relatech.warehouse_management_system.goodsIn.dto;
 
-import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
-import com.relatech.warehouse_management_system.util.State;
+import com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.common.util.State;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.*;
