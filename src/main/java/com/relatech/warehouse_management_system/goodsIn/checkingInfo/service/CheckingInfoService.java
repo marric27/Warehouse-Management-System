@@ -25,4 +25,6 @@ public interface CheckingInfoService {
 
     @Transactional
     CheckingInfo updateCheckingInfoState(Long checkingInfoId, State newState) throws ResourceNotFoundException;
+
+    List<CheckingInfo> getAllById(List<Long> checkingInfoIds);
 }

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/receiving")
+@RequestMapping("/receiving")
 @Tag(name = "Receiving Management", description = "Complete workflow for GRN receiving, validation, and item assignment")
 @RequiredArgsConstructor
 @Slf4j
@@ -30,16 +30,14 @@ public class ReceivingController {
 
     private final ReceivingService receivingService;
 
-
     @PostMapping("/grns")
     @Operation(summary = "Create new GRN", description = "Creates a new Goods Receipt Note with OPEN state")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "GRN created successfully"),
             @ApiResponse(responseCode = "409", description = "Duplicate GRN code", ref = "#/components/schemas/ApiError")
     })
-    public ResponseEntity<GrnDTO> createGRN(@Valid @RequestBody GrnDTO dto)
-            throws GrnExceptions.DuplicateGrnCodeException {
-        log.info("POST /api/receiving/grns - Creating GRN with code: {}", dto.getCode());
+    public ResponseEntity<GrnDTO> createGRN(@Valid @RequestBody GrnDTO dto) throws GrnExceptions.GrnNotFoundException, GrnExceptions.DuplicateGrnCodeException {
+        log.info("POST /receiving/grns - Creating GRN with code: {}", dto.getCode());
         GrnDTO created = receivingService.createGRN(dto);
         log.info("GRN created successfully with ID: {}", created.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
@@ -49,7 +47,7 @@ public class ReceivingController {
     @Operation(summary = "List all GRNs", description = "Retrieves list of all GRNs")
     @ApiResponse(responseCode = "200", description = "GRNs retrieved successfully")
     public ResponseEntity<List<GrnDTO>> listGRNs() {
-        log.info("GET /api/receiving/grns - Fetching all GRNs");
+        log.info("GET /receiving/grns - Fetching all GRNs");
         List<GrnDTO> grns = receivingService.listGRNs();
         log.info("Retrieved {} GRNs", grns.size());
         return ResponseEntity.ok(grns);
@@ -64,7 +62,7 @@ public class ReceivingController {
     public ResponseEntity<GrnDTO> getGRN(
             @Parameter(description = "GRN ID") @PathVariable Long id)
             throws GrnExceptions.GrnNotFoundException {
-        log.info("GET /api/receiving/grns/{} - Fetching GRN", id);
+        log.info("GET /receiving/grns/{} - Fetching GRN", id);
         GrnDTO dto = receivingService.readGRN(id);
         return ResponseEntity.ok(dto);
     }
@@ -79,7 +77,7 @@ public class ReceivingController {
             @Parameter(description = "GRN ID") @PathVariable Long id,
             @Valid @RequestBody GrnDTO dto)
             throws GrnExceptions.GrnNotFoundException {
-        log.info("PUT /api/receiving/grns/{} - Updating GRN", id);
+        log.info("PUT /receiving/grns/{} - Updating GRN", id);
         GrnDTO updated = receivingService.updateGRN(id, dto);
         log.info("GRN {} updated successfully", id);
         return ResponseEntity.ok(updated);
@@ -95,7 +93,7 @@ public class ReceivingController {
     public ResponseEntity<Void> deleteGRN(
             @Parameter(description = "GRN ID") @PathVariable Long id)
             throws GrnExceptions.GrnNotFoundException, GrnExceptions.GrnWithItemsException {
-        log.info("DELETE /api/receiving/grns/{} - Deleting GRN", id);
+        log.info("DELETE /receiving/grns/{} - Deleting GRN", id);
         receivingService.deleteGRN(id);
         log.info("GRN {} deleted successfully", id);
         return ResponseEntity.noContent().build();
@@ -107,7 +105,7 @@ public class ReceivingController {
     public ResponseEntity<List<GrnDTO>> searchGRNs(
             @Parameter(description = "Search term")
             @RequestParam(name = "term", required = false) String term) {
-        log.info("GET /api/receiving/grns/search - Searching with term: '{}'", term);
+        log.info("GET /receiving/grns/search - Searching with term: '{}'", term);
         List<GrnDTO> results = receivingService.searchGRNs(term);
         log.info("Found {} GRNs matching term '{}'", results.size(), term);
         return ResponseEntity.ok(results);
@@ -126,11 +124,11 @@ public class ReceivingController {
     public ResponseEntity<GrnItemDto> createGRNItem(
             @Parameter(description = "GRN ID") @PathVariable Long grnId,
             @Valid @RequestBody GrnItemDto dto)
-            throws GrnExceptions.GrnNotFoundException, GrnExceptions.InvalidQuantityException,
-            GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException {
-        log.info("POST /api/receiving/grns/{}/items - Creating item for GRN", grnId);
-        GrnItemDto created = receivingService.createGRNItem(grnId, dto);
-        log.info("Item {} created for GRN {}", created.getId(), grnId);
+            throws GrnExceptions.InvalidQuantityException,
+            GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException, GrnExceptions.GrnItemNotFoundException {
+        log.info("POST /receiving/grns/{}/items - Creating item for GRN", grnId);
+        GrnItemDto created = receivingService.createItemForGrn(grnId, dto);
+        log.info("Item {} created for GRN {}", created.getCode(), grnId);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -143,7 +141,7 @@ public class ReceivingController {
     public ResponseEntity<List<GrnItemDto>> listGRNItems(
             @Parameter(description = "GRN ID") @PathVariable Long grnId)
             throws GrnExceptions.GrnNotFoundException {
-        log.info("GET /api/receiving/grns/{}/items - Fetching items", grnId);
+        log.info("GET /receiving/grns/{}/items - Fetching items", grnId);
         List<GrnItemDto> items = receivingService.listGRNItems(grnId);
         log.info("Retrieved {} items for GRN {}", items.size(), grnId);
         return ResponseEntity.ok(items);
@@ -158,7 +156,7 @@ public class ReceivingController {
     public ResponseEntity<GrnItemDto> getGRNItem(
             @Parameter(description = "Item ID") @PathVariable Long itemId)
             throws GrnExceptions.GrnItemNotFoundException {
-        log.info("GET /api/receiving/items/{} - Fetching item", itemId);
+        log.info("GET /receiving/items/{} - Fetching item", itemId);
         GrnItemDto item = receivingService.readGRNItem(itemId);
         return ResponseEntity.ok(item);
     }
@@ -175,7 +173,7 @@ public class ReceivingController {
             @Valid @RequestBody GrnItemDto dto)
             throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.InvalidQuantityException,
             GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException {
-        log.info("PUT /api/receiving/items/{} - Updating item", itemId);
+        log.info("PUT /receiving/items/{} - Updating item", itemId);
         GrnItemDto updated = receivingService.updateGRNItem(itemId, dto);
         log.info("Item {} updated successfully", itemId);
         return ResponseEntity.ok(updated);
@@ -190,7 +188,7 @@ public class ReceivingController {
     public ResponseEntity<Void> deleteGRNItem(
             @Parameter(description = "Item ID") @PathVariable Long itemId)
             throws GrnExceptions.GrnItemNotFoundException {
-        log.info("DELETE /api/receiving/items/{} - Deleting item", itemId);
+        log.info("DELETE /receiving/items/{} - Deleting item", itemId);
         receivingService.deleteGRNItem(itemId);
         log.info("Item {} deleted successfully", itemId);
         return ResponseEntity.noContent().build();
@@ -211,7 +209,7 @@ public class ReceivingController {
             @Parameter(description = "List of Checking Info IDs")
             @RequestBody List<Long> checkingInfoIds)
             throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.QuantityMismatchException {
-        log.info("POST /api/receiving/items/{}/checking - Assigning {} checking infos", itemId, checkingInfoIds.size());
+        log.info("POST /receiving/items/{}/checking - Assigning {} checking infos", itemId, checkingInfoIds.size());
         GrnItemDto assigned = receivingService.assignCheckingInfoToItem(itemId, checkingInfoIds);
         log.info("Checking info assigned to item {}", itemId);
         return ResponseEntity.ok(assigned);
@@ -232,7 +230,7 @@ public class ReceivingController {
             @Parameter(description = "New state (OPEN, CHECKED, PUTAWAY, CLOSED)")
             @PathVariable State state)
             throws GrnExceptions.GrnNotFoundException, GrnExceptions.InvalidStateTransitionException {
-        log.info("PATCH /api/receiving/grns/{}/state/{} - Changing GRN state", id, state);
+        log.info("PATCH /receiving/grns/{}/state/{} - Changing GRN state", id, state);
         GrnDTO updated = receivingService.changeGRNState(id, state);
         log.info("GRN {} state changed to {}", id, state);
         return ResponseEntity.ok(updated);
@@ -250,7 +248,7 @@ public class ReceivingController {
             @Parameter(description = "New state (OPEN, CHECKED, PUTAWAY, CLOSED)")
             @PathVariable State state)
             throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.InvalidStateTransitionException {
-        log.info("PATCH /api/receiving/items/{}/state/{} - Changing item state", id, state);
+        log.info("PATCH /receiving/items/{}/state/{} - Changing item state", id, state);
         GrnItemDto updated = receivingService.changeItemState(id, state);
         log.info("Item {} state changed to {}", id, state);
         return ResponseEntity.ok(updated);

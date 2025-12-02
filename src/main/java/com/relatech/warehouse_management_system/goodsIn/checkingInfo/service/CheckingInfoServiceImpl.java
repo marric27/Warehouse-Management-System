@@ -123,4 +123,9 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
         log.info("Updated checkinginfo {} to state {}", checkingInfoId, newState);
         return ci;
     }
+
+    @Override
+    public List<CheckingInfo> getAllById(List<Long> checkingInfoIds) {
+        return checkingInfoRepository.findAllById(checkingInfoIds);
+    }
 }

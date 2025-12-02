@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.goodsIn.dto;
 
+import com.relatech.warehouse_management_system.common.util.State;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -34,7 +35,7 @@ public class GrnDTO {
     private LocalDate receivingDate;
 
     @Schema(description = "GRN status", example = "OPEN")
-    private String state;
+    private State state;
 
     @Valid
     @Schema(description = "List of items in the GRN", example = "1", accessMode = Schema.AccessMode.READ_ONLY)

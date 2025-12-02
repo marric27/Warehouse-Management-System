@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.common.exception;
 
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -100,6 +101,13 @@ public class GlobalExceptionHandler {
         log.error("IllegalArgumentException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(buildError(HttpStatus.BAD_REQUEST, ex, req));
+    }
+
+    @ExceptionHandler(GrnExceptions.GrnWithItemsException.class)
+    public ResponseEntity<ApiError> handleGrnWithItems(GrnExceptions.GrnWithItemsException ex, HttpServletRequest req) {
+        log.error("GrnWithItemsException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildError(HttpStatus.CONFLICT, ex, req));
     }
 
     @ExceptionHandler(Exception.class)

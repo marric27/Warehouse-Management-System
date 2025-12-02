@@ -15,6 +15,9 @@ public class GrnExceptions {
         public GrnItemNotFoundException(Long id) {
             super("GRNItem not found with ID: " + id);
         }
+        public GrnItemNotFoundException(String code) {
+            super("GRN not found with code: " + code);
+        }
     }
 
     public static class GrnWithItemsException extends Exception {

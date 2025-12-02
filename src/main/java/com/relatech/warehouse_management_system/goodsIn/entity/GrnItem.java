@@ -1,8 +1,8 @@
 package com.relatech.warehouse_management_system.goodsIn.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.common.util.State;
+import com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity.CheckingInfo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,11 +17,12 @@ import java.util.List;
 @Setter
 @Builder
 public class GrnItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "code", nullable = false)
+    @Column(name = "grn_item_code", nullable = false, unique = true)
     private String code;
 
     @Column(name = "product_code", nullable = false)
@@ -46,7 +47,7 @@ public class GrnItem {
     @Column(name = "notes", length = 1000)
     private String notes;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grn_id")
     @JsonIgnore
     private GRN grn;

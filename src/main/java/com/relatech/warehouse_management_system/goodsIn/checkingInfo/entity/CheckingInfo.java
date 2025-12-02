@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.common.util.State;
 import jakarta.persistence.*;
@@ -35,6 +36,7 @@ public class CheckingInfo {
 
     @ManyToOne
     @JoinColumn(name = "grn_item_id")
+    @JsonIgnore
     private GrnItem grnItem;
 
     @Column(name = "stock_unit_id")

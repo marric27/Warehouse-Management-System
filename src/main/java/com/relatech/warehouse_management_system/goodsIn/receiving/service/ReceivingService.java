@@ -8,16 +8,16 @@ package com.relatech.warehouse_management_system.goodsIn.receiving.service;
  * item assignment, and auto-progression rules.
  */
 import com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity.CheckingInfo;
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.repository.CheckingInfoRepository;
+import com.relatech.warehouse_management_system.goodsIn.checkingInfo.service.CheckingInfoService;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnMapper;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.GRN;
 import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
-import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnItemRepository;
-import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnRepository;
 import com.relatech.warehouse_management_system.common.util.State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +33,9 @@ import java.util.List;
 @Transactional
 public class ReceivingService {
 
-    private final GrnRepository grnRepository;
-    private final GrnItemRepository grnItemRepository;
-    private final CheckingInfoRepository checkingInfoRepository;
+    private final GrnService grnService;
+    private final GrnItemService grnItemService;
+    private final CheckingInfoService checkingInfoService;
     private final GrnMapper grnMapper;
     private final GrnItemMapper grnItemMapper;
 
@@ -45,69 +45,54 @@ public class ReceivingService {
      * Creates new GRN header with duplicate code check + business defaults
      * (OPEN state, today date). Maps DTO→Entity→DTO.
      */
-    public GrnDTO createGRN(GrnDTO grnDTO) throws GrnExceptions.DuplicateGrnCodeException {
+    public GrnDTO createGRN(GrnDTO grnDTO) throws GrnExceptions.GrnNotFoundException, GrnExceptions.DuplicateGrnCodeException {
         log.info("Creating new GRN with code: {}", grnDTO.getCode());
-
-        if (grnRepository.findByCode(grnDTO.getCode()).isPresent()) {
-            throw new GrnExceptions.DuplicateGrnCodeException(grnDTO.getCode());
-        }
 
         GRN grn = grnMapper.toEntity(grnDTO);
         if (grn.getState() == null) grn.setState(State.OPEN);
         if (grn.getReceivingDate() == null) grn.setReceivingDate(LocalDate.now());
 
-        grn = grnRepository.save(grn);
-        log.info("GRN {} created successfully", grn.getId());
-        return grnMapper.toDto(grn);
+        GrnDTO dto = grnService.createGRN(grnDTO);
+        log.info("GRN {} created successfully", dto.getId());
+        return dto;
     }
 
     /** Reads single GRN by ID → Entity→DTO */
     public GrnDTO readGRN(Long id) throws GrnExceptions.GrnNotFoundException {
-        GRN grn = grnRepository.findById(id)
-                .orElseThrow(() -> new GrnExceptions.GrnNotFoundException(id));
-        return grnMapper.toDto(grn);
+        return grnService.getGRNById(id);
     }
 
     /** Lists ALL GRNs (non-paginated) → Entity→DTO */
     public List<GrnDTO> listGRNs() {
-        return grnRepository.findAll().stream()
-                .map(grnMapper::toDto)
-                .toList();
+        return grnService.getAllGRNs();
     }
 
     /** Text search across GRN fields → Entity→DTO */
     public List<GrnDTO> searchGRNs(String term) {
-        return grnRepository.searchByTerm(term).stream()
-                .map(grnMapper::toDto)
-                .toList();
+        return grnService.searchGrns(term);
     }
 
     /** Partial update: only supplier/date if provided */
     public GrnDTO updateGRN(Long id, GrnDTO grnDTO) throws GrnExceptions.GrnNotFoundException {
-        GRN grn = grnRepository.findById(id)
-                .orElseThrow(() -> new GrnExceptions.GrnNotFoundException(id));
+        GrnDTO toUpdate = grnService.getGRNById(id);
 
         if (grnDTO.getSupplier() != null) {
-            grn.setSupplier(grnDTO.getSupplier());
+            toUpdate.setSupplier(grnDTO.getSupplier());
         }
         if (grnDTO.getReceivingDate() != null) {
-            grn.setReceivingDate(grnDTO.getReceivingDate());
+            toUpdate.setReceivingDate(grnDTO.getReceivingDate());
         }
-
-        grn = grnRepository.save(grn);
-        return grnMapper.toDto(grn);
+        return grnService.updateGRN(id, toUpdate);
     }
 
     /** Delete GRN only if it has NO items attached */
     public void deleteGRN(Long id) throws GrnExceptions.GrnNotFoundException, GrnExceptions.GrnWithItemsException {
-        GRN grn = grnRepository.findById(id)
-                .orElseThrow(() -> new GrnExceptions.GrnNotFoundException(id));
+        GrnDTO grn = grnService.getGRNById(id);
 
         if (grn.getItems() != null && !grn.getItems().isEmpty()) {
             throw new GrnExceptions.GrnWithItemsException(id.toString());
         }
-
-        grnRepository.delete(grn);
+        grnService.deleteById(id);
     }
 
 
@@ -121,20 +106,27 @@ public class ReceivingService {
      */
     public GrnItemDto createGRNItem(Long grnId, GrnItemDto dto)
             throws GrnExceptions.GrnNotFoundException, GrnExceptions.InvalidQuantityException,
-            GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException {
-        GRN grn = grnRepository.findById(grnId)
-                .orElseThrow(() -> new GrnExceptions.GrnNotFoundException(grnId));
+            GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException, GrnExceptions.DuplicateGrnCodeException {
+
+        GrnDTO grnDTO = grnService.getGRNById(grnId);
+        GRN grn = grnMapper.toEntity(grnDTO);
 
         GrnItem item = grnItemMapper.toEntity(dto);
         item.setGrn(grn);
 
         validateGRNItemLogic(item);
-        item = grnItemRepository.save(item);
+        grnItemService.createGrnItem(dto);
 
         grn.addItem(item);
-        grnRepository.save(grn);
+        grnService.updateGRN(grnId, grnMapper.toDto(grn));
 
         return grnItemMapper.toDto(item);
+    }
+
+    public GrnItemDto createItemForGrn(Long grnId, GrnItemDto dto) throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.InvalidQuantityException, GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException {
+        validateGRNItemLogic(grnItemMapper.toEntity(dto));
+        GrnItem saved = grnService.addItemToGrn(grnId, dto);
+        return grnItemMapper.toDto(saved);
     }
 
     /**
@@ -144,41 +136,35 @@ public class ReceivingService {
     public GrnItemDto updateGRNItem(Long grnItemId, GrnItemDto dto)
             throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.InvalidQuantityException,
             GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException {
-        GrnItem item = grnItemRepository.findById(grnItemId)
-                .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(grnItemId));
 
-        if (dto.getProductCode() != null) item.setProductCode(dto.getProductCode());
-        if (dto.getExpectedQty() > 0) item.setExpectedQty(dto.getExpectedQty());
-        if (dto.getReceivedQty() >= 0) item.setReceivedQty(dto.getReceivedQty());
-        if (dto.getCompliantQty() >= 0) item.setCompliantQty(dto.getCompliantQty());
-        if (dto.getNotCompliantQty() >= 0) item.setNotCompliantQty(dto.getNotCompliantQty());
-        if (dto.getState() != null) item.setState(dto.getState());
+        GrnItemDto toUpdate = grnItemService.getGrnItemById(grnItemId);
 
-        validateGRNItemLogic(item);
-        item = grnItemRepository.save(item);
+        if (dto.getProductCode() != null) toUpdate.setProductCode(dto.getProductCode());
+        if (dto.getExpectedQty() > 0) toUpdate.setExpectedQty(dto.getExpectedQty());
+        if (dto.getReceivedQty() >= 0) toUpdate.setReceivedQty(dto.getReceivedQty());
+        if (dto.getCompliantQty() >= 0) toUpdate.setCompliantQty(dto.getCompliantQty());
+        if (dto.getNotCompliantQty() >= 0) toUpdate.setNotCompliantQty(dto.getNotCompliantQty());
+        if (dto.getState() != null) toUpdate.setState(dto.getState());
 
-        return grnItemMapper.toDto(item);
+        validateGRNItemLogic(grnItemMapper.toEntity(toUpdate));
+
+        return grnItemService.updateGrnItem(grnItemId, toUpdate);
     }
 
     /** Lists all items belonging to specific GRN */
     public List<GrnItemDto> listGRNItems(Long grnId) throws GrnExceptions.GrnNotFoundException {
-        GRN grn = grnRepository.findById(grnId)
-                .orElseThrow(() -> new GrnExceptions.GrnNotFoundException(grnId));
+        GrnDTO grn = grnService.getGRNById(grnId);
 
-        List<GrnItem> items = grn.getItems();
-        return items != null ? grnItemMapper.toDto(items) : List.of();
+        List<GrnItemDto> items = grn.getItems();
+        return items != null ? items : List.of();
     }
 
     public GrnItemDto readGRNItem(Long id) throws GrnExceptions.GrnItemNotFoundException {
-        GrnItem item = grnItemRepository.findById(id)
-                .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(id));
-        return grnItemMapper.toDto(item);
+        return grnItemService.getGrnItemById(id);
     }
 
     public void deleteGRNItem(Long id) throws GrnExceptions.GrnItemNotFoundException {
-        grnItemRepository.findById(id)
-                .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(id));
-        grnItemRepository.deleteById(id);
+        grnItemService.deleteGrnItem(id);
     }
 
 
@@ -192,45 +178,40 @@ public class ReceivingService {
      */
     public GrnItemDto assignCheckingInfoToItem(Long itemId, List<Long> checkingInfoIds)
             throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.QuantityMismatchException {
-        GrnItem item = grnItemRepository.findById(itemId)
-                .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(itemId));
+        GrnItemDto item = grnItemService.getGrnItemById(itemId);
 
-        List<CheckingInfo> checkingInfos = checkingInfoRepository.findAllById(checkingInfoIds);
+        List<CheckingInfo> checkingInfos = checkingInfoService.getAllById(checkingInfoIds);
         item.setCheckingInfoList(checkingInfos);
 
-        GrnItem updated = grnItemRepository.save(item);
-        checkAssignedQuantity(updated);
+        GrnItemDto updated = grnItemService.updateGrnItem(itemId, item);
+        checkAssignedQuantity(grnItemMapper.toEntity(updated));
 
-        return grnItemMapper.toDto(updated);
+        return updated;
     }
-
 
     // Validates and applies allowed state transitions
     // OPEN → CHECKED/PUTAWAY | CHECKED → PUTAWAY/CLOSED | PUTAWAY → CLOSED
 
-
     public GrnDTO changeGRNState(Long id, State newState)
             throws GrnExceptions.GrnNotFoundException, GrnExceptions.InvalidStateTransitionException {
-        GRN grn = grnRepository.findById(id)
-                .orElseThrow(() -> new GrnExceptions.GrnNotFoundException(id));
+        GrnDTO grn = grnService.getGRNById(id);
 
         State currentState = grn.getState() != null ? grn.getState() : State.OPEN;
         validateStateTransition(currentState, newState);
 
         grn.setState(newState);
-        return grnMapper.toDto(grnRepository.save(grn));
+        return grnService.updateGRN(id, grn);
     }
 
     public GrnItemDto changeItemState(Long id, State newState)
             throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.InvalidStateTransitionException {
-        GrnItem item = grnItemRepository.findById(id)
-                .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(id));
+        GrnItemDto item = grnItemService.getGrnItemById(id);
 
         State currentState = item.getState() != null ? item.getState() : State.OPEN;
         validateStateTransition(currentState, newState);
 
         item.setState(newState);
-        return grnItemMapper.toDto(grnItemRepository.save(item));
+        return grnItemService.updateGrnItem(id, item);
     }
 
 
@@ -296,7 +277,7 @@ public class ReceivingService {
      * AUTO-PROGRESSION: if assigned CheckingInfo qty >= expected
      * and state=OPEN → auto CHECKED
      */
-    private void checkAssignedQuantity(GrnItem item) {
+    private void checkAssignedQuantity(GrnItem item) throws GrnExceptions.GrnItemNotFoundException {
         int expected = item.getExpectedQty();
         List<CheckingInfo> checkingInfos = item.getCheckingInfoList();
         int assigned = (checkingInfos == null || checkingInfos.isEmpty()) ? 0 :
@@ -306,7 +287,7 @@ public class ReceivingService {
         if (assigned >= expected && currentState == State.OPEN) {
             log.info("Item {} complete → auto CHECKED", item.getId());
             item.setState(State.CHECKED);
-            grnItemRepository.save(item);
+            grnItemService.updateGrnItem(item.getId(), grnItemMapper.toDto(item));
         }
     }
 }

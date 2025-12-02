@@ -1,13 +1,13 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
-import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.common.exception.GrnWithItemsException;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.GRN;
-import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnMapper;
+import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
-import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnItemRepository;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnRepository;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,28 +25,38 @@ import java.util.List;
 public class GrnServiceImpl implements GrnService {
 
     private final GrnRepository grnRepository;
-    private final GrnItemRepository grnItemRepository;
     private final GrnMapper grnMapper;
     private final GrnItemMapper grnItemMapper;
 
     @Override
-    public GrnDTO getGRNById(Long id) throws ResourceNotFoundException {
+    @Transactional(rollbackFor = GrnExceptions.DuplicateGrnCodeException.class, propagation = Propagation.REQUIRED)
+    public GrnDTO createGRN(GrnDTO grnDTO) {
+        log.debug("Creating new GRN with ID: {}", grnDTO.getId());
+
+        GRN entity = grnMapper.toEntity(grnDTO);
+        GRN saved = grnRepository.save(entity);
+        log.info("GRN created successfully with ID: {}", saved.getId());
+        return grnMapper.toDto(saved);
+    }
+
+    @Override
+    public GrnDTO getGRNById(Long id) throws GrnExceptions.GrnNotFoundException {
         log.debug("Fetching GRN with ID: {}", id);
         GRN entity = grnRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("GRN not found with ID: {}", id);
-                    return new ResourceNotFoundException("GRN", id);
+                    return new GrnExceptions.GrnNotFoundException(id);
                 });
         return grnMapper.toDto(entity);
     }
 
     @Override
-    public GrnDTO getGRNByCode(String code) throws ResourceNotFoundException {
+    public GrnDTO getGRNByCode(String code) throws GrnExceptions.GrnNotFoundException {
         log.debug("Fetching GRN with code: {}", code);
         GRN entity = grnRepository.findByCode(code)
                 .orElseThrow(() -> {
                     log.warn("GRN not found with code: {}", code);
-                    return new ResourceNotFoundException("GRN", code);
+                    return new GrnExceptions.GrnNotFoundException(code);
                 });
         return grnMapper.toDto(entity);
     }
@@ -68,10 +78,9 @@ public class GrnServiceImpl implements GrnService {
 
     @Override
     @Transactional(timeout = 5, propagation = Propagation.REQUIRED)
-    public GrnDTO updateGRN(Long id, GrnDTO grnDTO) throws ResourceNotFoundException {
+    public GrnDTO updateGRN(Long id, GrnDTO grnDTO) throws GrnExceptions.GrnNotFoundException {
         GRN existing = grnRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("GRN", id));
-
+                .orElseThrow(() -> new GrnExceptions.GrnNotFoundException(id));
 
         if (grnDTO.getSupplier() != null)
             existing.setSupplier(grnDTO.getSupplier());
@@ -82,22 +91,21 @@ public class GrnServiceImpl implements GrnService {
         return grnMapper.toDto(saved);
     }
 
-
     @Override
-    @Transactional(rollbackFor = {ResourceNotFoundException.class, GrnWithItemsException.class},
+    @Transactional(rollbackFor = {GrnExceptions.GrnNotFoundException.class, GrnExceptions.GrnWithItemsException.class},
             propagation = Propagation.REQUIRES_NEW)
-    public void deleteById(Long id) throws ResourceNotFoundException, GrnWithItemsException {
+    public void deleteById(Long id) throws GrnExceptions.GrnNotFoundException, GrnExceptions.GrnWithItemsException {
         log.debug("Deleting GRN with ID: {}", id);
 
         GRN grn = grnRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("GRN not found with ID: {}", id);
-                    return new ResourceNotFoundException("GRN", id);
+                    return new GrnExceptions.GrnNotFoundException(id);
                 });
 
         if (grn.getItems() != null && !grn.getItems().isEmpty()) {
             log.warn("Cannot delete GRN {} as it has associated items", id);
-            throw new GrnWithItemsException("" + id);
+            throw new GrnExceptions.GrnWithItemsException("" + id);
         }
 
         grnRepository.delete(grn);
@@ -115,5 +123,18 @@ public class GrnServiceImpl implements GrnService {
         return grnRepository.searchByTerm(term).stream()
                 .map(grnMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public GrnItem addItemToGrn(Long grnId, GrnItemDto dto) throws GrnExceptions.GrnItemNotFoundException {
+        GRN grn = grnRepository.findById(grnId)
+                .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(dto.getId()));
+
+        GrnItem item = grnItemMapper.toEntity(dto);
+
+        grn.addItem(item);
+        grnRepository.save(grn);
+
+        return item;
     }
 }
