@@ -7,8 +7,9 @@ package com.relatech.warehouse_management_system.goodsIn.receiving.service;
  * Handles full lifecycle: creation, validation, state transitions,
  * item assignment, and auto-progression rules.
  */
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity.CheckingInfo;
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.service.CheckingInfoService;
+import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.CheckingInfoService;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnMapper;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
@@ -123,10 +124,9 @@ public class ReceivingService {
         return grnItemMapper.toDto(item);
     }
 
-    public GrnItemDto createItemForGrn(Long grnId, GrnItemDto dto) throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.InvalidQuantityException, GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException {
+    public GrnDTO createItemForGrn(Long grnId, GrnItemDto dto) throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.InvalidQuantityException, GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException {
         validateGRNItemLogic(grnItemMapper.toEntity(dto));
-        GrnItem saved = grnService.addItemToGrn(grnId, dto);
-        return grnItemMapper.toDto(saved);
+        return grnService.addItemToGrn(grnId, dto);
     }
 
     /**
@@ -180,7 +180,7 @@ public class ReceivingService {
             throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.QuantityMismatchException {
         GrnItemDto item = grnItemService.getGrnItemById(itemId);
 
-        List<CheckingInfo> checkingInfos = checkingInfoService.getAllById(checkingInfoIds);
+        List<CheckingInfoDto> checkingInfos = checkingInfoService.getAllById(checkingInfoIds);
         item.setCheckingInfoList(checkingInfos);
 
         GrnItemDto updated = grnItemService.updateGrnItem(itemId, item);

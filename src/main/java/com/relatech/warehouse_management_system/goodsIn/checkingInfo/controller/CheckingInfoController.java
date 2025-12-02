@@ -1,9 +1,9 @@
 package com.relatech.warehouse_management_system.goodsIn.checkingInfo.controller;
 
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.dto.CheckingInfoDto;
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity.CheckingInfo;
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.mapper.CheckingInfoMapper;
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.service.CheckingInfoService;
+import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.CheckingInfoMapper;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.CheckingInfoService;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.State;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,6 +23,7 @@ import java.util.List;
 public class CheckingInfoController {
 
     private final CheckingInfoService checkingInfoService;
+    private final CheckingInfoMapper checkingInfoMapper;
 
     @PostMapping
     public ResponseEntity<CheckingInfoDto> create(@Valid @RequestBody CheckingInfoDto dto) {
@@ -73,6 +74,6 @@ public class CheckingInfoController {
     @PutMapping("/{id}/state")
     public ResponseEntity<CheckingInfoDto> updateState(@PathVariable Long id, @RequestParam State state) throws ResourceNotFoundException {
         CheckingInfo updatedCI = checkingInfoService.updateCheckingInfoState(id, state);
-        return ResponseEntity.ok(CheckingInfoMapper.toDto(updatedCI));
+        return ResponseEntity.ok(checkingInfoMapper.toDto(updatedCI));
     }
 }

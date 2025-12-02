@@ -1,4 +1,4 @@
-package com.relatech.warehouse_management_system.stockUnit.entity;
+package com.relatech.warehouse_management_system.goodsIn.entity;
 
 import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.product.entity.Product;

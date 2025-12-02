@@ -1,4 +1,4 @@
-package com.relatech.warehouse_management_system.stockUnit.dto;
+package com.relatech.warehouse_management_system.goodsIn.dto;
 
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;

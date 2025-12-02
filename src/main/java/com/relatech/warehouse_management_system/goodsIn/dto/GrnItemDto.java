@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.goodsIn.dto;
 
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.goodsIn.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.common.util.State;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
@@ -46,6 +46,6 @@ public class GrnItemDto {
     private State state;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    private List<CheckingInfo> checkingInfoList;
+    private List<CheckingInfoDto> checkingInfoList;
 }
 

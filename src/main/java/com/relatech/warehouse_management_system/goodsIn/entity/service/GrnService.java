@@ -21,5 +21,5 @@ public interface GrnService {
     void deleteById(Long id) throws GrnExceptions.GrnNotFoundException, GrnExceptions.GrnWithItemsException;
     List<GrnDTO> searchGrns(String term);
 
-    GrnItem addItemToGrn(Long grnId, GrnItemDto dto) throws GrnExceptions.GrnItemNotFoundException;
+    GrnDTO addItemToGrn(Long grnId, GrnItemDto dto) throws GrnExceptions.GrnItemNotFoundException;
 }

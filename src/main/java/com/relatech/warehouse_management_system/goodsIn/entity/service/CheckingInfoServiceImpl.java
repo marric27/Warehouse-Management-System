@@ -1,11 +1,11 @@
-package com.relatech.warehouse_management_system.goodsIn.checkingInfo.service;
+package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
 import com.relatech.warehouse_management_system.goodsIn.entity.GRN;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnRepository;
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.dto.CheckingInfoDto;
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity.CheckingInfo;
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.mapper.CheckingInfoMapper;
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.repository.CheckingInfoRepository;
+import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.CheckingInfoMapper;
+import com.relatech.warehouse_management_system.goodsIn.entity.repository.CheckingInfoRepository;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnItemRepository;
@@ -60,6 +60,13 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
     }
 
     @Override
+    public CheckingInfoDto getByCode(String code) throws ResourceNotFoundException {
+        return checkingInfoRepository.findByCode(code)
+                .map(CheckingInfoMapper::toDto)
+                .orElseThrow(() -> new ResourceNotFoundException("CheckingInfo", code));
+    }
+
+    @Override
     public List<CheckingInfoDto> getAll() {
         return checkingInfoRepository.findAll()
                 .stream()
@@ -83,7 +90,7 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
                 .orElseThrow(() -> new ResourceNotFoundException("CheckingInfo", checkingInfoId));
 
         if (ci.getGrnItem() != null) {
-            ci.setStockUnit(stockUnitId);
+            ci.setStockUnitId(stockUnitId);
             updateCheckingInfoState(checkingInfoId, State.PUTAWAY);
             checkAllCIPutawayForGi(ci.getGrnItem());
         }
@@ -125,7 +132,7 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
     }
 
     @Override
-    public List<CheckingInfo> getAllById(List<Long> checkingInfoIds) {
-        return checkingInfoRepository.findAllById(checkingInfoIds);
+    public List<CheckingInfoDto> getAllById(List<Long> checkingInfoIds) {
+        return CheckingInfoMapper.toDtoList(checkingInfoRepository.findAllById(checkingInfoIds));
     }
 }

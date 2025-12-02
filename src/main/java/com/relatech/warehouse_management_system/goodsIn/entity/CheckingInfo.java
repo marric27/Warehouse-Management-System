@@ -1,7 +1,6 @@
-package com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity;
+package com.relatech.warehouse_management_system.goodsIn.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.common.util.State;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -41,16 +40,4 @@ public class CheckingInfo {
 
     @Column(name = "stock_unit_id")
     private Long stockUnitId;
-
-    public void setStockUnit(Long stockUnitId) {
-        this.stockUnitId = stockUnitId;
-    }
-
-    public Long getStockUnit() {
-        return this.stockUnitId;
-    }
-
-    public void removeStockUnit() {
-        this.stockUnitId = null;
-    }
 }

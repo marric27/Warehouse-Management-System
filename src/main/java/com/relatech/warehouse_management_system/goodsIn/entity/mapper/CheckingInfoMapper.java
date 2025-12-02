@@ -1,11 +1,16 @@
-package com.relatech.warehouse_management_system.goodsIn.checkingInfo.mapper;
+package com.relatech.warehouse_management_system.goodsIn.entity.mapper;
 
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.dto.CheckingInfoDto;
-import com.relatech.warehouse_management_system.goodsIn.checkingInfo.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class CheckingInfoMapper {
+
 
     public static CheckingInfoDto toDto(CheckingInfo entity) {
         if (entity == null) return null;
@@ -18,7 +23,7 @@ public class CheckingInfoMapper {
                 .quantity(entity.getQuantity())
                 .state(entity.getState())
                 .stockUnitId(entity.getStockUnitId())
-                .grnItemId(entity.getGrnItem() != null ? entity.getGrnItem().getId() : null)
+                .grnItemId(entity.getId())
                 .build();
     }
 
@@ -33,6 +38,16 @@ public class CheckingInfoMapper {
         ci.setQuantity(dto.getQuantity());
         ci.setState(dto.getState());
         ci.setStockUnitId(dto.getStockUnitId());
+        if (dto.getGrnItemId() != null) {
+            GrnItem grnItem = new GrnItem();
+            grnItem.setId(dto.getGrnItemId());
+            ci.setGrnItem(grnItem);
+        }
         return ci;
+    }
+
+    public static List<CheckingInfoDto> toDtoList(List<CheckingInfo> list) {
+        if (list == null || list.isEmpty()) return List.of();
+        return list.stream().map(CheckingInfoMapper::toDto).toList();
     }
 }

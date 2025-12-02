@@ -126,15 +126,14 @@ public class GrnServiceImpl implements GrnService {
     }
 
     @Override
-    public GrnItem addItemToGrn(Long grnId, GrnItemDto dto) throws GrnExceptions.GrnItemNotFoundException {
+    public GrnDTO addItemToGrn(Long grnId, GrnItemDto dto) throws GrnExceptions.GrnItemNotFoundException {
         GRN grn = grnRepository.findById(grnId)
                 .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(dto.getId()));
 
         GrnItem item = grnItemMapper.toEntity(dto);
 
         grn.addItem(item);
-        grnRepository.save(grn);
 
-        return item;
+        return grnMapper.toDto(grnRepository.save(grn));
     }
 }

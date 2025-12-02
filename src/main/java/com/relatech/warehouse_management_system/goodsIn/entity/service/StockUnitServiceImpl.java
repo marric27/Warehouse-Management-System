@@ -1,13 +1,12 @@
-package com.relatech.warehouse_management_system.stockUnit.service;
+package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
-import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
-import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
-import com.relatech.warehouse_management_system.stockUnit.mapper.StockUnitMapper;
-import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRepository;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
+import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 
@@ -25,32 +24,32 @@ import java.util.List;
 public class StockUnitServiceImpl implements StockUnitService {
 
     private final StockUnitRepository stockUnitRepository;
-    private final SlotRepository slotRepository;
     private final ProductRepository productRepository;
+    private final StockUnitMapper stockUnitMapper;
 
     @Override
     @Transactional(rollbackFor = {ValidationException.class, RuntimeException.class})
     public StockUnitDTO createStockUnit(StockUnitDTO dto) throws ValidationException {
-        StockUnit saved = stockUnitRepository.save(StockUnitMapper.toEntity(dto));
-        return StockUnitMapper.toDTO(saved);
+        StockUnit saved = stockUnitRepository.save(stockUnitMapper.toEntity(dto));
+        return stockUnitMapper.toDTO(saved);
     }
 
     @Override
     public StockUnitDTO getStockUnitById(Long id) throws ResourceNotFoundException {
         StockUnit stockUnit = stockUnitRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("StockUnit", id));
-        return StockUnitMapper.toDTO(stockUnit);
+        return stockUnitMapper.toDTO(stockUnit);
     }
 
     @Override
     public List<StockUnitDTO> getAllStockUnits() {
         return stockUnitRepository.findAll()
-                .stream().map(StockUnitMapper::toDTO).toList();
+                .stream().map(stockUnitMapper::toDTO).toList();
     }
 
     @Override
     public Page<StockUnitDTO> getAllStockUnitsPaged(Pageable pageable) {
-        return stockUnitRepository.findAll(pageable).map(StockUnitMapper::toDTO);
+        return stockUnitRepository.findAll(pageable).map(stockUnitMapper::toDTO);
     }
 
     @Override
@@ -66,7 +65,7 @@ public class StockUnitServiceImpl implements StockUnitService {
         existing.setCategory(dto.getCategory());
 
         StockUnit saved = stockUnitRepository.save(existing);
-        return StockUnitMapper.toDTO(saved);
+        return stockUnitMapper.toDTO(saved);
     }
 
     @Override
@@ -86,7 +85,7 @@ public class StockUnitServiceImpl implements StockUnitService {
                 .orElseThrow(() -> new ResourceNotFoundException("StockUnit", stockUnitId));
 
         su.addProduct(product);
-        return StockUnitMapper.toDTO(stockUnitRepository.save(su));
+        return stockUnitMapper.toDTO(stockUnitRepository.save(su));
     }
 
     @Override
@@ -95,6 +94,6 @@ public class StockUnitServiceImpl implements StockUnitService {
         StockUnit stockUnit = stockUnitRepository.findById(stockUnitId)
                 .orElseThrow(() -> new ResourceNotFoundException("Stock Unit", stockUnitId));
         stockUnit.setProduct(null);
-        return StockUnitMapper.toDTO(stockUnitRepository.save(stockUnit));
+        return stockUnitMapper.toDTO(stockUnitRepository.save(stockUnit));
     }
 }

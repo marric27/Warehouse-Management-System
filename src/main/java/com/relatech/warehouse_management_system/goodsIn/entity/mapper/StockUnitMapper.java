@@ -1,15 +1,15 @@
-package com.relatech.warehouse_management_system.stockUnit.mapper;
+package com.relatech.warehouse_management_system.goodsIn.entity.mapper;
 
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
-import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
-import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
 public class StockUnitMapper {
 
-    public static StockUnitDTO toDTO(StockUnit entity) {
+    public StockUnitDTO toDTO(StockUnit entity) {
         return StockUnitDTO.builder()
                 .id(entity.getId())
                 .batchNumber(entity.getBatchNumber())
@@ -22,7 +22,7 @@ public class StockUnitMapper {
                 .build();
     }
 
-    public static StockUnit toEntity(StockUnitDTO dto) {
+    public StockUnit toEntity(StockUnitDTO dto) {
         return StockUnit.builder()
                 .id(dto.getId())
                 .batchNumber(dto.getBatchNumber())
@@ -35,17 +35,17 @@ public class StockUnitMapper {
                 .build();
     }
 
-    public static List<StockUnitDTO> toDTO(List<StockUnit> entities) {
+    public List<StockUnitDTO> toDTO(List<StockUnit> entities) {
         if (entities == null) return null;
         return entities.stream()
-                .map(StockUnitMapper::toDTO)
+                .map(this::toDTO)
                 .toList();
     }
 
-    public static List<StockUnit> toEntity(List<StockUnitDTO> dtos) {
+    public List<StockUnit> toEntity(List<StockUnitDTO> dtos) {
         if (dtos == null) return null;
         return dtos.stream()
-                .map(StockUnitMapper::toEntity)
+                .map(this::toEntity)
                 .toList();
     }
 }

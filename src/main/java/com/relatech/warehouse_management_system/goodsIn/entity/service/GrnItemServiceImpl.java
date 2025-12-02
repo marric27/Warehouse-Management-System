@@ -19,20 +19,19 @@ import java.util.List;
 public class GrnItemServiceImpl implements GrnItemService {
 
     private final GrnItemRepository grnItemRepository;
-    private final GrnItemMapper grnItemMapper;
 
     @Override
     public GrnItemDto createGrnItem(GrnItemDto dto) {
         log.debug("Creating new GRN item with ID: {}", dto.getId());
-        GrnItem grnItem = grnItemMapper.toEntity(dto);
+        GrnItem grnItem = GrnItemMapper.toEntity(dto);
         log.info("GRN item created successfully with ID: {}", grnItem.getId());
-        return grnItemMapper.toDto(grnItem);
+        return GrnItemMapper.toDto(grnItem);
     }
 
     @Override
     public List<GrnItemDto> getAllGrnItems() {
         return grnItemRepository.findAll().stream()
-                .map(grnItemMapper::toDto)
+                .map(GrnItemMapper::toDto)
                 .toList();
     }
 
@@ -44,7 +43,7 @@ public class GrnItemServiceImpl implements GrnItemService {
                     log.warn("GRN item not found with ID: {}", id);
                     return new GrnExceptions.GrnItemNotFoundException(id);
                 });
-        return grnItemMapper.toDto(grnItem);
+        return GrnItemMapper.toDto(grnItem);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class GrnItemServiceImpl implements GrnItemService {
                     log.warn("GRN not found with code: {}", code);
                     return new GrnExceptions.GrnItemNotFoundException(code);
                 });
-        return grnItemMapper.toDto(grnItem);
+        return GrnItemMapper.toDto(grnItem);
     }
 
     @Override
@@ -74,11 +73,9 @@ public class GrnItemServiceImpl implements GrnItemService {
 
         if (grnItemDto.getState() != null)
             existingGrnItem.setState(grnItemDto.getState());
-        if (grnItemDto.getCheckingInfoList() != null)
-            existingGrnItem.setCheckingInfoList(grnItemDto.getCheckingInfoList());
 
         GrnItem updatedItem = grnItemRepository.save(existingGrnItem);
-        return grnItemMapper.toDto(updatedItem);
+        return GrnItemMapper.toDto(updatedItem);
     }
 
     @Override

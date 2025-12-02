@@ -2,6 +2,7 @@ package com.relatech.warehouse_management_system.goodsIn.entity.mapper;
 
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -9,8 +10,7 @@ import java.util.List;
 @Component
 public class GrnItemMapper {
 
-
-    public GrnItemDto toDto(GrnItem grnItem) {
+    public static GrnItemDto toDto(GrnItem grnItem) {
         if (grnItem == null) return null;
         return GrnItemDto.builder()
                 .id(grnItem.getId())
@@ -21,12 +21,14 @@ public class GrnItemMapper {
                 .compliantQty(grnItem.getCompliantQty())
                 .notCompliantQty(grnItem.getNotCompliantQty())
                 .state(grnItem.getState())
-                .checkingInfoList(grnItem.getCheckingInfoList())
+                .checkingInfoList(
+                        CheckingInfoMapper.toDtoList(grnItem.getCheckingInfoList())
+                )
                 .build();
     }
 
 
-    public GrnItem toEntity(GrnItemDto dto) {
+    public static GrnItem toEntity(GrnItemDto dto) {
         if (dto == null) return null;
         return GrnItem.builder()
                 .id(dto.getId())
@@ -43,15 +45,11 @@ public class GrnItemMapper {
 
     public List<GrnItemDto> toDto(List<GrnItem> entities) {
         if (entities == null || entities.isEmpty()) return List.of();
-        return entities.stream().map(this::toDto).toList();
+        return entities.stream().map(GrnItemMapper::toDto).toList();
     }
 
     public List<GrnItem> toEntity(List<GrnItemDto> dtos) {
         if (dtos == null || dtos.isEmpty()) return List.of();
-        return dtos.stream().map(this::toEntity).toList();
+        return dtos.stream().map(GrnItemMapper::toEntity).toList();
     }
-
-    // STATICI opzionali (retrocompatibilità)
-    public static GrnItemDto toDtoStatic(GrnItem grnItem) { return new GrnItemMapper().toDto(grnItem); }
-    public static GrnItem toEntityStatic(GrnItemDto dto) { return new GrnItemMapper().toEntity(dto); }
 }

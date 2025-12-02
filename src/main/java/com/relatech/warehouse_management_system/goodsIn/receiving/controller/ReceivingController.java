@@ -121,14 +121,14 @@ public class ReceivingController {
             @ApiResponse(responseCode = "404", description = "GRN not found"),
             @ApiResponse(responseCode = "422", description = "Invalid quantity")
     })
-    public ResponseEntity<GrnItemDto> createGRNItem(
+    public ResponseEntity<GrnDTO> createGRNItem(
             @Parameter(description = "GRN ID") @PathVariable Long grnId,
             @Valid @RequestBody GrnItemDto dto)
             throws GrnExceptions.InvalidQuantityException,
             GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException, GrnExceptions.GrnItemNotFoundException {
         log.info("POST /receiving/grns/{}/items - Creating item for GRN", grnId);
-        GrnItemDto created = receivingService.createItemForGrn(grnId, dto);
-        log.info("Item {} created for GRN {}", created.getCode(), grnId);
+        GrnDTO created = receivingService.createItemForGrn(grnId, dto);
+        log.info("Item {} created for GRN {}", dto.getCode(), grnId);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 

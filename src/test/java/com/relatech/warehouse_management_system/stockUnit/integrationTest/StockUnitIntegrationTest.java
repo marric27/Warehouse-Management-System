@@ -1,9 +1,9 @@
 package com.relatech.warehouse_management_system.stockUnit.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
-import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRepository;
-import com.relatech.warehouse_management_system.stockUnit.service.StockUnitService;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
 import com.relatech.warehouse_management_system.common.util.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
