@@ -22,7 +22,7 @@ public class GrnItemServiceImpl implements GrnItemService {
     private final GrnItemMapper grnItemMapper;
 
     @Override
-    public GrnItemDto createGrnItem(GrnItemDto dto) throws GrnExceptions.DuplicateGrnCodeException {
+    public GrnItemDto createGrnItem(GrnItemDto dto) {
         log.debug("Creating new GRN item with ID: {}", dto.getId());
         GrnItem grnItem = grnItemMapper.toEntity(dto);
         log.info("GRN item created successfully with ID: {}", grnItem.getId());
