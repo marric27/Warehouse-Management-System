@@ -7,8 +7,8 @@ import com.relatech.warehouse_management_system.common.util.Category;
 
 
 import com.relatech.warehouse_management_system.slot.controller.SlotController;
-import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
-import com.relatech.warehouse_management_system.slot.service.SlotService;
+import com.relatech.warehouse_management_system.goodsIn.dto.SlotDTO;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.SlotService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

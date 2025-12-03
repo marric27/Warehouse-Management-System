@@ -1,11 +1,14 @@
-package com.relatech.warehouse_management_system.slot.service;
+package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
+import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
-import com.relatech.warehouse_management_system.slot.entity.Slot;
-import com.relatech.warehouse_management_system.slot.mapper.SlotMapper;
-import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
+import com.relatech.warehouse_management_system.goodsIn.dto.SlotDTO;
+import com.relatech.warehouse_management_system.goodsIn.entity.Slot;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.SlotMapper;
+import com.relatech.warehouse_management_system.goodsIn.entity.repository.SlotRepository;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,9 @@ public class SlotServiceImpl implements SlotService {
     
     @Autowired
     private SlotMapper slotMapper;
+
+    @Autowired
+    private StockUnitMapper stockUnitMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -55,7 +61,7 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     @Transactional
-    public SlotDTO updateSlot(Long id, SlotDTO slotDTO) throws Exception {
+    public SlotDTO updateSlot(Long id, SlotDTO slotDTO) throws ResourceNotFoundException, UpdateEntityException {
         Slot existingSlot = slotRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", id));
 
@@ -66,8 +72,23 @@ public class SlotServiceImpl implements SlotService {
             existingSlot.setAllowedCategory(slotDTO.getAllowedCategory());
         else if (existingSlot.getProd().getCategory().equals(slotDTO.getAllowedCategory())) {
             existingSlot.setAllowedCategory(slotDTO.getAllowedCategory());
-        } else throw new Exception("Cant update slot category cause contains a product");
-
+        } else throw new UpdateEntityException(id);
+        if (slotDTO.getStockUnits() != null) {
+            for (StockUnitDTO stockUnitDTO : slotDTO.getStockUnits()) {
+                if (stockUnitDTO.getId() != null) {
+                    // Entità già persistente: fetch dal DB
+                    StockUnit stockUnit = stockUnitRepository.findById(stockUnitDTO.getId())
+                            .orElseThrow(() -> new ResourceNotFoundException("StockUnit", stockUnitDTO.getId()));
+                    stockUnit.setSlot(existingSlot); // Associo allo slot
+                    existingSlot.getStockUnits().add(stockUnit);
+                } else {
+                    // Nuova entità: creo e associo
+                    StockUnit stockUnit = stockUnitMapper.toEntity(stockUnitDTO);
+                    stockUnit.setSlot(existingSlot);
+                    existingSlot.getStockUnits().add(stockUnit);
+                }
+            }
+        }
         Slot updatedSlot = slotRepository.save(existingSlot);
         return slotMapper.toDto(updatedSlot);
     }

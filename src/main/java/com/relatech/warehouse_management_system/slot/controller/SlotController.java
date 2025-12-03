@@ -1,8 +1,8 @@
 package com.relatech.warehouse_management_system.slot.controller;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
-import com.relatech.warehouse_management_system.slot.service.SlotService;
+import com.relatech.warehouse_management_system.goodsIn.dto.SlotDTO;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.SlotService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

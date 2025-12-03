@@ -5,9 +5,9 @@ import com.relatech.warehouse_management_system.common.exception.ResourceNotFoun
 import com.relatech.warehouse_management_system.logistic.service.LogisticServiceImpl;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
-import com.relatech.warehouse_management_system.slot.entity.Slot;
-import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
+import com.relatech.warehouse_management_system.goodsIn.dto.SlotDTO;
+import com.relatech.warehouse_management_system.goodsIn.entity.Slot;
+import com.relatech.warehouse_management_system.goodsIn.entity.repository.SlotRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -3,7 +3,7 @@ package com.relatech.warehouse_management_system.stockUnit.serviceUnitTest;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.slot.service.SlotServiceImpl;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.SlotServiceImpl;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;

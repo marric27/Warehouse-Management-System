@@ -2,8 +2,8 @@ package com.relatech.warehouse_management_system.stockUnit.dataJpaTest;
 
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.slot.entity.Slot;
-import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
+import com.relatech.warehouse_management_system.goodsIn.entity.Slot;
+import com.relatech.warehouse_management_system.goodsIn.entity.repository.SlotRepository;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
 import com.relatech.warehouse_management_system.common.util.Category;
