@@ -2,8 +2,8 @@ package com.relatech.warehouse_management_system.slot.controllerUnitTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.util.Category;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.util.Category;
 
 
 import com.relatech.warehouse_management_system.slot.controller.SlotController;

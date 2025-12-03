@@ -1,14 +1,14 @@
 package com.relatech.warehouse_management_system.stockUnit.serviceUnitTest;
 
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import com.relatech.warehouse_management_system.slot.service.SlotServiceImpl;
-import com.relatech.warehouse_management_system.stockUnit.dto.StockUnitDTO;
-import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
-import com.relatech.warehouse_management_system.stockUnit.mapper.StockUnitMapper;
-import com.relatech.warehouse_management_system.stockUnit.repository.StockUnitRepository;
-import com.relatech.warehouse_management_system.stockUnit.service.StockUnitServiceImpl;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
+import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

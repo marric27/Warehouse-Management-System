@@ -1,15 +1,12 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
-import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
-import com.relatech.warehouse_management_system.checkingInfo.repository.CheckingInfoRepository;
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
-import com.relatech.warehouse_management_system.goodsIn.repository.GrnItemRepository;
-import com.relatech.warehouse_management_system.util.State;
+import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnItemRepository;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,108 +14,78 @@ import java.util.List;
 
 @Slf4j
 @Service
-//@Transactional(readOnly = true) //TODO
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class GrnItemServiceImpl implements GrnItemService {
 
-    @Autowired
-    private GrnItemRepository grnItemRepository;
-
-    @Autowired
-    private CheckingInfoRepository checkingInfoRepository;
+    private final GrnItemRepository grnItemRepository;
 
     @Override
-    public GrnItemDto createGrnItem(GrnItemDto grnItemDto) {
-        GrnItem grnItem = GrnItemMapper.toEntity(grnItemDto);
-
-        validateAndCalculateReceivedQty(grnItem);
-
-        GrnItem savedItem = grnItemRepository.save(grnItem);
-        return GrnItemMapper.toDto(savedItem);
+    @Transactional
+    public GrnItemDto createGrnItem(GrnItemDto dto) {
+        log.debug("Creating new GRN item with ID: {}", dto.getId());
+        GrnItem grnItem = GrnItemMapper.toEntity(dto);
+        grnItemRepository.save(grnItem);
+        log.info("GRN item created successfully with ID: {}", grnItem.getId());
+        return GrnItemMapper.toDto(grnItem);
     }
 
     @Override
     public List<GrnItemDto> getAllGrnItems() {
-        return grnItemRepository.findAll()
-                .stream()
-                .map(GrnItemMapper::toDto).toList();
-    }
-
-    @Override
-    public GrnItemDto getGrnItemById(Long id) throws ResourceNotFoundException {
-        return grnItemRepository.findById(id)
+        return grnItemRepository.findAll().stream()
                 .map(GrnItemMapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException("GrnItem", id));
+                .toList();
     }
 
     @Override
-    public GrnItemDto updateGrnItem(Long id, GrnItemDto grnItemDto) throws ResourceNotFoundException {
+    public GrnItemDto getGrnItemById(Long id) throws GrnExceptions.GrnItemNotFoundException {
+        log.debug("Fetching GRN item with ID: {}", id);
+        GrnItem grnItem = grnItemRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("GRN item not found with ID: {}", id);
+                    return new GrnExceptions.GrnItemNotFoundException(id);
+                });
+        return GrnItemMapper.toDto(grnItem);
+    }
+
+    @Override
+    public GrnItemDto getGrnItemByCode(String code) throws GrnExceptions.GrnItemNotFoundException {
+        log.debug("Fetching GRN item with code: {}", code);
+        GrnItem grnItem = grnItemRepository.findByCode(code)
+                .orElseThrow(() -> {
+                    log.warn("GRN not found with code: {}", code);
+                    return new GrnExceptions.GrnItemNotFoundException(code);
+                });
+        return GrnItemMapper.toDto(grnItem);
+    }
+
+    @Override
+    @Transactional
+    public GrnItemDto updateGrnItem(Long id, GrnItemDto grnItemDto) throws GrnExceptions.GrnItemNotFoundException {
         GrnItem existingGrnItem = grnItemRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("GrnItem", id));
-        //TODO scegliere quali campi aggiornare
-        existingGrnItem.setProductCode(grnItemDto.getProductCode());
+                .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(id));
+
+        if (grnItemDto.getProductCode() != null)
+            existingGrnItem.setProductCode(grnItemDto.getProductCode());
+
         existingGrnItem.setExpectedQty(grnItemDto.getExpectedQty());
         existingGrnItem.setReceivedQty(grnItemDto.getReceivedQty());
         existingGrnItem.setCompliantQty(grnItemDto.getCompliantQty());
         existingGrnItem.setNotCompliantQty(grnItemDto.getNotCompliantQty());
-        existingGrnItem.setState(grnItemDto.getState());
-        existingGrnItem.setCheckingInfoList(grnItemDto.getCheckingInfoList());
 
-        validateAndCalculateReceivedQty(existingGrnItem);
+        if (grnItemDto.getState() != null)
+            existingGrnItem.setState(grnItemDto.getState());
 
         GrnItem updatedItem = grnItemRepository.save(existingGrnItem);
         return GrnItemMapper.toDto(updatedItem);
     }
 
     @Override
-    public void deleteGrnItem(Long id) throws ResourceNotFoundException {
-        GrnItem grnItem = grnItemRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("GrnItem", id));
+    @Transactional
+    public void deleteGrnItem(Long id) throws GrnExceptions.GrnItemNotFoundException {
+        grnItemRepository.findById(id)
+                .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(id));
         grnItemRepository.deleteById(id);
     }
 
-    @Override
-    @Transactional
-    public GrnItemDto addCheckinginfoToGrnitem(Long grnitemId, List<Long> ciIds) throws ResourceNotFoundException {
-        GrnItem grnItem = grnItemRepository.findById(grnitemId)
-                .orElseThrow(() -> new ResourceNotFoundException("GrnItem", grnitemId));
-
-        List<CheckingInfo> checkingInfoList = checkingInfoRepository.findAllById(ciIds);
-        grnItem.addCInfos(checkingInfoList);
-        log.info("Assigned checkinginfo {} to grnitem {}", ciIds.getFirst(), grnitemId);
-
-        checkIfExpectedQtyIsSatisfied(grnItem);
-
-        return GrnItemMapper.toDto(grnItemRepository.save(grnItem));
-    }
-
-    @Override
-    @Transactional
-    public GrnItem updateGrnItemState(Long grnItemId, State newState) throws ResourceNotFoundException {
-        GrnItem grnItem = grnItemRepository.findById(grnItemId)
-                .orElseThrow(() -> new ResourceNotFoundException("GrnItem", grnItemId));
-
-        grnItem.setState(newState);
-        log.info("Updated GrnItem {} to state {}", grnItem.getId(), newState);
-        return grnItemRepository.save(grnItem);
-    }
-
-    private void checkIfExpectedQtyIsSatisfied(GrnItem grnItem) throws ResourceNotFoundException {
-        int totalAssigned = grnItem.getCheckingInfoList()
-                .stream()
-                .mapToInt(CheckingInfo::getQuantity)
-                .sum();
-
-        if (totalAssigned == grnItem.getExpectedQty() && grnItem.getState() == State.OPEN) {
-            updateGrnItemState(grnItem.getId(), State.CHECKED);
-        }
-    }
-
-    private void validateAndCalculateReceivedQty(GrnItem grnItem) {
-        int calculated = grnItem.getCompliantQty() + grnItem.getNotCompliantQty();
-        if (grnItem.getReceivedQty() != calculated) {
-            throw new IllegalArgumentException(
-                    "receivedQty deve essere uguale a compliantQty + notCompliantQty"
-            );
-        }
-    }
 }

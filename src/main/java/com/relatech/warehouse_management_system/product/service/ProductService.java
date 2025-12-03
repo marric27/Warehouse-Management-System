@@ -1,8 +1,8 @@
 package com.relatech.warehouse_management_system.product.service;
 
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
-import com.relatech.warehouse_management_system.util.Category;
+import com.relatech.warehouse_management_system.common.util.Category;
 
 import java.util.List;
 

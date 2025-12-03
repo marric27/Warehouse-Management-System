@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.slot.repository;
 
-import com.relatech.warehouse_management_system.util.Category;
+import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.slot.entity.Slot;
 import org.springframework.data.jpa.repository.JpaRepository;
 

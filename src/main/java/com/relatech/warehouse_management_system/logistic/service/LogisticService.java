@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.logistic.service;
 
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 
 public interface LogisticService {

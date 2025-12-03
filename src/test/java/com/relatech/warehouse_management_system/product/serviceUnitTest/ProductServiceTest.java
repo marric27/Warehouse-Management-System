@@ -1,12 +1,12 @@
 package com.relatech.warehouse_management_system.product.serviceUnitTest;
 
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import com.relatech.warehouse_management_system.product.service.ProductServiceImpl;
-import com.relatech.warehouse_management_system.util.Category;
+import com.relatech.warehouse_management_system.common.util.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

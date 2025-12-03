@@ -1,21 +1,20 @@
 package com.relatech.warehouse_management_system.goodsIn.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.relatech.warehouse_management_system.checkingInfo.entity.CheckingInfo;
-import com.relatech.warehouse_management_system.util.State;
+import com.relatech.warehouse_management_system.common.util.State;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "grn_item")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
 public class GrnItem {
 
     @Id
@@ -25,50 +24,33 @@ public class GrnItem {
     @Column(name = "grn_item_code", nullable = false, unique = true)
     private String code;
 
-    @Column(name = "product_code", nullable = false, length = 50)
+    @Column(name = "product_code", nullable = false)
     private String productCode;
 
     @Column(name = "expected_qty", nullable = false)
     private int expectedQty;
 
-    @Column(name = "received_qty", nullable = false)
+    @Column(name = "received_qty")
     private int receivedQty;
 
-    @Column(name = "compliant_qty", nullable = false)
+    @Column(name = "compliant_qty")
     private int compliantQty;
 
-    @Column(name = "not_compliant_qty", nullable = false)
+    @Column(name = "not_compliant_qty")
     private int notCompliantQty;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "state", nullable = false, length = 20)
+    @Column(name = "state")
     private State state;
 
-    @ManyToOne
+    @Column(name = "notes", length = 1000)
+    private String notes;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grn_id")
+    @JsonIgnore
     private GRN grn;
 
-    @OneToMany(mappedBy = "grnItem", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<CheckingInfo> checkingInfoList;
-
-    public void addCInfo(CheckingInfo ci) {
-        if (this.checkingInfoList == null) {
-            this.checkingInfoList = new ArrayList<>();
-        }
-        checkingInfoList.add(ci);
-        ci.setGrnItem(this);
-    }
-
-    public void addCInfos(List<CheckingInfo> checkingInfoList) {
-        for (CheckingInfo ci : checkingInfoList) {
-            addCInfo(ci); // this will set grn for each item
-        }
-    }
-
-    public void removeItem(CheckingInfo ci) {
-        checkingInfoList.remove(ci);
-    }
-
-
+    @OneToMany(mappedBy = "grnItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CheckingInfo> checkingInfoList = new ArrayList<>();
 }

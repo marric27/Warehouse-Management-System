@@ -1,94 +1,137 @@
 package com.relatech.warehouse_management_system.grnItem.service;
 
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.goodsIn.entity.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemServiceImpl;
-import com.relatech.warehouse_management_system.goodsIn.repository.GrnItemRepository;
-import com.relatech.warehouse_management_system.util.State;
+import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnItemRepository;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.*;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("GrnItemServiceImpl - Extended CRUD and Business Logic")
 class GrnItemServiceImplTest {
+
     @Mock
     private GrnItemRepository grnItemRepository;
+
+    @Mock
+    private GrnItemMapper grnItemMapper;
 
     @InjectMocks
     private GrnItemServiceImpl grnItemService;
 
     private GrnItemDto createValidDto() {
-        GrnItemDto dto = new GrnItemDto();
-        dto.setProductCode("P001");
-        dto.setExpectedQty(100);
-        dto.setCompliantQty(80);
-        dto.setNotCompliantQty(20);
-        dto.setReceivedQty(100);
-        dto.setState(State.OPEN);
-        dto.setCheckingInfoList(null);
-        return dto;
+        return GrnItemDto.builder()
+                .id(1L)
+                .code("ITEM-001")
+                .productCode("P001")
+                .expectedQty(10)
+                .build();
+    }
+
+    private GrnItem createValidEntity() {
+        return GrnItem.builder()
+                .id(1L)
+                .code("ITEM-001")
+                .productCode("P001")
+                .expectedQty(10)
+                .build();
     }
 
     @Test
-    @DisplayName("givenValidGrnItemDto_whenCreateGrnItem_thenReturnsSavedDto")
     void givenValidGrnItemDto_whenCreateGrnItem_thenReturnsSavedDto() {
-        GrnItemDto dto = createValidDto();
-        GrnItem entity = GrnItemMapper.toEntity(dto);
+        GrnItemDto grnItemDto = createValidDto();
+        GrnItem grnItem = createValidEntity();
 
-        when(grnItemRepository.save(any(GrnItem.class)))
-                .thenReturn(entity);
+        when(grnItemMapper.toEntity(grnItemDto)).thenReturn(grnItem);
+        when(grnItemMapper.toDto(grnItem)).thenReturn(grnItemDto);
 
-        GrnItemDto result = grnItemService.createGrnItem(dto);
+        GrnItemDto result = grnItemService.createGrnItem(grnItemDto);
 
-        assertThat(result).isNotNull();
-        assertThat(result.getReceivedQty()).isEqualTo(100);
+        assertNotNull(result);
+        assertEquals("ITEM-001", result.getCode());
+        verify(grnItemMapper).toEntity(grnItemDto);
+        verify(grnItemMapper).toDto(grnItem);
     }
 
     @Test
-    @DisplayName("givenInvalidReceivedQty_whenCreateGrnItem_thenThrowsIllegalArgumentException")
-    void givenInvalidReceivedQty_whenCreateGrnItem_thenThrowsIllegalArgumentException() {
-        GrnItemDto dto = createValidDto();
-        dto.setReceivedQty(50);
+    void givenExistingGrnItemId_whenGetGrnItemById_thenReturnsDto() throws GrnExceptions.GrnItemNotFoundException {
+        GrnItem grnItem = createValidEntity();
+        GrnItemDto grnItemDto = createValidDto();
 
-        assertThatThrownBy(() -> grnItemService.createGrnItem(dto))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("receivedQty deve essere uguale");
+        when(grnItemRepository.findById(1L)).thenReturn(Optional.of(grnItem));
+        when(grnItemMapper.toDto(grnItem)).thenReturn(grnItemDto);
+
+        GrnItemDto result = grnItemService.getGrnItemById(1L);
+
+        assertNotNull(result);
+        assertEquals("ITEM-001", result.getCode());
     }
 
     @Test
-    @DisplayName("givenGrnItemDoesNotExist_whenGetById_thenThrowsResourceNotFoundException")
-    void givenGrnItemDoesNotExist_whenGetById_thenThrowsResourceNotFoundException() {
-        when(grnItemRepository.findById(1L))
-                .thenReturn(Optional.empty());
+    void givenNonExistingGrnItemId_whenGetGrnItemById_thenThrowsNotFoundException() {
+        when(grnItemRepository.findById(2L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> grnItemService.getGrnItemById(1L))
-                .isInstanceOf(ResourceNotFoundException.class);
+        assertThrows(GrnExceptions.GrnItemNotFoundException.class,
+                () -> grnItemService.getGrnItemById(2L));
     }
 
     @Test
-    @DisplayName("givenGrnItemExists_whenDeleteGrnItem_thenRepositoryDeleteIsCalled")
-    void givenGrnItemExists_whenDeleteGrnItem_thenRepositoryDeleteIsCalled() throws Exception {
-        GrnItem existing = GrnItemMapper.toEntity(createValidDto());
-        existing.setId(1L);
+    void givenValidUpdateDto_whenUpdateGrnItem_thenUpdatesFieldsAndReturnsDto() throws GrnExceptions.GrnItemNotFoundException {
+        GrnItemDto updateDto = GrnItemDto.builder()
+                .productCode("P002")
+                .expectedQty(20)
+                .build();
+        GrnItem grnItem = createValidEntity();
+        GrnItemDto grnItemDto = createValidDto();
 
-        when(grnItemRepository.findById(1L))
-                .thenReturn(Optional.of(existing));
+        when(grnItemRepository.findById(1L)).thenReturn(Optional.of(grnItem));
+        when(grnItemRepository.save(grnItem)).thenReturn(grnItem);
+        when(grnItemMapper.toDto(grnItem)).thenReturn(grnItemDto);
+
+        GrnItemDto result = grnItemService.updateGrnItem(1L, updateDto);
+
+        assertNotNull(result);
+        assertEquals("P002", grnItem.getProductCode());
+        assertEquals(20, grnItem.getExpectedQty());
+        verify(grnItemRepository).save(grnItem);
+    }
+
+    @Test
+    void givenNonExistingId_whenUpdateGrnItem_thenThrowsNotFoundException() {
+        GrnItemDto updateDto = GrnItemDto.builder().productCode("P002").build();
+        when(grnItemRepository.findById(2L)).thenReturn(Optional.empty());
+
+        assertThrows(GrnExceptions.GrnItemNotFoundException.class,
+                () -> grnItemService.updateGrnItem(2L, updateDto));
+    }
+
+    @Test
+    void givenExistingGrnItemId_whenDeleteGrnItem_thenRepositoryDeleteCalled() throws GrnExceptions.GrnItemNotFoundException {
+        GrnItem grnItem = createValidEntity();
+        when(grnItemRepository.findById(1L)).thenReturn(Optional.of(grnItem));
 
         grnItemService.deleteGrnItem(1L);
 
         verify(grnItemRepository).deleteById(1L);
+    }
+
+    @Test
+    void givenNonExistingGrnItemId_whenDeleteGrnItem_thenThrowsNotFoundException() {
+        when(grnItemRepository.findById(2L)).thenReturn(Optional.empty());
+
+        assertThrows(GrnExceptions.GrnItemNotFoundException.class,
+                () -> grnItemService.deleteGrnItem(2L));
     }
 }

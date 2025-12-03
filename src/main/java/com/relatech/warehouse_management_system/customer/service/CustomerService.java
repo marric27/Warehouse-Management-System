@@ -1,7 +1,9 @@
 package com.relatech.warehouse_management_system.customer.service;
 
+import com.relatech.warehouse_management_system.common.exception.CustomerWithActiveOrdersException;
+import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.customer.dto.CustomerDTO;
-import com.relatech.warehouse_management_system.exception.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

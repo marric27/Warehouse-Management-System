@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.goodsIn.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.relatech.warehouse_management_system.util.State;
+import com.relatech.warehouse_management_system.common.util.State;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,26 +35,32 @@ public class GRN {
     @Column(name = "state", nullable = false, length = 20)
     private State state;
 
-    @OneToMany
-    @JoinColumn(name = "grn_id")
+    @OneToMany(mappedBy = "grn", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<GrnItem> items;
+    @Builder.Default
+    private List<GrnItem> items = new ArrayList<>();
 
+
+    // ---------- UTILITIES ----------
     public void addItem(GrnItem item) {
-        if (this.items == null) {
-            this.items = new ArrayList<>();
-        }
+        if (items == null)
+            items = new ArrayList<>();
         items.add(item);
         item.setGrn(this);
     }
 
     public void addItems(List<GrnItem> itemList) {
         for (GrnItem item : itemList) {
-            addItem(item); // this will set grn for each item
+            addItem(item);
         }
     }
 
     public void removeItem(GrnItem item) {
         items.remove(item);
+        item.setGrn(null);
+    }
+
+    public void setItems(List<GrnItem> list) {
+        this.items = (list != null) ? new ArrayList<>(list) : new ArrayList<>();
     }
 }

@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.logistic.serviceUnitTest;
 
 
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.logistic.service.LogisticServiceImpl;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class LogisticServiceImplTest {
+class LogisticServiceTest {
 
     @Mock
     SlotRepository slotRepository;

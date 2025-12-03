@@ -3,12 +3,16 @@ package com.relatech.warehouse_management_system.slot.mapper;
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
 import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
 import com.relatech.warehouse_management_system.slot.entity.Slot;
-import com.relatech.warehouse_management_system.stockUnit.mapper.StockUnitMapper;
+import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class SlotMapper {
-    public static SlotDTO toDto(Slot slot) {
+    private final StockUnitMapper stockUnitMapper;
+
+    public SlotDTO toDto(Slot slot) {
         if (slot == null) return null;
 
         SlotDTO dto = new SlotDTO();
@@ -17,12 +21,12 @@ public class SlotMapper {
         dto.setAllowedCategory(slot.getAllowedCategory());
         dto.setCapacity(slot.getCapacity());
         dto.setProduct(ProductMapper.toDto(slot.getProd()));
-        dto.setStockUnits(StockUnitMapper.toDTO(slot.getStockUnits()));
+        dto.setStockUnits(stockUnitMapper.toDTO(slot.getStockUnits()));
 
         return dto;
     }
 
-    public static Slot toEntity(SlotDTO dto) {
+    public Slot toEntity(SlotDTO dto) {
         if (dto == null) return null;
 
         Slot slot = new Slot();
@@ -31,10 +35,9 @@ public class SlotMapper {
         slot.setAllowedCategory(dto.getAllowedCategory());
         slot.setCapacity(dto.getCapacity());
         slot.setProd(ProductMapper.toEntity(dto.getProduct()));
-        slot.setStockUnits(StockUnitMapper.toEntity(dto.getStockUnits()));
+        slot.setStockUnits(stockUnitMapper.toEntity(dto.getStockUnits()));
 
         return slot;
     }
-
 
 }

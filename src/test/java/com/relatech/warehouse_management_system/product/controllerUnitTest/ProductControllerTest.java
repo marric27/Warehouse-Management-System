@@ -1,11 +1,11 @@
 package com.relatech.warehouse_management_system.product.controllerUnitTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.relatech.warehouse_management_system.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.controller.ProductController;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.product.service.ProductService;
-import com.relatech.warehouse_management_system.util.Category;import org.junit.jupiter.api.DisplayName;
+import com.relatech.warehouse_management_system.common.util.Category;import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,8 @@
 package com.relatech.warehouse_management_system.slot.entity;
 
 import com.relatech.warehouse_management_system.product.entity.Product;
-import com.relatech.warehouse_management_system.stockUnit.entity.StockUnit;
-import com.relatech.warehouse_management_system.util.Category;
+import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
+import com.relatech.warehouse_management_system.common.util.Category;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;

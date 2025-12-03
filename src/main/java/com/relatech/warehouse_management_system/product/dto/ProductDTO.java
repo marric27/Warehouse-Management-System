@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.product.dto;
 
-import com.relatech.warehouse_management_system.util.Category;
+import com.relatech.warehouse_management_system.common.util.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
