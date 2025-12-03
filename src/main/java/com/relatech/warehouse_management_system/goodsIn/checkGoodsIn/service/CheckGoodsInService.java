@@ -38,26 +38,16 @@ public class CheckGoodsInService {
     @Transactional
     public GrnItemDto createCheckingInfoWithStockUnitAndAssignToGrnItem(CheckingInfoDto checkingInfoDto, StockUnitDTO stockUnitDTO, Long grnItemId) throws Exception {
 
-        // recupero la grnitem esistente
-        // gli assegno la checking info
-        // assegno la ci a item
-
-        // salvo tutto
-
-
-        // 1. recupero grn item esistente
         GrnItemDto grnItem = grnItemService.getGrnItemById(grnItemId);
 
-        // 2. creo stock unit
         StockUnitDTO savedStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
 
-        // 3. preparo checking info
         checkingInfoDto.setGrnItemId(grnItemId);
         checkingInfoDto.setStockUnitId(savedStockUnit.getId());
 
         CheckingInfoDto savedChecking = checkingInfoService.create(checkingInfoDto);
 
-        // 4. aggiorno quantita grn item
+        // 4. aggiorno quantita grn item TODO
         grnItem.setReceivedQty(grnItem.getReceivedQty() + savedChecking.getQuantity());
 
         if (savedChecking.getState() == State.OPEN) {
@@ -66,12 +56,7 @@ public class CheckGoodsInService {
             grnItem.setNotCompliantQty(grnItem.getNotCompliantQty() + savedChecking.getQuantity());
         }
 
-        GrnItemDto updated = grnItemService.updateGrnItem(grnItemId, grnItem);
-
-        log.info(String.valueOf(updated));
-
-        // 5. ritorno DTO
-        return (updated);
+        return grnItemService.updateGrnItem(grnItemId, grnItem);
     }
 
 

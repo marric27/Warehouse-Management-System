@@ -21,9 +21,11 @@ public class GrnItemServiceImpl implements GrnItemService {
     private final GrnItemRepository grnItemRepository;
 
     @Override
+    @Transactional
     public GrnItemDto createGrnItem(GrnItemDto dto) {
         log.debug("Creating new GRN item with ID: {}", dto.getId());
         GrnItem grnItem = GrnItemMapper.toEntity(dto);
+        grnItemRepository.save(grnItem);
         log.info("GRN item created successfully with ID: {}", grnItem.getId());
         return GrnItemMapper.toDto(grnItem);
     }

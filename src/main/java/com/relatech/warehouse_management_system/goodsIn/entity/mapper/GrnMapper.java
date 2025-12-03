@@ -28,7 +28,9 @@ public class GrnMapper {
                 .supplier(entity.getSupplier())
                 .receivingDate(entity.getReceivingDate())
                 .state(entity.getState() != null ? entity.getState() : null)
-                .items(grnItemMapper.toDto(entity.getItems()))
+                .items(entity.getItems() != null ?
+                        new ArrayList<>(grnItemMapper.toDto(entity.getItems())) :
+                        new ArrayList<>())
                 .build();
     }
 

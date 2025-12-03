@@ -38,7 +38,6 @@ public class ReceivingService {
     private final GrnItemService grnItemService;
     private final CheckingInfoService checkingInfoService;
     private final GrnMapper grnMapper;
-    private final GrnItemMapper grnItemMapper;
 
     // Basic create/read/update/delete for GRN headers with business rules
 
@@ -46,7 +45,7 @@ public class ReceivingService {
      * Creates new GRN header with duplicate code check + business defaults
      * (OPEN state, today date). Maps DTO→Entity→DTO.
      */
-    public GrnDTO createGRN(GrnDTO grnDTO) throws GrnExceptions.GrnNotFoundException, GrnExceptions.DuplicateGrnCodeException {
+    public GrnDTO createGRN(GrnDTO grnDTO) throws GrnExceptions.DuplicateGrnCodeException {
         log.info("Creating new GRN with code: {}", grnDTO.getCode());
 
         GRN grn = grnMapper.toEntity(grnDTO);
@@ -105,28 +104,15 @@ public class ReceivingService {
      * Creates item → validates quantities → saves item → adds to parent GRN
      * → saves GRN aggregate for relationship consistency
      */
-    public GrnItemDto createGRNItem(Long grnId, GrnItemDto dto)
+    @Transactional
+    public GrnDTO createGRNItemAndAssignToGrn(Long grnId, GrnItemDto itemDto)
             throws GrnExceptions.GrnNotFoundException, GrnExceptions.InvalidQuantityException,
-            GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException, GrnExceptions.DuplicateGrnCodeException {
-
+            GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException {
         GrnDTO grnDTO = grnService.getGRNById(grnId);
-        GRN grn = grnMapper.toEntity(grnDTO);
-
-        GrnItem item = grnItemMapper.toEntity(dto);
-        item.setGrn(grn);
-
-        validateGRNItemLogic(item);
-        grnItemService.createGrnItem(dto);
-
-        grn.addItem(item);
-        grnService.updateGRN(grnId, grnMapper.toDto(grn));
-
-        return grnItemMapper.toDto(item);
-    }
-
-    public GrnDTO createItemForGrn(Long grnId, GrnItemDto dto) throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.InvalidQuantityException, GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException {
-        validateGRNItemLogic(grnItemMapper.toEntity(dto));
-        return grnService.addItemToGrn(grnId, dto);
+        validateGRNItemLogic(itemDto);
+        grnDTO.getItems().add(itemDto);
+        itemDto.setGrnId(grnId);
+        return grnService.updateGRN(grnId, grnDTO);
     }
 
     /**
@@ -146,7 +132,7 @@ public class ReceivingService {
         if (dto.getNotCompliantQty() >= 0) toUpdate.setNotCompliantQty(dto.getNotCompliantQty());
         if (dto.getState() != null) toUpdate.setState(dto.getState());
 
-        validateGRNItemLogic(grnItemMapper.toEntity(toUpdate));
+        validateGRNItemLogic(toUpdate);
 
         return grnItemService.updateGrnItem(grnItemId, toUpdate);
     }
@@ -184,7 +170,7 @@ public class ReceivingService {
         item.setCheckingInfoList(checkingInfos);
 
         GrnItemDto updated = grnItemService.updateGrnItem(itemId, item);
-        checkAssignedQuantity(grnItemMapper.toEntity(updated));
+        checkAssignedQuantity(GrnItemMapper.toEntity(updated));
 
         return updated;
     }
@@ -224,7 +210,7 @@ public class ReceivingService {
      * 2. received = compliant + notCompliant
      * 3. received <= expected (no over-receipt)
      */
-    private void validateGRNItemLogic(GrnItem item)
+    private void validateGRNItemLogic(GrnItemDto item)
             throws GrnExceptions.InvalidQuantityException, GrnExceptions.QuantityMismatchException,
             GrnExceptions.OverReceivedQuantityException {
         int compliant = item.getCompliantQty();
@@ -287,7 +273,7 @@ public class ReceivingService {
         if (assigned >= expected && currentState == State.OPEN) {
             log.info("Item {} complete → auto CHECKED", item.getId());
             item.setState(State.CHECKED);
-            grnItemService.updateGrnItem(item.getId(), grnItemMapper.toDto(item));
+            grnItemService.updateGrnItem(item.getId(), GrnItemMapper.toDto(item));
         }
     }
 }

@@ -38,6 +38,6 @@ public class GrnDTO {
     private State state;
 
     @Valid
-    @Schema(description = "List of items in the GRN", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "List of items in the GRN", example = "1")
     private List<GrnItemDto> items;
 }

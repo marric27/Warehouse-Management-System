@@ -1,10 +1,11 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.mapper;
 
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.GRN;
 import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -21,6 +22,7 @@ public class GrnItemMapper {
                 .compliantQty(grnItem.getCompliantQty())
                 .notCompliantQty(grnItem.getNotCompliantQty())
                 .state(grnItem.getState())
+                .grnId(grnItem.getGrn().getId())
                 .checkingInfoList(
                         CheckingInfoMapper.toDtoList(grnItem.getCheckingInfoList())
                 )
@@ -30,6 +32,12 @@ public class GrnItemMapper {
 
     public static GrnItem toEntity(GrnItemDto dto) {
         if (dto == null) return null;
+        GRN grnRef = null;
+        if (dto.getGrnId() != null) {
+            grnRef = GRN.builder()
+                    .id(dto.getGrnId())
+                    .build();
+        }
         return GrnItem.builder()
                 .id(dto.getId())
                 .code(dto.getCode())
@@ -39,9 +47,9 @@ public class GrnItemMapper {
                 .compliantQty(dto.getCompliantQty())
                 .notCompliantQty(dto.getNotCompliantQty())
                 .state(dto.getState())
+                .grn(grnRef)
                 .build();
     }
-
 
     public List<GrnItemDto> toDto(List<GrnItem> entities) {
         if (entities == null || entities.isEmpty()) return List.of();

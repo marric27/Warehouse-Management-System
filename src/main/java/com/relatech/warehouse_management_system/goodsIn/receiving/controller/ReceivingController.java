@@ -125,9 +125,10 @@ public class ReceivingController {
             @Parameter(description = "GRN ID") @PathVariable Long grnId,
             @Valid @RequestBody GrnItemDto dto)
             throws GrnExceptions.InvalidQuantityException,
-            GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException, GrnExceptions.GrnItemNotFoundException {
+            GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException, GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException, GrnExceptions.DuplicateGrnCodeException {
         log.info("POST /receiving/grns/{}/items - Creating item for GRN", grnId);
-        GrnDTO created = receivingService.createItemForGrn(grnId, dto);
+        //GrnDTO created = receivingService.createItemForGrn(grnId, dto);
+        GrnDTO created = receivingService.createGRNItemAndAssignToGrn(grnId, dto);
         log.info("Item {} created for GRN {}", dto.getCode(), grnId);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }

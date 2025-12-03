@@ -86,6 +86,18 @@ public class GrnServiceImpl implements GrnService {
             existing.setSupplier(grnDTO.getSupplier());
         if (grnDTO.getReceivingDate() != null)
             existing.setReceivingDate(grnDTO.getReceivingDate());
+        if (grnDTO.getItems() != null && !grnDTO.getItems().isEmpty()) {
+
+            for (GrnItemDto dto : grnDTO.getItems()) {
+                // Se ID è nullo -> nuovo item
+                if (dto.getId() == null) {
+                    GrnItem newItem = GrnItemMapper.toEntity(dto);
+                    newItem.setGrn(existing);
+                    existing.getItems().add(newItem);
+                }
+                // Se ID esiste -> skip (o update, se vuoi modificare quantità/stato)
+            }
+        }
 
         GRN saved = grnRepository.save(existing);
         return grnMapper.toDto(saved);
@@ -130,7 +142,7 @@ public class GrnServiceImpl implements GrnService {
         GRN grn = grnRepository.findById(grnId)
                 .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(dto.getId()));
 
-        GrnItem item = grnItemMapper.toEntity(dto);
+        GrnItem item = GrnItemMapper.toEntity(dto);
 
         grn.addItem(item);
 
