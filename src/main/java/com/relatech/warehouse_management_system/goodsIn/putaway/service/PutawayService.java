@@ -2,17 +2,8 @@ package com.relatech.warehouse_management_system.goodsIn.putaway.service;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.State;
-import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
-import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.goodsIn.dto.SlotDTO;
-import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
-import com.relatech.warehouse_management_system.goodsIn.entity.CheckingInfo;
-import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
-import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
-import com.relatech.warehouse_management_system.goodsIn.entity.service.CheckingInfoService;
-import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
-import com.relatech.warehouse_management_system.goodsIn.entity.service.SlotService;
-import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
+import com.relatech.warehouse_management_system.goodsIn.dto.*;
+import com.relatech.warehouse_management_system.goodsIn.entity.service.*;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +22,10 @@ public class PutawayService {
     private final StockUnitService stockUnitService;
     private final CheckingInfoService checkingInfoService;
     private final GrnItemService grnItemService;
+    private final GrnService grnService;
 
     @Transactional
-    public SlotDTO assignStockUnitToSlot(Long stockUnitId, Long slotId) throws ResourceNotFoundException, UpdateEntityException, GrnExceptions.GrnItemNotFoundException {
+    public SlotDTO assignStockUnitToSlot(Long stockUnitId, Long slotId) throws ResourceNotFoundException, UpdateEntityException, GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
         SlotDTO slotDTO = slotService.getSlotById(slotId);
         StockUnitDTO stockUnitDTO = stockUnitService.getStockUnitById(stockUnitId);
 
@@ -49,7 +41,7 @@ public class PutawayService {
         return saved;
     }
 
-    private void updateCheckinfoState(Long stockUnitId) throws ResourceNotFoundException, GrnExceptions.GrnItemNotFoundException {
+    private void updateCheckinfoState(Long stockUnitId) throws ResourceNotFoundException, GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
         CheckingInfoDto toUpdate = checkingInfoService.getByStockUnitId(stockUnitId);
 
         checkingInfoService.updateCheckingInfoState(toUpdate.getId(), State.PUTAWAY);
@@ -58,8 +50,7 @@ public class PutawayService {
         checkAssignedQuantity(itemDto);
     }
 
-    public void checkAssignedQuantity(GrnItemDto item) throws GrnExceptions.GrnItemNotFoundException {
-        //GrnItemDto item = grnItemService.getGrnItemById(grnItemId);
+    public void checkAssignedQuantity(GrnItemDto item) throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
         int expected = item.getExpectedQty();
         List<CheckingInfoDto> checkingInfos = item.getCheckingInfoList();
         int assigned = (checkingInfos == null || checkingInfos.isEmpty()) ? 0 :
@@ -84,10 +75,21 @@ public class PutawayService {
             log.info("All checkingInfos for item {} are PUTAWAY → auto PUTAWAY", item.getId());
             item.setState(State.PUTAWAY);
             grnItemService.updateGrnItem(item.getId(), item);
+            checkGrnState(item.getGrnId());
         }
     }
 
+    public void checkGrnState(Long grnId) throws GrnExceptions.GrnNotFoundException {
+        GrnDTO grnDTO = grnService.getGRNById(grnId);
+        boolean allItemsPutaway = grnDTO.getItems().stream()
+                .allMatch(i -> i.getState() == State.PUTAWAY);
 
+        if (allItemsPutaway) {
+            grnDTO.setState(State.CLOSED);
+            grnService.updateGRN(grnId, grnDTO);
+            log.info("All GrnItems for GRN {} are PUTAWAY → auto PUTAWAY", grnId);
+        }
+    }
 
 
 

@@ -87,7 +87,6 @@ public class GrnServiceImpl implements GrnService {
         if (grnDTO.getReceivingDate() != null)
             existing.setReceivingDate(grnDTO.getReceivingDate());
         if (grnDTO.getItems() != null && !grnDTO.getItems().isEmpty()) {
-
             for (GrnItemDto dto : grnDTO.getItems()) {
                 // Se ID è nullo -> nuovo item
                 if (dto.getId() == null) {
@@ -98,6 +97,8 @@ public class GrnServiceImpl implements GrnService {
                 // Se ID esiste -> skip (o update, se vuoi modificare quantità/stato)
             }
         }
+        if (grnDTO.getState() != null)
+            existing.setState(grnDTO.getState());
 
         GRN saved = grnRepository.save(existing);
         return grnMapper.toDto(saved);

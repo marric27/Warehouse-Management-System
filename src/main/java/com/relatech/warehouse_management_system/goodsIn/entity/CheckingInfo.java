@@ -38,6 +38,6 @@ public class CheckingInfo {
     @JsonIgnore
     private GrnItem grnItem;
 
-    @Column(name = "stock_unit_id")
+    @Column(name = "stock_unit_id", unique = true)
     private Long stockUnitId;
 }

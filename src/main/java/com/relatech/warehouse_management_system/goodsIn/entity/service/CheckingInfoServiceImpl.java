@@ -138,8 +138,10 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
     }
 
     @Override
-    public CheckingInfoDto getByStockUnitId(Long suId) {
-        return CheckingInfoMapper.toDto(checkingInfoRepository.findByStockUnitId(suId).getFirst());
+    public CheckingInfoDto getByStockUnitId(Long suId) throws ResourceNotFoundException {
+        CheckingInfo entity = checkingInfoRepository.findByStockUnitId(suId)
+                .orElseThrow(() -> new ResourceNotFoundException("CheckingInfo", suId));
+        return CheckingInfoMapper.toDto(entity);
     }
 
     @Override

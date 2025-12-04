@@ -3,7 +3,6 @@ package com.relatech.warehouse_management_system.goodsIn.entity.mapper;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class CheckingInfoMapper {
                 .quantity(entity.getQuantity())
                 .state(entity.getState())
                 .stockUnitId(entity.getStockUnitId())
-                .grnItemId(entity.getId())
+                .grnItemId(entity.getGrnItem().getId())
                 .build();
     }
 

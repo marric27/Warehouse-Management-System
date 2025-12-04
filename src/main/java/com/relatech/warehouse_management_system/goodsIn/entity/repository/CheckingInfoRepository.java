@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface CheckingInfoRepository extends JpaRepository<CheckingInfo, Long> {
     List<CheckingInfo> findByGrnItemId(Long grnItemId);
     Optional<CheckingInfo> findByCode(@NotBlank(message = "The code cannot be empty or null.") String code);
-    List<CheckingInfo> findByStockUnitId(Long stockUnitId);
+    Optional<CheckingInfo> findByStockUnitId(Long stockUnitId);
 }

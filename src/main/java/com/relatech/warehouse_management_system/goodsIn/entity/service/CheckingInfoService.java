@@ -4,9 +4,7 @@ import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.State;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 public interface CheckingInfoService {
@@ -29,7 +27,7 @@ public interface CheckingInfoService {
 
     List<CheckingInfoDto> getAllById(List<Long> checkingInfoIds);
 
-    CheckingInfoDto getByStockUnitId(Long suId);
+    CheckingInfoDto getByStockUnitId(Long suId) throws ResourceNotFoundException;
 
     List<CheckingInfoDto> getByGrnItemId(Long id);
 }
