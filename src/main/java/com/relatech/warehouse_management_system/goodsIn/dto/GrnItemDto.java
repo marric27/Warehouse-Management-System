@@ -44,7 +44,7 @@ public class GrnItemDto {
     @Schema(description = "State of the GRN item", example = "OPEN")
     private State state;
 
-    @Schema(description = "GRN", example = "1")
+    @Schema(description = "GRN", accessMode = Schema.AccessMode.READ_ONLY)
     private Long grnId;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)

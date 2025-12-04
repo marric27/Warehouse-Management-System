@@ -109,6 +109,7 @@ public class SlotServiceImpl implements SlotService {
         slotRepository.deleteById(id);
     }
 
+    //TODO remove
     @Override
     @Transactional
     public SlotDTO assignStockUnitToSlot(Long slotId, Long stockUnitId) throws ResourceNotFoundException {

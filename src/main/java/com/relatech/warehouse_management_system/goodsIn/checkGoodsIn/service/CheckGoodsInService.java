@@ -23,9 +23,7 @@ public class CheckGoodsInService {
     private final GrnItemService grnItemService;
     private final GrnItemStateService stateService;
 
-    public GrnItemDto createCheckingInfo(Long grnItemId,
-                                         CheckingInfoDto ci,
-                                         StockUnitDTO su) throws Exception {
+    public GrnItemDto createCheckingInfo(Long grnItemId, CheckingInfoDto ci, StockUnitDTO su) throws Exception {
 
         // Create StockUnit
         StockUnitDTO stockUnit = stockUnitService.createStockUnit(su);

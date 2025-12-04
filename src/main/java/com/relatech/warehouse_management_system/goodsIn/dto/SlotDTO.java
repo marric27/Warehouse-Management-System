@@ -33,6 +33,6 @@ public class SlotDTO {
     @Schema(description = "Product assigned to this slot (optional)")
     private ProductDTO product;
 
-    @Schema(description = "List of stock units stored in this slot")
+    @Schema(description = "List of stock units stored in this slot", accessMode = Schema.AccessMode.READ_ONLY)
     private List<StockUnitDTO> stockUnits;
 }

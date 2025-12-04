@@ -37,9 +37,9 @@ public class CheckingInfoDto {
     @Schema(description = "State of the checking info", example = "OPEN")
     private State state;
 
-    @Schema(description = "Soft reference to the associated StockUnit ID", example = "5")
+    @Schema(description = "Soft reference to the associated StockUnit ID", accessMode = Schema.AccessMode.READ_ONLY)
     private Long stockUnitId;
 
-    @Schema(description = "reference to the associated GRN Item ID", example = "5")
+    @Schema(description = "reference to the associated GRN Item ID", accessMode = Schema.AccessMode.READ_ONLY)
     private Long grnItemId;
 }

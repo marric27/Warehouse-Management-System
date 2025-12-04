@@ -1,13 +1,17 @@
 package com.relatech.warehouse_management_system.goodsIn.putaway.service;
 
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.dto.*;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.*;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
+import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -44,4 +48,27 @@ public class PutawayService {
 
         return savedSlot;
     }
+
+    public List<SlotDTO> listSlots() {
+        return slotService.getAllSlots();
+    }
+
+    public SlotDTO getSlot(Long id) throws ResourceNotFoundException {
+        return slotService.getSlotById(id);
+    }
+
+    public SlotDTO createSlot(SlotDTO slot) {
+        return slotService.createSlot(slot);
+    }
+
+    public SlotDTO updateSlot(Long id, SlotDTO slot)
+            throws ResourceNotFoundException, UpdateEntityException {
+        return slotService.updateSlot(id, slot);
+    }
+
+    public void deleteSlot(Long id) throws ResourceNotFoundException {
+        slotService.deleteSlot(id);
+    }
+
+
 }

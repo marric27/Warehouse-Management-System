@@ -8,9 +8,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/check-goods-in")
 @RequiredArgsConstructor
@@ -25,14 +27,13 @@ public class CheckGoodsInController {
     /**
      * Create a StockUnit and a CheckingInfo, link them, assign the CheckingInfo to
      * a GRN item, and automatically update the item state.
-     *
      * POST /check-goods-in/{grnItemId}/checking-info
      */
     @PostMapping("/{grnItemId}/checking-info")
     public ResponseEntity<GrnItemDto> createCheckingInfo(
             @PathVariable Long grnItemId,
             @RequestBody CreateCheckingInfoRequest request) throws Exception {
-
+        log.info("POST /{}/checking-info - creating checking-info {} and stockUnit {}", grnItemId, request.getCheckingInfo().getCode(), request.getStockUnit().getUniqueCode());
         GrnItemDto result = checkGoodsInService.createCheckingInfo(
                 grnItemId,
                 request.getCheckingInfo(),

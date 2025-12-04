@@ -86,7 +86,6 @@ public class ReceivingController {
 
     // ---------------------------
     // STATE MANUAL CHANGE
-    // (se vuoi mantenerlo — opzionale)
     // ---------------------------
 
     @PatchMapping("/grns/{id}/state/{state}")
@@ -97,7 +96,6 @@ public class ReceivingController {
             throws GrnExceptions.GrnNotFoundException, GrnExceptions.InvalidStateTransitionException {
 
         log.info("Changing state of GRN {} to {}", id, state);
-        // puoi collegarlo a ReceivingService solo se lo implementi
         throw new UnsupportedOperationException("Not implemented in ReceivingService");
     }
 
