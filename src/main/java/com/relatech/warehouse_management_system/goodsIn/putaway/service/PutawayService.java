@@ -44,7 +44,7 @@ public class PutawayService {
     private void updateCheckinfoState(Long stockUnitId) throws ResourceNotFoundException, GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
         CheckingInfoDto toUpdate = checkingInfoService.getByStockUnitId(stockUnitId);
 
-        checkingInfoService.updateCheckingInfoState(toUpdate.getId(), State.PUTAWAY);
+        updateCheckingInfoState(toUpdate.getId(), State.PUTAWAY);
 
         GrnItemDto itemDto = grnItemService.getGrnItemById(toUpdate.getGrnItemId());
         checkAssignedQuantity(itemDto);
@@ -87,14 +87,18 @@ public class PutawayService {
         if (allItemsPutaway) {
             grnDTO.setState(State.CLOSED);
             grnService.updateGRN(grnId, grnDTO);
-            log.info("All GrnItems for GRN {} are PUTAWAY → auto PUTAWAY", grnId);
+            log.info("All GrnItems for GRN {} are PUTAWAY → auto CLOSED", grnId);
         }
     }
 
+    @Transactional
+    public void updateCheckingInfoState(Long checkingInfoId, State newState) throws ResourceNotFoundException {
+        log.info("Updating checkinginfo {} to state {}", checkingInfoId, newState);
+        CheckingInfoDto ci = checkingInfoService.getById(checkingInfoId);
 
-
-
-    //SlotDTO removeStockUnitFromSlot(Long slotId, Long stockUnitId) throws ResourceNotFoundException;
-
+        ci.setState(newState);
+        checkingInfoService.update(checkingInfoId, ci);
+        log.info("Updated checkinginfo {} to state {}", checkingInfoId, newState);
+    }
 
 }

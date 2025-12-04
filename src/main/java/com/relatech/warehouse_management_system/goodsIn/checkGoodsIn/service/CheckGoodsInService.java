@@ -12,12 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-// obiettivo: creazione stockunit relative ad item e checkinginfo
-
-// CREO STOCKUNIT E CHECKING INFO VENGONO CREATE INSIEME
-
-// FUNZIONI DI ASSEGNAZIONE DI STOCK UNIT E CHECKING INFO A GRNITEM
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -43,32 +37,14 @@ public class CheckGoodsInService {
         log.info("Created CheckingInfo with ID: {}", savedChecking.getId());
         log.info("Assigned stockunit {} to CheckingInfo with ID: {}", savedStockUnit.getId(), savedChecking.getId());
 
-        //grnItem.getCheckingInfoList().add(savedChecking);
         grnItemService.addCheckingInfo(grnItemId, savedChecking.getId());
 
 
-        // TODO check assigned quantity
         grnItem = grnItemService.updateGrnItem(grnItemId, grnItem);
         log.info("Updated GrnItem with ID: {}", grnItem.getId());
 
-        // 6. Ora posso verificare quantità e stati
         putawayService.checkAssignedQuantity(grnItem);
 
         return grnItem;
     }
-
-
-
-
-    // 4. aggiorno quantita grn item TODO cos'è?
-    //grnItem.setReceivedQty(grnItem.getReceivedQty() + savedChecking.getQuantity());
-
-//        if (savedChecking.getState() == State.OPEN) {
-//            grnItem.setCompliantQty(grnItem.getCompliantQty() + savedChecking.getQuantity());
-//        } else {
-//            grnItem.setNotCompliantQty(grnItem.getNotCompliantQty() + savedChecking.getQuantity());
-//        }
-
-
-
 }

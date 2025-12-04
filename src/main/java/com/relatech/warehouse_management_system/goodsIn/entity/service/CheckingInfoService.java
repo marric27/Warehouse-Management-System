@@ -1,9 +1,7 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
-import com.relatech.warehouse_management_system.goodsIn.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.common.util.State;
 
 import java.util.List;
 
@@ -20,10 +18,6 @@ public interface CheckingInfoService {
     List<CheckingInfoDto> getAll();
 
     void delete(Long id) throws ResourceNotFoundException;
-
-    CheckingInfo setStockUnit(Long checkingInfoId, Long stockUnitId) throws Exception;
-
-    CheckingInfo updateCheckingInfoState(Long checkingInfoId, State newState) throws ResourceNotFoundException;
 
     List<CheckingInfoDto> getAllById(List<Long> checkingInfoIds);
 
