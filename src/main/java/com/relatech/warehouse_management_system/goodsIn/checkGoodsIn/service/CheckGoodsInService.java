@@ -6,7 +6,7 @@ import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.CheckingInfoService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
-import com.relatech.warehouse_management_system.goodsIn.putaway.service.PutawayService;
+import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,33 +18,30 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CheckGoodsInService {
 
-    private final CheckingInfoService checkingInfoService;
     private final StockUnitService stockUnitService;
+    private final CheckingInfoService checkingInfoService;
     private final GrnItemService grnItemService;
-    private final PutawayService putawayService;
+    private final GrnItemStateService stateService;
 
-    @Transactional
-    public GrnItemDto createCheckingInfoWithStockUnitAndAssignToGrnItem(CheckingInfoDto checkingInfoDto, StockUnitDTO stockUnitDTO, Long grnItemId) throws Exception {
+    public GrnItemDto createCheckingInfo(Long grnItemId,
+                                         CheckingInfoDto ci,
+                                         StockUnitDTO su) throws Exception {
 
-        GrnItemDto grnItem = grnItemService.getGrnItemById(grnItemId);
+        // Create StockUnit
+        StockUnitDTO stockUnit = stockUnitService.createStockUnit(su);
 
-        StockUnitDTO savedStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
-        log.info("Created stockunit with ID: {}", savedStockUnit.getId());
+        // Create CheckingInfo
+        ci.setStockUnitId(stockUnit.getId());
+        ci.setGrnItemId(grnItemId);
+        CheckingInfoDto savedCI = checkingInfoService.create(ci);
 
-        checkingInfoDto.setGrnItemId(grnItemId);
-        checkingInfoDto.setStockUnitId(savedStockUnit.getId());
-        CheckingInfoDto savedChecking = checkingInfoService.create(checkingInfoDto);
-        log.info("Created CheckingInfo with ID: {}", savedChecking.getId());
-        log.info("Assigned stockunit {} to CheckingInfo with ID: {}", savedStockUnit.getId(), savedChecking.getId());
+        // assign to item
+        grnItemService.addCheckingInfo(grnItemId, savedCI.getId());
 
-        grnItemService.addCheckingInfo(grnItemId, savedChecking.getId());
+        // progress state
+        GrnItemDto item = grnItemService.getGrnItemById(grnItemId);
+        stateService.evaluateAndProgressItemState(item);
 
-
-        grnItem = grnItemService.updateGrnItem(grnItemId, grnItem);
-        log.info("Updated GrnItem with ID: {}", grnItem.getId());
-
-        putawayService.checkAssignedQuantity(grnItem);
-
-        return grnItem;
+        return item;
     }
 }

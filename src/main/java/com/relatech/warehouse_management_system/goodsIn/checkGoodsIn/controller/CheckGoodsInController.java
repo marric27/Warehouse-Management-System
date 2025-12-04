@@ -1,6 +1,5 @@
 package com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.controller;
 
-
 import com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.service.CheckGoodsInService;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
@@ -15,37 +14,42 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/check-goods-in")
 @RequiredArgsConstructor
-@Tag(name = "Check Goods In Management", description = "Complete workflow for ")
+@Tag(
+        name = "Check Goods In Management",
+        description = "Handles creation of CheckingInfo + StockUnit and assignment to GRN items"
+)
 public class CheckGoodsInController {
 
     private final CheckGoodsInService checkGoodsInService;
 
     /**
-     * Creates CheckingInfo and StockUnit, links them together,
-     * and assigns CheckingInfo to a specific GRN item.
+     * Create a StockUnit and a CheckingInfo, link them, assign the CheckingInfo to
+     * a GRN item, and automatically update the item state.
+     *
+     * POST /check-goods-in/{grnItemId}/checking-info
      */
-    @PostMapping("/{grnItemId}/create-and-assign")
-    public ResponseEntity<GrnItemDto> createCheckingInfoWithStockUnitAndAssign(
+    @PostMapping("/{grnItemId}/checking-info")
+    public ResponseEntity<GrnItemDto> createCheckingInfo(
             @PathVariable Long grnItemId,
             @RequestBody CreateCheckingInfoRequest request) throws Exception {
 
-        GrnItemDto result = checkGoodsInService.createCheckingInfoWithStockUnitAndAssignToGrnItem(
+        GrnItemDto result = checkGoodsInService.createCheckingInfo(
+                grnItemId,
                 request.getCheckingInfo(),
-                request.getStockUnit(),
-                grnItemId
+                request.getStockUnit()
         );
 
         return ResponseEntity.ok(result);
     }
 
+
     /**
-     * Wrapper request DTO to carry both CheckingInfoDto and StockUnitDTO.
+     * Wrapper request DTO: contains both CheckingInfoDto and StockUnitDto
      */
-    @Setter
     @Getter
+    @Setter
     public static class CreateCheckingInfoRequest {
         private CheckingInfoDto checkingInfo;
         private StockUnitDTO stockUnit;
-
     }
 }

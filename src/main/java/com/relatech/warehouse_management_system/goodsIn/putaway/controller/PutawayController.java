@@ -20,7 +20,7 @@ public class PutawayController {
     private final PutawayService putawayService;
 
     @PostMapping("/{stockUnitId}/assignToSlot/{slotId}")
-    public ResponseEntity<SlotDTO> assignStockUnitToSlot(@PathVariable Long stockUnitId, @PathVariable Long slotId) throws UpdateEntityException, ResourceNotFoundException, GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
+    public ResponseEntity<SlotDTO> assignStockUnitToSlot(@PathVariable Long stockUnitId, @PathVariable Long slotId) throws Exception {
         log.info("POST /putaway/{}/assignToSlot/{} - Assigning stockunit to slot", stockUnitId, slotId);
         SlotDTO slotDTO = putawayService.assignStockUnitToSlot(stockUnitId, slotId);
         log.info("StockUnit {} assigned to Slot {}", stockUnitId, slotId);
