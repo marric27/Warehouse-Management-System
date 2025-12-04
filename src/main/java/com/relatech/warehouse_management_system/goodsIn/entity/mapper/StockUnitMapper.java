@@ -3,6 +3,7 @@ package com.relatech.warehouse_management_system.goodsIn.entity.mapper;
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class StockUnitMapper {
                 .quantity(entity.getQuantity())
                 .category(entity.getCategory())
                 .productDto(entity.getProduct() != null ? ProductMapper.toDto(entity.getProduct()) : null)
+                .slotId(entity.getSlot() != null ? entity.getSlot().getId() : null)
                 .build();
     }
 

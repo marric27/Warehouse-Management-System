@@ -2,6 +2,7 @@ package com.relatech.warehouse_management_system.goodsIn.putaway.controller;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.dto.SlotDTO;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
 import com.relatech.warehouse_management_system.goodsIn.putaway.service.PutawayService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,7 +20,7 @@ public class PutawayController {
     private final PutawayService putawayService;
 
     @PostMapping("/{stockUnitId}/assignToSlot/{slotId}")
-    public ResponseEntity<SlotDTO> assignStockUnitToSlot(@PathVariable Long stockUnitId, @PathVariable Long slotId) throws UpdateEntityException, ResourceNotFoundException {
+    public ResponseEntity<SlotDTO> assignStockUnitToSlot(@PathVariable Long stockUnitId, @PathVariable Long slotId) throws UpdateEntityException, ResourceNotFoundException, GrnExceptions.GrnItemNotFoundException {
         log.info("POST /putaway/{}/assignToSlot/{} - Assigning stockunit to slot", stockUnitId, slotId);
         SlotDTO slotDTO = putawayService.assignStockUnitToSlot(stockUnitId, slotId);
         log.info("StockUnit {} assigned to Slot {}", stockUnitId, slotId);

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class GrnItemMapper {
@@ -53,7 +54,10 @@ public class GrnItemMapper {
 
     public List<GrnItemDto> toDto(List<GrnItem> entities) {
         if (entities == null || entities.isEmpty()) return List.of();
-        return entities.stream().map(GrnItemMapper::toDto).toList();
+        return entities.stream()
+                .map(GrnItemMapper::toDto)
+                .collect(Collectors.toCollection(ArrayList::new));
+
     }
 
     public List<GrnItem> toEntity(List<GrnItemDto> dtos) {

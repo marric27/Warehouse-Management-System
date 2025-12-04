@@ -6,7 +6,9 @@ import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CheckingInfoMapper {
@@ -47,7 +49,10 @@ public class CheckingInfoMapper {
     }
 
     public static List<CheckingInfoDto> toDtoList(List<CheckingInfo> list) {
-        if (list == null || list.isEmpty()) return List.of();
-        return list.stream().map(CheckingInfoMapper::toDto).toList();
+        if (list == null) return new ArrayList<>();
+        return list.stream()
+                .map(CheckingInfoMapper::toDto)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
+
 }

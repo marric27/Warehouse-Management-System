@@ -1,8 +1,10 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
+import com.relatech.warehouse_management_system.goodsIn.entity.repository.CheckingInfoRepository;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnItemRepository;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,8 @@ import java.util.List;
 public class GrnItemServiceImpl implements GrnItemService {
 
     private final GrnItemRepository grnItemRepository;
+    private final CheckingInfoRepository checkingInfoRepository;
+
 
     @Override
     @Transactional
@@ -73,6 +77,7 @@ public class GrnItemServiceImpl implements GrnItemService {
         existingGrnItem.setCompliantQty(grnItemDto.getCompliantQty());
         existingGrnItem.setNotCompliantQty(grnItemDto.getNotCompliantQty());
 
+
         if (grnItemDto.getState() != null)
             existingGrnItem.setState(grnItemDto.getState());
 
@@ -86,6 +91,18 @@ public class GrnItemServiceImpl implements GrnItemService {
         grnItemRepository.findById(id)
                 .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(id));
         grnItemRepository.deleteById(id);
+    }
+
+    @Transactional
+    @Override
+    public void addCheckingInfo(Long grnItemId, Long checkingInfoId) throws GrnExceptions.GrnItemNotFoundException {
+        GrnItem item = grnItemRepository.findById(grnItemId)
+                .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(grnItemId));
+
+        CheckingInfo info = checkingInfoRepository.findById(checkingInfoId)
+                .orElseThrow(() -> new RuntimeException("CheckingInfo not found"));
+
+        item.getCheckingInfoList().add(info);
     }
 
 }

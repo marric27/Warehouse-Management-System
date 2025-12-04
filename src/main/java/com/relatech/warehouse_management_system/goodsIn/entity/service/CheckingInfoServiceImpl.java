@@ -118,6 +118,7 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
     }
 
     //TODO potrei anche non esporlo ma usarlo solo internamente
+    //TODO potrei spostare la logica nel putaway service
     @Override
     @Transactional
     public CheckingInfo updateCheckingInfoState(Long checkingInfoId, State newState) throws ResourceNotFoundException {
@@ -134,5 +135,15 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
     @Override
     public List<CheckingInfoDto> getAllById(List<Long> checkingInfoIds) {
         return CheckingInfoMapper.toDtoList(checkingInfoRepository.findAllById(checkingInfoIds));
+    }
+
+    @Override
+    public CheckingInfoDto getByStockUnitId(Long suId) {
+        return CheckingInfoMapper.toDto(checkingInfoRepository.findByStockUnitId(suId).getFirst());
+    }
+
+    @Override
+    public List<CheckingInfoDto> getByGrnItemId(Long id) {
+        return CheckingInfoMapper.toDtoList(checkingInfoRepository.findByGrnItemId(id));
     }
 }

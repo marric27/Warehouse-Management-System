@@ -48,6 +48,6 @@ public class StockUnitDTO {
     private ProductDTO productDto;
 
     @Schema(description = "Storage slot information", accessMode = Schema.AccessMode.READ_ONLY)
-    private SlotDTO slotDto;
+    private Long slotId;
 
 }
