@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/slot")
+@RequestMapping("/slots")
 @Slf4j
 @RequiredArgsConstructor
 @Tag(name = "Slot Management", description = "Complete crud for Slot")
@@ -28,7 +28,7 @@ public class SlotController {
     @Operation(summary = "List all slots", description = "Returns all warehouse slots")
     @ApiResponse(responseCode = "200", description = "Slots retrieved")
     public ResponseEntity<List<SlotDTO>> listSlots() {
-        log.info("GET /putaway/slots - listing all slots");
+        log.info("GET /slots - listing all slots");
         return ResponseEntity.ok(slotService.getAllSlots());
     }
 
@@ -37,7 +37,7 @@ public class SlotController {
     @ApiResponse(responseCode = "200", description = "Slot found")
     @ApiResponse(responseCode = "404", description = "Slot not found")
     public ResponseEntity<SlotDTO> getSlot(@PathVariable Long id) throws ResourceNotFoundException {
-        log.info("GET /putaway/slots/{} - fetching slot", id);
+        log.info("GET /slots/{} - fetching slot", id);
         return ResponseEntity.ok(slotService.getSlotById(id));
     }
 
@@ -45,7 +45,7 @@ public class SlotController {
     @Operation(summary = "Create slot")
     @ApiResponse(responseCode = "201", description = "Slot created")
     public ResponseEntity<SlotDTO> createSlot(@RequestBody SlotDTO dto) {
-        log.info("POST /putaway/slots - creating slot {}", dto.getCode());
+        log.info("POST /slots - creating slot {}", dto.getCode());
         SlotDTO created = slotService.createSlot(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -60,7 +60,7 @@ public class SlotController {
             @RequestBody SlotDTO dto
     ) throws ResourceNotFoundException, UpdateEntityException {
 
-        log.info("PUT /putaway/slots/{} - updating slot {}", id, dto.getCode());
+        log.info("PUT /slots/{} - updating slot {}", id, dto.getCode());
         SlotDTO updated = slotService.updateSlot(id, dto);
         return ResponseEntity.ok(updated);
     }
@@ -70,7 +70,7 @@ public class SlotController {
     @ApiResponse(responseCode = "204", description = "Slot deleted")
     @ApiResponse(responseCode = "404", description = "Slot not found")
     public ResponseEntity<Void> deleteSlot(@PathVariable Long id) throws ResourceNotFoundException {
-        log.info("DELETE /putaway/slots/{} - deleting slot", id);
+        log.info("DELETE /slots/{} - deleting slot", id);
         slotService.deleteSlot(id);
         return ResponseEntity.noContent().build();
     }

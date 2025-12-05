@@ -7,6 +7,7 @@ import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
 import com.relatech.warehouse_management_system.warehouse.entity.Slot;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotMapper;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,9 @@ class LogisticServiceTest {
     @InjectMocks
     LogisticServiceImpl logisticService;
 
+    @Mock
+    SlotMapper slotMapper;
+
     @Test
     void assignProductToSlot_ShouldAssignProduct() throws Exception {
         Slot slot = new Slot();
@@ -43,6 +47,7 @@ class LogisticServiceTest {
         when(slotRepository.findById(1L)).thenReturn(Optional.of(slot));
         when(productRepository.findById(10L)).thenReturn(Optional.of(product));
         when(slotRepository.save(any(Slot.class))).thenReturn(slot);
+        when(slotMapper.toDto(any(Slot.class))).thenReturn(new SlotDTO(1L,null,null,0,null,null));
 
         SlotDTO result = logisticService.assignProductToSlot(1L, 10L);
 
@@ -79,6 +84,7 @@ class LogisticServiceTest {
 
         when(slotRepository.findById(1L)).thenReturn(Optional.of(slot));
         when(slotRepository.save(any(Slot.class))).thenReturn(slot);
+        when(slotMapper.toDto(any(Slot.class))).thenReturn(new SlotDTO());
 
         SlotDTO result = logisticService.removeProductFromSlot(1L);
 

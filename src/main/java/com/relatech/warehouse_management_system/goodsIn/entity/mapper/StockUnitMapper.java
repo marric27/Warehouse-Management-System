@@ -37,14 +37,14 @@ public class StockUnitMapper {
     }
 
     public List<StockUnitDTO> toDTO(List<StockUnit> entities) {
-        if (entities == null) return null;
+        if (entities == null) return List.of();
         return entities.stream()
                 .map(this::toDTO)
                 .toList();
     }
 
     public List<StockUnit> toEntity(List<StockUnitDTO> dtos) {
-        if (dtos == null) return null;
+        if (dtos == null) return List.of();
         return dtos.stream()
                 .map(this::toEntity)
                 .toList();

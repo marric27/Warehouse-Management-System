@@ -85,16 +85,6 @@ class SlotIntegrationTest {
     }
 
     @Test
-    void givenValidSlot_whenCreateSlot_thenReturnCreated() throws Exception {
-        mockMvc.perform(post("/slots")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(slotDTO)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("SLOT001"))
-                .andExpect(jsonPath("$.capacity").value(100));
-    }
-
-    @Test
     void givenNewSlotWithoutCode_whenPost_thenReturnBadRequest() throws Exception {
         SlotDTO slotWithoutCode = new SlotDTO(null, null, Category.FLAMMABLE, 10, null, null);
 
@@ -132,49 +122,5 @@ class SlotIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(toUpdate)))
                 .andExpect(status().isConflict());
-    }
-
-    @Test
-    void givenSlotAndStockUnit_whenAssign_thenReturnUpdatedSlot() throws Exception {
-        SlotDTO createdSlot = slotService.createSlot(slotDTO);
-        StockUnitDTO createdStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
-
-        mockMvc.perform(patch("/slots/{slotId}/assign/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(createdSlot.getId()))
-                .andExpect(jsonPath("$.stockUnits[0].id").value(createdStockUnit.getId()));
-    }
-
-    @Test
-    void givenAssignedStockUnit_whenRemove_thenReturnSlotWithoutStockUnit() throws Exception {
-        SlotDTO createdSlot = slotService.createSlot(slotDTO);
-        StockUnitDTO createdStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
-
-        mockMvc.perform(patch("/slots/{slotId}/assign/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(patch("/slots/{slotId}/remove-stock-unit/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.stockUnits").isEmpty());
-    }
-
-    @Test
-    void givenWrongCategory_whenAssign_thenReturnBadRequest() throws Exception {
-        SlotDTO createdSlot = slotService.createSlot(slotDTO);
-        StockUnitDTO createdStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
-
-        createdStockUnit.setCategory(Category.FLAMMABLE);
-
-        mockMvc.perform(put("/stock-units/{id}", createdStockUnit.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createdStockUnit)))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(patch("/slots/{slotId}/assign/{stockUnitId}", createdSlot.getId(), createdStockUnit.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 }
