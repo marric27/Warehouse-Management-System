@@ -49,6 +49,7 @@ public class PutawayService {
         return savedSlot;
     }
 
+    // TODO togliere?
     public List<SlotDTO> listSlots() {
         return slotService.getAllSlots();
     }

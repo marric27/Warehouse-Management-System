@@ -45,12 +45,9 @@ public class GrnItemStateService {
                     "Over-received: expected=" + expected + " received=" + received);
     }
 
-
     // PROGRESSIONE AUTOMATICA DI STATO
     @Transactional
-    public void evaluateAndProgressItemState(GrnItemDto item)
-            throws GrnExceptions.GrnItemNotFoundException,
-            GrnExceptions.GrnNotFoundException {
+    public void evaluateAndProgressItemState(GrnItemDto item) throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
 
         List<CheckingInfoDto> checks = item.getCheckingInfoList();
         int expected = item.getExpectedQty();
@@ -80,7 +77,6 @@ public class GrnItemStateService {
         }
     }
 
-
     // SE TUTTI GLI ITEMS SONO PUTAWAY → CHIUDERE GRN
     @Transactional
     public void evaluateAndProgressGrnState(Long grnId)
@@ -96,5 +92,9 @@ public class GrnItemStateService {
             grnService.updateGRN(grnId, grn);
             log.info("AUTO: GRN {} → CLOSED (all items PUTAWAY)", grnId);
         }
+    }
+
+    public boolean checkGrnIfClosed(Long grnID) throws GrnExceptions.GrnNotFoundException {
+        return grnService.getGRNById(grnID).getState() == State.CLOSED;
     }
 }

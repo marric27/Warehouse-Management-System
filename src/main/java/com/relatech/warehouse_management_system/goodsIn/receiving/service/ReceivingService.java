@@ -5,6 +5,7 @@ import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
+import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignItemToGrnClosedException;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class ReceivingService {
         return grnService.createGRN(dto);
     }
 
+    // TODO tolgo e uso direttamente quelli del grnserviceimpl?
     public GrnDTO getGRN(Long id) throws GrnExceptions.GrnNotFoundException {
         return grnService.getGRNById(id);
     }
@@ -41,10 +43,10 @@ public class ReceivingService {
         return grnService.getAllGRNs();
     }
 
-    // CREATE ITEM
-    public GrnItemDto createItem(Long grnId, GrnItemDto item)
-            throws Exception {
-
+    // CREATE ITEM AND ASSIGN TO GRN BY ID
+    public GrnItemDto createItem(Long grnId, GrnItemDto item) throws Exception {
+        // se grn è closed non posso assegnare item -> return exception
+        if(stateService.checkGrnIfClosed(grnId)) throw new CannotAssignItemToGrnClosedException(grnId);
         stateService.validateItemQuantities(item);
 
         item.setGrnId(grnId);
