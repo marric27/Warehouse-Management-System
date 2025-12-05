@@ -5,11 +5,11 @@ import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import com.relatech.warehouse_management_system.product.service.ProductService;
-import com.relatech.warehouse_management_system.goodsIn.dto.SlotDTO;
-import com.relatech.warehouse_management_system.goodsIn.entity.Slot;
-import com.relatech.warehouse_management_system.goodsIn.entity.mapper.SlotMapper;
-import com.relatech.warehouse_management_system.goodsIn.entity.repository.SlotRepository;
-import com.relatech.warehouse_management_system.goodsIn.entity.service.SlotService;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
+import com.relatech.warehouse_management_system.warehouse.entity.Slot;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotMapper;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotRepository;
+import com.relatech.warehouse_management_system.warehouse.service.SlotService;
 import com.relatech.warehouse_management_system.common.util.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,6 +43,9 @@ class LogisticIntegrationTest {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private SlotMapper slotMapper;
+
     private final SlotDTO slotDTO = new SlotDTO(null, "SLOT001", Category.STANDARD, 100, null, null);
     private final ProductDTO productDTO = new ProductDTO(null, "PRD-001", "Paracetamolo", Category.STANDARD);
 
@@ -55,7 +58,7 @@ class LogisticIntegrationTest {
     @Test
     void assignProductToSlot_ShouldAssignProduct() throws Exception {
         SlotDTO slotDTO = slotService.createSlot(this.slotDTO);
-        Slot slot = SlotMapper.toEntity(slotDTO);
+        Slot slot = slotMapper.toEntity(slotDTO);
         ProductDTO productDTO = productService.createProduct(this.productDTO);
         Product product = ProductMapper.toEntity(productDTO);
 
@@ -72,7 +75,7 @@ class LogisticIntegrationTest {
     @Test
     void removeProductFromSlot_ShouldSetProductToNull() throws Exception {
         SlotDTO slotDTO = slotService.createSlot(this.slotDTO);
-        Slot slot = SlotMapper.toEntity(slotDTO);
+        Slot slot = slotMapper.toEntity(slotDTO);
 
         productService.createProduct(productDTO);
 
@@ -89,7 +92,7 @@ class LogisticIntegrationTest {
     @Test
     void canSlotContainProduct_ShouldReturnTrue() throws Exception {
         SlotDTO slotDTO = slotService.createSlot(this.slotDTO);
-        Slot slot = SlotMapper.toEntity(slotDTO);
+        Slot slot = slotMapper.toEntity(slotDTO);
         ProductDTO productDTO = productService.createProduct(this.productDTO);
         Product product = ProductMapper.toEntity(productDTO);
         mockMvc.perform(get("/logistic/" + slot.getId() + "/can-contain/" + product.getId())

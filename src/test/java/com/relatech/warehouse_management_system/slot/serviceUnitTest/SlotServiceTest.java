@@ -5,11 +5,11 @@ import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
 import com.relatech.warehouse_management_system.common.util.Category;
-import com.relatech.warehouse_management_system.goodsIn.dto.SlotDTO;
-import com.relatech.warehouse_management_system.goodsIn.entity.Slot;
-import com.relatech.warehouse_management_system.goodsIn.entity.mapper.SlotMapper;
-import com.relatech.warehouse_management_system.goodsIn.entity.repository.SlotRepository;
-import com.relatech.warehouse_management_system.goodsIn.entity.service.SlotServiceImpl;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
+import com.relatech.warehouse_management_system.warehouse.entity.Slot;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotMapper;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotRepository;
+import com.relatech.warehouse_management_system.warehouse.service.SlotServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +37,9 @@ class SlotServiceTest {
     @InjectMocks
     private SlotServiceImpl slotService;
 
+    @InjectMocks
+    private SlotMapper slotMapper;
+
     private Slot slot;
     private SlotDTO slotDTO;
 
@@ -53,7 +56,7 @@ class SlotServiceTest {
         slot.setCapacity(100);
         slot.setProd(product);
 
-        slotDTO = SlotMapper.toDto(slot);
+        slotDTO = slotMapper.toDto(slot);
     }
 
     @Test
@@ -107,7 +110,7 @@ class SlotServiceTest {
     void givenExistingSlot_whenUpdateSlot_thenReturnUpdatedDTO() throws Exception {
         SlotDTO updatedDTO = new SlotDTO(1L, "SLOT002", Category.STANDARD, 200, null, null);
         when(slotRepository.findById(1L)).thenReturn(Optional.of(slot));
-        when(slotRepository.save(any(Slot.class))).thenReturn(SlotMapper.toEntity(updatedDTO));
+        when(slotRepository.save(any(Slot.class))).thenReturn(slotMapper.toEntity(updatedDTO));
 
         SlotDTO result = slotService.updateSlot(1L, updatedDTO);
 

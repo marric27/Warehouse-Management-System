@@ -100,6 +100,6 @@ public class GrnItemStateService {
 
     public boolean checkGrnItemIfCheckedOrPutaway(Long grnItemId) throws GrnExceptions.GrnItemNotFoundException {
         State state = grnItemService.getGrnItemById(grnItemId).getState();
-        return  state == State.CHECKED || state == State.PUTAWAY;
+        return state == State.CHECKED || state == State.PUTAWAY;
     }
 }

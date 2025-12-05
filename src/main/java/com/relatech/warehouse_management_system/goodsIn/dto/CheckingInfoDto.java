@@ -19,7 +19,7 @@ public class CheckingInfoDto {
 
     @NotBlank(message = "The code cannot be empty or null.")
     @Schema(description = "Unique ID of the Checking info", example = "CI-1")
-    private String code;
+    private String code; //TODO generato da app
 
     @NotBlank(message = "Batch number cannot be blank")
     @Schema(description = "Batch number or lot identifier", example = "BN-2025A")

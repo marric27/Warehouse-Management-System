@@ -1,5 +1,6 @@
-package com.relatech.warehouse_management_system.goodsIn.dto;
+package com.relatech.warehouse_management_system.warehouse.entity;
 
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.common.util.Category;
 import io.swagger.v3.oas.annotations.media.Schema;

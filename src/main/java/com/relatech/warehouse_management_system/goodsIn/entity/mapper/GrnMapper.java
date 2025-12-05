@@ -28,9 +28,10 @@ public class GrnMapper {
                 .supplier(entity.getSupplier())
                 .receivingDate(entity.getReceivingDate())
                 .state(entity.getState() != null ? entity.getState() : null)
-                .items(entity.getItems() != null ?
-                        new ArrayList<>(grnItemMapper.toDto(entity.getItems())) :
-                        new ArrayList<>())
+                .items(grnItemMapper.toDto(entity.getItems()))
+//                .items(entity.getItems() != null ?
+//                        new ArrayList<>(grnItemMapper.toDto(entity.getItems())) :
+//                        new ArrayList<>())
                 .build();
     }
 
@@ -45,9 +46,7 @@ public class GrnMapper {
                 .supplier(dto.getSupplier())
                 .receivingDate(dto.getReceivingDate())
                 .state(State.OPEN) // Default state on creation
-                .items(dto.getItems() != null ?
-                        new ArrayList<>(grnItemMapper.toEntity(dto.getItems())) :
-                        new ArrayList<>())
+                .items(grnItemMapper.toEntity(dto.getItems())) //TODO test
                 .build();
     }
 

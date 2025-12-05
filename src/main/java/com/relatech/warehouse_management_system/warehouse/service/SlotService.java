@@ -1,8 +1,8 @@
-package com.relatech.warehouse_management_system.goodsIn.entity.service;
+package com.relatech.warehouse_management_system.warehouse.service;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.goodsIn.dto.SlotDTO;
 import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
 
 import java.util.List;
 
@@ -12,6 +12,4 @@ public interface SlotService {
     SlotDTO createSlot(SlotDTO slotDTO);
     SlotDTO updateSlot(Long slotId, SlotDTO slotDTO) throws ResourceNotFoundException, UpdateEntityException;
     void deleteSlot(Long slotId) throws ResourceNotFoundException;
-    SlotDTO assignStockUnitToSlot(Long slotId, Long stockUnitId) throws ResourceNotFoundException;
-    SlotDTO removeStockUnitFromSlot(Long slotId, Long stockUnitId) throws ResourceNotFoundException;
 }

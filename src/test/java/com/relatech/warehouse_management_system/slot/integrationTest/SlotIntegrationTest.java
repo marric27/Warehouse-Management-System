@@ -1,13 +1,13 @@
 package com.relatech.warehouse_management_system.slot.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.relatech.warehouse_management_system.goodsIn.entity.repository.SlotRepository;
-import com.relatech.warehouse_management_system.goodsIn.entity.service.SlotService;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotRepository;
+import com.relatech.warehouse_management_system.warehouse.service.SlotService;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
 import com.relatech.warehouse_management_system.common.util.Category;
-import com.relatech.warehouse_management_system.goodsIn.dto.SlotDTO;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

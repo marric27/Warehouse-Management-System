@@ -22,22 +22,23 @@ public class GrnItemServiceImpl implements GrnItemService {
 
     private final GrnItemRepository grnItemRepository;
     private final CheckingInfoRepository checkingInfoRepository;
+    private final GrnItemMapper grnItemMapper;
 
 
     @Override
     @Transactional
     public GrnItemDto createGrnItem(GrnItemDto dto) {
         log.debug("Creating new GRN item with ID: {}", dto.getId());
-        GrnItem grnItem = GrnItemMapper.toEntity(dto);
+        GrnItem grnItem = grnItemMapper.toEntity(dto);
         grnItemRepository.save(grnItem);
         log.info("GRN item created successfully with ID: {}", grnItem.getId());
-        return GrnItemMapper.toDto(grnItem);
+        return grnItemMapper.toDto(grnItem);
     }
 
     @Override
     public List<GrnItemDto> getAllGrnItems() {
         return grnItemRepository.findAll().stream()
-                .map(GrnItemMapper::toDto)
+                .map(grnItemMapper::toDto)
                 .toList();
     }
 
@@ -49,7 +50,7 @@ public class GrnItemServiceImpl implements GrnItemService {
                     log.warn("GRN item not found with ID: {}", id);
                     return new GrnExceptions.GrnItemNotFoundException(id);
                 });
-        return GrnItemMapper.toDto(grnItem);
+        return grnItemMapper.toDto(grnItem);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class GrnItemServiceImpl implements GrnItemService {
                     log.warn("GRN not found with code: {}", code);
                     return new GrnExceptions.GrnItemNotFoundException(code);
                 });
-        return GrnItemMapper.toDto(grnItem);
+        return grnItemMapper.toDto(grnItem);
     }
 
     @Override
@@ -82,7 +83,7 @@ public class GrnItemServiceImpl implements GrnItemService {
             existingGrnItem.setState(grnItemDto.getState());
 
         GrnItem updatedItem = grnItemRepository.save(existingGrnItem);
-        return GrnItemMapper.toDto(updatedItem);
+        return grnItemMapper.toDto(updatedItem);
     }
 
     @Override

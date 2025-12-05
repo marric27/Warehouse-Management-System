@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 @Component
 public class CheckingInfoMapper {
 
-
     public static CheckingInfoDto toDto(CheckingInfo entity) {
         if (entity == null) return null;
 

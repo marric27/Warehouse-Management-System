@@ -3,7 +3,7 @@ package com.relatech.warehouse_management_system.stockUnit.serviceUnitTest;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.goodsIn.entity.service.SlotServiceImpl;
+import com.relatech.warehouse_management_system.warehouse.service.SlotServiceImpl;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
@@ -39,6 +39,9 @@ public class StockUnitServiceTest {
     @InjectMocks
     private StockUnitServiceImpl stockUnitService;
 
+    @Mock
+    private StockUnitMapper stockUnitMapper;
+
     private StockUnit stockUnit;
     private StockUnitDTO stockUnitDTO;
     private Product product;
@@ -54,12 +57,16 @@ public class StockUnitServiceTest {
                 .quantity(10)
                 .build();
 
-        stockUnitDTO = StockUnitMapper.toDTO(stockUnit);
+
 
         product = new Product();
         product.setId(1L);
         product.setCode("P001");
         product.setName("Test Product");
+
+        when(stockUnitMapper.toDTO(any())).thenReturn(stockUnitDTO);
+        when(stockUnitMapper.toEntity(any())).thenReturn(stockUnit);
+        stockUnitDTO = stockUnitMapper.toDTO(stockUnit);
     }
 
     @Test

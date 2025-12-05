@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Component
 public class GrnItemMapper {
 
-    public static GrnItemDto toDto(GrnItem grnItem) {
+    public GrnItemDto toDto(GrnItem grnItem) {
         if (grnItem == null) return null;
         return GrnItemDto.builder()
                 .id(grnItem.getId())
@@ -31,7 +31,7 @@ public class GrnItemMapper {
     }
 
 
-    public static GrnItem toEntity(GrnItemDto dto) {
+    public GrnItem toEntity(GrnItemDto dto) {
         if (dto == null) return null;
         GRN grnRef = null;
         if (dto.getGrnId() != null) {
@@ -55,13 +55,13 @@ public class GrnItemMapper {
     public List<GrnItemDto> toDto(List<GrnItem> entities) {
         if (entities == null || entities.isEmpty()) return List.of();
         return entities.stream()
-                .map(GrnItemMapper::toDto)
+                .map(this::toDto)
                 .collect(Collectors.toCollection(ArrayList::new));
 
     }
 
     public List<GrnItem> toEntity(List<GrnItemDto> dtos) {
         if (dtos == null || dtos.isEmpty()) return List.of();
-        return dtos.stream().map(GrnItemMapper::toEntity).toList();
+        return dtos.stream().map(this::toEntity).toList();
     }
 }

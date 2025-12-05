@@ -9,7 +9,6 @@ import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemSe
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignCIToGrnItemInClosedOrPutawayStateException;
-import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignItemToGrnClosedException;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,8 @@ public class CheckGoodsInService {
 
     public GrnItemDto createCheckingInfo(Long grnItemId, CheckingInfoDto ci, StockUnitDTO su) throws CannotAssignCIToGrnItemInClosedOrPutawayStateException, DuplicateResourceException, GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
 
-        if(stateService.checkGrnItemIfCheckedOrPutaway(grnItemId)) throw new CannotAssignCIToGrnItemInClosedOrPutawayStateException(grnItemId);
+        if(stateService.checkGrnItemIfCheckedOrPutaway(grnItemId))
+            throw new CannotAssignCIToGrnItemInClosedOrPutawayStateException(grnItemId);
 
         // Create StockUnit
         StockUnitDTO stockUnit = stockUnitService.createStockUnit(su);

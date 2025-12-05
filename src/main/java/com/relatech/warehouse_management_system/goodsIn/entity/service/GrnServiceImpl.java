@@ -90,7 +90,7 @@ public class GrnServiceImpl implements GrnService {
             for (GrnItemDto dto : grnDTO.getItems()) {
                 // Se ID è nullo -> nuovo item
                 if (dto.getId() == null) {
-                    GrnItem newItem = GrnItemMapper.toEntity(dto);
+                    GrnItem newItem = grnItemMapper.toEntity(dto);
                     newItem.setGrn(existing);
                     existing.getItems().add(newItem);
                 }

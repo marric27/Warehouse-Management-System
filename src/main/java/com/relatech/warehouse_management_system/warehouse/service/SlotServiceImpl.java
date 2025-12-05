@@ -1,16 +1,16 @@
-package com.relatech.warehouse_management_system.goodsIn.entity.service;
+package com.relatech.warehouse_management_system.warehouse.service;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
 import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.goodsIn.dto.SlotDTO;
-import com.relatech.warehouse_management_system.goodsIn.entity.Slot;
-import com.relatech.warehouse_management_system.goodsIn.entity.mapper.SlotMapper;
-import com.relatech.warehouse_management_system.goodsIn.entity.repository.SlotRepository;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
+import com.relatech.warehouse_management_system.warehouse.entity.Slot;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotMapper;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -108,43 +108,4 @@ public class SlotServiceImpl implements SlotService {
 
         slotRepository.deleteById(id);
     }
-
-    //TODO remove
-    @Override
-    @Transactional
-    public SlotDTO assignStockUnitToSlot(Long slotId, Long stockUnitId) throws ResourceNotFoundException {
-        Slot slot = slotRepository.findById(slotId)
-                .orElseThrow(() -> new ResourceNotFoundException("Slot", slotId));
-        StockUnit stockUnit = stockUnitRepository.findById(stockUnitId)
-                .orElseThrow(() -> new ResourceNotFoundException("Stock Unit", stockUnitId));
-
-        if (!slot.getAllowedCategory().equals(stockUnit.getCategory())) {
-            throw new IllegalArgumentException("StockUnit category not allowed in this Slot");
-        }
-
-        slot.addStockUnit(stockUnit);
-
-        return slotMapper.toDto(slotRepository.save(slot));
-    }
-
-    @Override
-    @Transactional
-    public SlotDTO removeStockUnitFromSlot(Long slotId, Long stockUnitId) throws ResourceNotFoundException {
-        Slot slot = slotRepository.findById(slotId)
-                .orElseThrow(() -> new ResourceNotFoundException("Slot", slotId));
-        StockUnit toRemove = slot.getStockUnits().stream()
-                .filter(su -> su.getId().equals(stockUnitId))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("StockUnit", stockUnitId));
-
-        slot.getStockUnits().remove(toRemove);
-
-        toRemove.setSlot(null);
-
-        Slot savedSlot = slotRepository.save(slot);
-
-        return slotMapper.toDto(savedSlot);
-    }
-
-
 }
