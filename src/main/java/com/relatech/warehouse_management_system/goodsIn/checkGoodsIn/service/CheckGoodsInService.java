@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.service;
 
+import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
@@ -7,6 +8,9 @@ import com.relatech.warehouse_management_system.goodsIn.entity.service.CheckingI
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
+import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignCIToGrnItemInClosedOrPutawayStateException;
+import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignItemToGrnClosedException;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +27,9 @@ public class CheckGoodsInService {
     private final GrnItemService grnItemService;
     private final GrnItemStateService stateService;
 
-    public GrnItemDto createCheckingInfo(Long grnItemId, CheckingInfoDto ci, StockUnitDTO su) throws Exception {
+    public GrnItemDto createCheckingInfo(Long grnItemId, CheckingInfoDto ci, StockUnitDTO su) throws CannotAssignCIToGrnItemInClosedOrPutawayStateException, DuplicateResourceException, GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
+
+        if(stateService.checkGrnItemIfCheckedOrPutaway(grnItemId)) throw new CannotAssignCIToGrnItemInClosedOrPutawayStateException(grnItemId);
 
         // Create StockUnit
         StockUnitDTO stockUnit = stockUnitService.createStockUnit(su);

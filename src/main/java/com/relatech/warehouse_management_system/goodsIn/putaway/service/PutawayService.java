@@ -5,6 +5,7 @@ import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.dto.*;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.*;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +26,7 @@ public class PutawayService {
     private final GrnItemService grnItemService;
     private final GrnItemStateService stateService;
 
-    public SlotDTO assignStockUnitToSlot(Long stockUnitId, Long slotId)
-            throws Exception {
+    public SlotDTO assignStockUnitToSlot(Long stockUnitId, Long slotId) throws ResourceNotFoundException, UpdateEntityException, GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
 
         SlotDTO slot = slotService.getSlotById(slotId);
         StockUnitDTO su = stockUnitService.getStockUnitById(stockUnitId);

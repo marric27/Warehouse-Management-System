@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.common.exception;
 
+import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignCIToGrnItemInClosedOrPutawayStateException;
 import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignItemToGrnClosedException;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
@@ -115,6 +116,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CannotAssignItemToGrnClosedException.class)
     public ResponseEntity<ApiError> handleGrnWithItems(CannotAssignItemToGrnClosedException ex, HttpServletRequest req) {
         log.error("CannotAssignItemToGrnClosedException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildError(HttpStatus.CONFLICT, ex, req));
+    }
+
+    @ExceptionHandler(CannotAssignCIToGrnItemInClosedOrPutawayStateException.class)
+    public ResponseEntity<ApiError> handleGrnWithItems(CannotAssignCIToGrnItemInClosedOrPutawayStateException ex, HttpServletRequest req) {
+        log.error("CannotAssignCIToGrnItemInClosedOrPutawayStateException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildError(HttpStatus.CONFLICT, ex, req));
     }

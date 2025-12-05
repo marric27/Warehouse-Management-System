@@ -45,7 +45,6 @@ public class ReceivingService {
 
     // CREATE ITEM AND ASSIGN TO GRN BY ID
     public GrnItemDto createItem(Long grnId, GrnItemDto item) throws Exception {
-        // se grn è closed non posso assegnare item -> return exception
         if(stateService.checkGrnIfClosed(grnId)) throw new CannotAssignItemToGrnClosedException(grnId);
         stateService.validateItemQuantities(item);
 
