@@ -1,12 +1,16 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
 import com.relatech.warehouse_management_system.goodsIn.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.goodsIn.entity.GRN;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.CheckingInfoMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.CheckingInfoRepository;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +72,14 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
                 .stream()
                 .map(CheckingInfoMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CheckingInfoDto> getAllPaged(Pageable pageable) {
+        log.debug("Fetching paginated Checking info: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
+        Page<CheckingInfo> checkingInfoDtoPage = checkingInfoRepository.findAll(pageable);
+        return checkingInfoDtoPage.map(CheckingInfoMapper::toDto);
     }
 
     @Override

@@ -4,13 +4,18 @@ import com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.service.Che
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -52,5 +57,29 @@ public class CheckGoodsInController {
     public static class CreateCheckingInfoRequest {
         private CheckingInfoDto checkingInfo;
         private StockUnitDTO stockUnit;
+    }
+
+    @GetMapping("/checking-info")
+    @Operation(summary = "List all Checking Info")
+    public ResponseEntity<List<CheckingInfoDto>> listCheckingInfo() {
+        return ResponseEntity.ok(checkGoodsInService.listCheckinginfo());
+    }
+
+    @GetMapping("/checking-info/paged")
+    @Operation(summary = "List Checking Info paginated")
+    public ResponseEntity<Page<CheckingInfoDto>> listCheckingInfoPaged(Pageable pageable) {
+        return ResponseEntity.ok(checkGoodsInService.listCIPaged(pageable));
+    }
+
+    @GetMapping("/stock-units")
+    @Operation(summary = "List all Stock Units")
+    public ResponseEntity<List<StockUnitDTO>> listStockUnits() {
+        return ResponseEntity.ok(checkGoodsInService.listStockUnit());
+    }
+
+    @GetMapping("/stock-units/paged")
+    @Operation(summary = "List Stock Units paginated")
+    public ResponseEntity<Page<StockUnitDTO>> listStockUnitsPaged(Pageable pageable) {
+        return ResponseEntity.ok(checkGoodsInService.listStockUnitPaged(pageable));
     }
 }

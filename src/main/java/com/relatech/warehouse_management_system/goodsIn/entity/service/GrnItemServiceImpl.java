@@ -2,6 +2,7 @@ package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.CheckingInfo;
+import com.relatech.warehouse_management_system.goodsIn.entity.GRN;
 import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.CheckingInfoRepository;
@@ -9,6 +10,8 @@ import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnIte
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +44,13 @@ public class GrnItemServiceImpl implements GrnItemService {
         return grnItemRepository.findAll().stream()
                 .map(grnItemMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public Page<GrnItemDto> getAllGrnItemsPaged(Pageable pageable) {
+        log.debug("Fetching paginated GrnItems: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
+        Page<GrnItem> grnItemPage = grnItemRepository.findAll(pageable);
+        return grnItemPage.map(grnItemMapper::toDto);
     }
 
     @Override

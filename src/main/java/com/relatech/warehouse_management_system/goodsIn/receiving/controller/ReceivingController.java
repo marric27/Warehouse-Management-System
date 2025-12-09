@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,12 +56,33 @@ public class ReceivingController {
     @Operation(summary = "List all GRNs")
     public ResponseEntity<List<GrnDTO>> listGRNs() {
         log.info("Listing all GRNs");
-        return ResponseEntity.ok(receivingService.list());
+        return ResponseEntity.ok(receivingService.listGrn());
+    }
+
+    @GetMapping("/grns-paged")
+    @Operation(summary = "List all GRNs")
+    public ResponseEntity<Page<GrnDTO>> listGRNsPaged(Pageable pageable) {
+        log.info("Listing all GRNs Paged");
+        return ResponseEntity.ok(receivingService.listGrnPaged(pageable));
     }
 
     // ---------------------------
     // GRN ITEM ENDPOINTS
     // ---------------------------
+
+    @GetMapping("/items")
+    @Operation(summary = "List all items")
+    public ResponseEntity<List<GrnItemDto>> listGrnItems() {
+        log.info("Listing all items");
+        return ResponseEntity.ok(receivingService.listGrnItems());
+    }
+
+    @GetMapping("/items-paged")
+    @Operation(summary = "List all GrnItems paged")
+    public ResponseEntity<Page<GrnItemDto>> listGrnItemsPaged(Pageable pageable) {
+        log.info("Listing all GrnItems Paged");
+        return ResponseEntity.ok(receivingService.listGrnItemsPaged(pageable));
+    }
 
     @PostMapping("/grns/{grnId}/items")
     @Operation(summary = "Create item for GRN")

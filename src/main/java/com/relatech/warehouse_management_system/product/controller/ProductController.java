@@ -2,13 +2,17 @@ package com.relatech.warehouse_management_system.product.controller;
 
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.product.service.ProductService;
 import com.relatech.warehouse_management_system.common.util.Category;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +49,12 @@ public class ProductController {
         List<ProductDTO> products = productService.getAllProducts();
         log.info("Returning products: {}", products);
         return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/paged")
+    @Operation(summary = "List Stock Units paginated")
+    public ResponseEntity<Page<ProductDTO>> listStockUnitsPaged(Pageable pageable) {
+        return ResponseEntity.ok(productService.getAllProductsPaged(pageable));
     }
 
     @GetMapping("/category/{category}")

@@ -9,6 +9,8 @@ import com.relatech.warehouse_management_system.goodsIn.exception.*;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,8 +41,21 @@ public class ReceivingService {
     }
 
     @Transactional(readOnly = true)
-    public List<GrnDTO> list() {
+    public List<GrnDTO> listGrn() {
         return grnService.getAllGRNs();
+    }
+
+    public Page<GrnDTO> listGrnPaged(Pageable pageable) {
+        return grnService.getAllGRNsPaged(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GrnItemDto> listGrnItems() {
+        return grnItemService.getAllGrnItems();
+    }
+
+    public Page<GrnItemDto> listGrnItemsPaged(Pageable pageable) {
+        return grnItemService.getAllGrnItemsPaged(pageable);
     }
 
     // CREATE ITEM AND ASSIGN TO GRN BY ID

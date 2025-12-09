@@ -13,8 +13,12 @@ import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoun
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -49,5 +53,26 @@ public class CheckGoodsInService {
         stateService.evaluateAndProgressItemState(item);
 
         return item;
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<CheckingInfoDto> listCheckinginfo() {
+        return checkingInfoService.getAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CheckingInfoDto> listCIPaged(Pageable pageable) {
+        return checkingInfoService.getAllPaged(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<StockUnitDTO> listStockUnit() {
+        return stockUnitService.getAllStockUnits();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<StockUnitDTO> listStockUnitPaged(Pageable pageable) {
+        return stockUnitService.getAllStockUnitsPaged(pageable);
     }
 }
