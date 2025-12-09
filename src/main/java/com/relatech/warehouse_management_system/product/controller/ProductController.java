@@ -2,7 +2,6 @@ package com.relatech.warehouse_management_system.product.controller;
 
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.product.service.ProductService;
 import com.relatech.warehouse_management_system.common.util.Category;
