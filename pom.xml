@@ -151,9 +151,12 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <exclude>
-                                    com/relatech/warehouse_management_system/WarehouseManagementSystemApplication*
-                                </exclude>
+                                <exclude>**/dto/**</exclude>
+                                <exclude>**/entity/**</exclude>
+                                <exclude>**/util/**</exclude>
+                                <exclude>**/config/**</exclude>
+                                <!--exclude>**/exception/**</exclude-->
+                                <exclude>com/relatech/warehouse_management_system/WarehouseManagementSystemApplication*</exclude>
                             </excludes>
                         </configuration>
                     </execution>
