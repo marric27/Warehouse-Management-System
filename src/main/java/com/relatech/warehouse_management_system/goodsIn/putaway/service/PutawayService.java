@@ -14,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -50,28 +48,4 @@ public class PutawayService {
 
         return savedSlot;
     }
-
-    // TODO togliere?
-    public List<SlotDTO> listSlots() {
-        return slotService.getAllSlots();
-    }
-
-    public SlotDTO getSlot(Long id) throws ResourceNotFoundException {
-        return slotService.getSlotById(id);
-    }
-
-    public SlotDTO createSlot(SlotDTO slot) {
-        return slotService.createSlot(slot);
-    }
-
-    public SlotDTO updateSlot(Long id, SlotDTO slot)
-            throws ResourceNotFoundException, UpdateEntityException {
-        return slotService.updateSlot(id, slot);
-    }
-
-    public void deleteSlot(Long id) throws ResourceNotFoundException {
-        slotService.deleteSlot(id);
-    }
-
-
 }

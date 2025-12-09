@@ -34,7 +34,6 @@ public class ReceivingService {
         return grnService.createGRN(dto);
     }
 
-    // TODO tolgo e uso direttamente quelli del grnserviceimpl?
     public GrnDTO getGRN(Long id) throws GrnExceptions.GrnNotFoundException {
         return grnService.getGRNById(id);
     }

@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -29,9 +27,6 @@ public class GrnMapper {
                 .receivingDate(entity.getReceivingDate())
                 .state(entity.getState() != null ? entity.getState() : null)
                 .items(grnItemMapper.toDto(entity.getItems()))
-//                .items(entity.getItems() != null ?
-//                        new ArrayList<>(grnItemMapper.toDto(entity.getItems())) ://TODO
-//                        new ArrayList<>())
                 .build();
     }
 
@@ -46,7 +41,7 @@ public class GrnMapper {
                 .supplier(dto.getSupplier())
                 .receivingDate(dto.getReceivingDate())
                 .state(State.OPEN) // Default state on creation
-                .items(grnItemMapper.toEntity(dto.getItems())) //TODO test
+                .items(grnItemMapper.toEntity(dto.getItems()))
                 .build();
     }
 }
