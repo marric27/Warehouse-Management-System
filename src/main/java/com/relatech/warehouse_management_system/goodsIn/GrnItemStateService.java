@@ -6,7 +6,7 @@ import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
-import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
+import com.relatech.warehouse_management_system.goodsIn.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class GrnItemStateService {
     private final GrnItemService grnItemService;
 
     // VALIDAZIONE QUANTITÀ
-    public void validateItemQuantities(GrnItemDto item) throws GrnExceptions.InvalidQuantityException, GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException {
+    public void validateItemQuantities(GrnItemDto item) throws InvalidQuantityException, QuantityMismatchException, OverReceivedQuantityException {
 
         int expected = item.getExpectedQty();
         int compliant = item.getCompliantQty();
@@ -33,18 +33,18 @@ public class GrnItemStateService {
         if(received==0) item.setState(State.PUTAWAY);
 
         if (expected <= 0)
-            throw new GrnExceptions.InvalidQuantityException("Expected qty must be > 0");
+            throw new InvalidQuantityException("Expected qty must be > 0");
 
         if (received != compliant + notCompliant)
-            throw new GrnExceptions.QuantityMismatchException("Received != compliant + notCompliant");
+            throw new QuantityMismatchException("Received != compliant + notCompliant");
 
         if (received > expected)
-            throw new GrnExceptions.OverReceivedQuantityException("Over-received: expected=" + expected + " received=" + received);
+            throw new OverReceivedQuantityException("Over-received: expected=" + expected + " received=" + received);
     }
 
     // PROGRESSIONE AUTOMATICA DI STATO
     @Transactional
-    public void evaluateAndProgressItemState(GrnItemDto item) throws GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
+    public void evaluateAndProgressItemState(GrnItemDto item) throws GrnItemNotFoundException, GrnNotFoundException {
 
         List<CheckingInfoDto> checks = item.getCheckingInfoList();
         int expected = item.getExpectedQty();
@@ -77,7 +77,7 @@ public class GrnItemStateService {
     // SE TUTTI GLI ITEMS SONO PUTAWAY → CHIUDERE GRN
     @Transactional
     public void evaluateAndProgressGrnState(Long grnId)
-            throws GrnExceptions.GrnNotFoundException {
+            throws GrnNotFoundException {
 
         GrnDTO grn = grnService.getGRNById(grnId);
 
@@ -91,11 +91,11 @@ public class GrnItemStateService {
         }
     }
 
-    public boolean checkGrnIfClosed(Long grnID) throws GrnExceptions.GrnNotFoundException {
+    public boolean checkGrnIfClosed(Long grnID) throws GrnNotFoundException {
         return grnService.getGRNById(grnID).getState() == State.CLOSED;
     }
 
-    public boolean checkGrnItemIfCheckedOrPutaway(Long grnItemId) throws GrnExceptions.GrnItemNotFoundException {
+    public boolean checkGrnItemIfCheckedOrPutaway(Long grnItemId) throws GrnItemNotFoundException {
         State state = grnItemService.getGrnItemById(grnItemId).getState();
         return state == State.CHECKED || state == State.PUTAWAY;
     }

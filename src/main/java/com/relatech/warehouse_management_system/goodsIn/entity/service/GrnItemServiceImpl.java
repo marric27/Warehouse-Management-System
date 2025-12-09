@@ -6,7 +6,7 @@ import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.CheckingInfoRepository;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnItemRepository;
-import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,33 +45,33 @@ public class GrnItemServiceImpl implements GrnItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public GrnItemDto getGrnItemById(Long id) throws GrnExceptions.GrnItemNotFoundException {
+    public GrnItemDto getGrnItemById(Long id) throws GrnItemNotFoundException {
         log.debug("Fetching GRN item with ID: {}", id);
         GrnItem grnItem = grnItemRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("GRN item not found with ID: {}", id);
-                    return new GrnExceptions.GrnItemNotFoundException(id);
+                    return new GrnItemNotFoundException(id);
                 });
         return grnItemMapper.toDto(grnItem);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public GrnItemDto getGrnItemByCode(String code) throws GrnExceptions.GrnItemNotFoundException {
+    public GrnItemDto getGrnItemByCode(String code) throws GrnItemNotFoundException {
         log.debug("Fetching GRN item with code: {}", code);
         GrnItem grnItem = grnItemRepository.findByCode(code)
                 .orElseThrow(() -> {
                     log.warn("GRN not found with code: {}", code);
-                    return new GrnExceptions.GrnItemNotFoundException(code);
+                    return new GrnItemNotFoundException(code);
                 });
         return grnItemMapper.toDto(grnItem);
     }
 
     @Override
-    @Transactional(rollbackFor = {GrnExceptions.GrnItemNotFoundException.class, Exception.class}, propagation = Propagation.REQUIRES_NEW)
-    public GrnItemDto updateGrnItem(Long id, GrnItemDto grnItemDto) throws GrnExceptions.GrnItemNotFoundException {
+    @Transactional(rollbackFor = {GrnItemNotFoundException.class, Exception.class})
+    public GrnItemDto updateGrnItem(Long id, GrnItemDto grnItemDto) throws GrnItemNotFoundException {
         GrnItem existingGrnItem = grnItemRepository.findById(id)
-                .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(id));
+                .orElseThrow(() -> new GrnItemNotFoundException(id));
 
         if (grnItemDto.getProductCode() != null)
             existingGrnItem.setProductCode(grnItemDto.getProductCode());
@@ -90,21 +90,21 @@ public class GrnItemServiceImpl implements GrnItemService {
     }
 
     @Override
-    @Transactional(rollbackFor = {GrnExceptions.GrnItemNotFoundException.class}, propagation = Propagation.REQUIRES_NEW)
-    public void deleteGrnItem(Long id) throws GrnExceptions.GrnItemNotFoundException {
+    @Transactional(rollbackFor = {GrnItemNotFoundException.class}, propagation = Propagation.REQUIRES_NEW)
+    public void deleteGrnItem(Long id) throws GrnItemNotFoundException {
         grnItemRepository.findById(id)
-                .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(id));
+                .orElseThrow(() -> new GrnItemNotFoundException(id));
         grnItemRepository.deleteById(id);
     }
 
-    @Transactional(rollbackFor = {GrnExceptions.GrnItemNotFoundException.class}, propagation = Propagation.REQUIRES_NEW)
+    @Transactional(rollbackFor = {GrnItemNotFoundException.class})
     @Override
-    public void addCheckingInfo(Long grnItemId, Long checkingInfoId) throws GrnExceptions.GrnItemNotFoundException {
+    public void addCheckingInfo(Long grnItemId, Long checkingInfoId) throws Exception {
         GrnItem item = grnItemRepository.findById(grnItemId)
-                .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(grnItemId));
+                .orElseThrow(() -> new GrnItemNotFoundException(grnItemId));
 
         CheckingInfo info = checkingInfoRepository.findById(checkingInfoId)
-                .orElseThrow(() -> new RuntimeException("CheckingInfo not found"));
+                .orElseThrow(() -> new Exception("CheckingInfo not found"));
 
         item.getCheckingInfoList().add(info);
     }

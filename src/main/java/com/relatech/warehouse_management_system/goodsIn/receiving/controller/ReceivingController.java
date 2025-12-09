@@ -3,7 +3,8 @@ package com.relatech.warehouse_management_system.goodsIn.receiving.controller;
 import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
+import com.relatech.warehouse_management_system.goodsIn.exception.InvalidStateTransitionException;
 import com.relatech.warehouse_management_system.goodsIn.receiving.service.ReceivingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,8 +34,7 @@ public class ReceivingController {
     @PostMapping("/grns")
     @Operation(summary = "Create GRN")
     @ApiResponse(responseCode = "201", description = "GRN created")
-    public ResponseEntity<GrnDTO> createGRN(@Valid @RequestBody GrnDTO dto)
-            throws GrnExceptions.DuplicateGrnCodeException {
+    public ResponseEntity<GrnDTO> createGRN(@Valid @RequestBody GrnDTO dto) {
 
         log.info("Creating GRN");
         GrnDTO result = receivingService.createGRN(dto);
@@ -44,7 +44,7 @@ public class ReceivingController {
     @GetMapping("/grns/{id}")
     @Operation(summary = "Get GRN by ID")
     public ResponseEntity<GrnDTO> getGRN(@PathVariable Long id)
-            throws GrnExceptions.GrnNotFoundException {
+            throws GrnNotFoundException {
 
         log.info("Fetching GRN {}", id);
         return ResponseEntity.ok(receivingService.getGRN(id));
@@ -93,7 +93,7 @@ public class ReceivingController {
     public ResponseEntity<GrnDTO> changeGrnState(
             @PathVariable Long id,
             @PathVariable State state)
-            throws GrnExceptions.GrnNotFoundException, GrnExceptions.InvalidStateTransitionException {
+            throws GrnNotFoundException, InvalidStateTransitionException {
 
         log.info("Changing state of GRN {} to {}", id, state);
         throw new UnsupportedOperationException("Not implemented in ReceivingService");

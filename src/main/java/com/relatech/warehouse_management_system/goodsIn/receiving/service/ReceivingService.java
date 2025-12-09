@@ -5,8 +5,7 @@ import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
-import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignItemToGrnClosedException;
-import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
+import com.relatech.warehouse_management_system.goodsIn.exception.*;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +25,8 @@ public class ReceivingService {
     private final GrnItemStateService stateService;
 
     // CREATE GRN
-    @Transactional(rollbackFor = {GrnExceptions.DuplicateGrnCodeException.class, Exception.class})
-    public GrnDTO createGRN(GrnDTO dto) throws GrnExceptions.DuplicateGrnCodeException {
+    @Transactional(rollbackFor = {Exception.class})
+    public GrnDTO createGRN(GrnDTO dto) {
         dto.setState(State.OPEN);
         if (dto.getReceivingDate() == null)
             dto.setReceivingDate(LocalDate.now());
@@ -35,7 +34,7 @@ public class ReceivingService {
     }
 
     @Transactional(readOnly = true)
-    public GrnDTO getGRN(Long id) throws GrnExceptions.GrnNotFoundException {
+    public GrnDTO getGRN(Long id) throws GrnNotFoundException {
         return grnService.getGRNById(id);
     }
 
@@ -46,7 +45,8 @@ public class ReceivingService {
 
     // CREATE ITEM AND ASSIGN TO GRN BY ID
     @Transactional(rollbackFor = {Exception.class})
-    public GrnItemDto createItem(Long grnId, GrnItemDto item) throws Exception {
+    public GrnItemDto createItem(Long grnId, GrnItemDto item) throws GrnNotFoundException, CannotAssignItemToGrnClosedException, InvalidQuantityException, QuantityMismatchException, OverReceivedQuantityException, GrnItemNotFoundException {
+        if(grnService.getGRNById(grnId) == null) throw new GrnNotFoundException(grnId);
         if(stateService.checkGrnIfClosed(grnId))
             throw new CannotAssignItemToGrnClosedException(grnId);
         stateService.validateItemQuantities(item);

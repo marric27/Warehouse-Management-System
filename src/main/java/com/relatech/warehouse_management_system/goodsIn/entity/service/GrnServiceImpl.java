@@ -7,7 +7,8 @@ import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnRepository;
-import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnWithItemsException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ public class GrnServiceImpl implements GrnService {
     private final GrnItemMapper grnItemMapper;
 
     @Override
-    @Transactional(rollbackFor = {GrnExceptions.DuplicateGrnCodeException.class, Exception.class}, propagation = Propagation.REQUIRED)
+    @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
     public GrnDTO createGRN(GrnDTO grnDTO) {
         log.debug("Creating new GRN with ID: {}", grnDTO.getId());
 
@@ -40,24 +41,24 @@ public class GrnServiceImpl implements GrnService {
 
     @Override
     @Transactional(readOnly = true)
-    public GrnDTO getGRNById(Long id) throws GrnExceptions.GrnNotFoundException {
+    public GrnDTO getGRNById(Long id) throws GrnNotFoundException {
         log.debug("Fetching GRN with ID: {}", id);
         GRN entity = grnRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("GRN not found with ID: {}", id);
-                    return new GrnExceptions.GrnNotFoundException(id);
+                    return new GrnNotFoundException(id);
                 });
         return grnMapper.toDto(entity);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public GrnDTO getGRNByCode(String code) throws GrnExceptions.GrnNotFoundException {
+    public GrnDTO getGRNByCode(String code) throws GrnNotFoundException {
         log.debug("Fetching GRN with code: {}", code);
         GRN entity = grnRepository.findByCode(code)
                 .orElseThrow(() -> {
                     log.warn("GRN not found with code: {}", code);
-                    return new GrnExceptions.GrnNotFoundException(code);
+                    return new GrnNotFoundException(code);
                 });
         return grnMapper.toDto(entity);
     }
@@ -81,9 +82,9 @@ public class GrnServiceImpl implements GrnService {
 
     @Override
     @Transactional(timeout = 5, propagation = Propagation.REQUIRED)
-    public GrnDTO updateGRN(Long id, GrnDTO grnDTO) throws GrnExceptions.GrnNotFoundException {
+    public GrnDTO updateGRN(Long id, GrnDTO grnDTO) throws GrnNotFoundException {
         GRN existing = grnRepository.findById(id)
-                .orElseThrow(() -> new GrnExceptions.GrnNotFoundException(id));
+                .orElseThrow(() -> new GrnNotFoundException(id));
 
         if (grnDTO.getSupplier() != null)
             existing.setSupplier(grnDTO.getSupplier());
@@ -108,20 +109,20 @@ public class GrnServiceImpl implements GrnService {
     }
 
     @Override
-    @Transactional(rollbackFor = {GrnExceptions.GrnNotFoundException.class, GrnExceptions.GrnWithItemsException.class},
+    @Transactional(rollbackFor = {GrnNotFoundException.class, GrnWithItemsException.class},
             propagation = Propagation.REQUIRES_NEW)
-    public void deleteById(Long id) throws GrnExceptions.GrnNotFoundException, GrnExceptions.GrnWithItemsException {
+    public void deleteById(Long id) throws GrnNotFoundException, GrnWithItemsException {
         log.debug("Deleting GRN with ID: {}", id);
 
         GRN grn = grnRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("GRN not found with ID: {}", id);
-                    return new GrnExceptions.GrnNotFoundException(id);
+                    return new GrnNotFoundException(id);
                 });
 
         if (grn.getItems() != null && !grn.getItems().isEmpty()) {
             log.warn("Cannot delete GRN {} as it has associated items", id);
-            throw new GrnExceptions.GrnWithItemsException("" + id);
+            throw new GrnWithItemsException("" + id);
         }
 
         grnRepository.delete(grn);

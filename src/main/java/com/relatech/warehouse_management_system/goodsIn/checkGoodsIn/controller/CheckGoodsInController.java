@@ -33,8 +33,8 @@ public class CheckGoodsInController {
     public ResponseEntity<GrnItemDto> createCheckingInfo(
             @PathVariable Long grnItemId,
             @RequestBody CreateCheckingInfoRequest request) throws Exception {
-        log.info("POST /{}/checking-info - creating checking-info {} and stockUnit {}", grnItemId, request.getCheckingInfo().getId(), request.getStockUnit().getId());
-        GrnItemDto result = checkGoodsInService.createCheckingInfo(
+        log.info("POST /{}/checking-info - creating checking-info {} and stockUnit {}", grnItemId, request.getCheckingInfo().getCode(), request.getStockUnit().getCode());
+        GrnItemDto result = checkGoodsInService.createCheckingInfoAndStockUnit(
                 grnItemId,
                 request.getCheckingInfo(),
                 request.getStockUnit()

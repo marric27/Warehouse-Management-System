@@ -5,7 +5,7 @@ import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemServiceImpl;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.GrnItemRepository;
-import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,7 +66,7 @@ class GrnItemServiceImplTest {
     }
 
     @Test
-    void givenExistingGrnItemId_whenGetGrnItemById_thenReturnsDto() throws GrnExceptions.GrnItemNotFoundException {
+    void givenExistingGrnItemId_whenGetGrnItemById_thenReturnsDto() throws GrnItemNotFoundException {
         GrnItem grnItem = createValidEntity();
         GrnItemDto grnItemDto = createValidDto();
 
@@ -83,12 +83,12 @@ class GrnItemServiceImplTest {
     void givenNonExistingGrnItemId_whenGetGrnItemById_thenThrowsNotFoundException() {
         when(grnItemRepository.findById(2L)).thenReturn(Optional.empty());
 
-        assertThrows(GrnExceptions.GrnItemNotFoundException.class,
+        assertThrows(GrnItemNotFoundException.class,
                 () -> grnItemService.getGrnItemById(2L));
     }
 
     @Test
-    void givenValidUpdateDto_whenUpdateGrnItem_thenUpdatesFieldsAndReturnsDto() throws GrnExceptions.GrnItemNotFoundException {
+    void givenValidUpdateDto_whenUpdateGrnItem_thenUpdatesFieldsAndReturnsDto() throws GrnItemNotFoundException {
         GrnItemDto updateDto = GrnItemDto.builder()
                 .productCode("P002")
                 .expectedQty(20)
@@ -113,12 +113,12 @@ class GrnItemServiceImplTest {
         GrnItemDto updateDto = GrnItemDto.builder().productCode("P002").build();
         when(grnItemRepository.findById(2L)).thenReturn(Optional.empty());
 
-        assertThrows(GrnExceptions.GrnItemNotFoundException.class,
+        assertThrows(GrnItemNotFoundException.class,
                 () -> grnItemService.updateGrnItem(2L, updateDto));
     }
 
     @Test
-    void givenExistingGrnItemId_whenDeleteGrnItem_thenRepositoryDeleteCalled() throws GrnExceptions.GrnItemNotFoundException {
+    void givenExistingGrnItemId_whenDeleteGrnItem_thenRepositoryDeleteCalled() throws  GrnItemNotFoundException {
         GrnItem grnItem = createValidEntity();
         when(grnItemRepository.findById(1L)).thenReturn(Optional.of(grnItem));
 
@@ -131,7 +131,7 @@ class GrnItemServiceImplTest {
     void givenNonExistingGrnItemId_whenDeleteGrnItem_thenThrowsNotFoundException() {
         when(grnItemRepository.findById(2L)).thenReturn(Optional.empty());
 
-        assertThrows(GrnExceptions.GrnItemNotFoundException.class,
+        assertThrows(GrnItemNotFoundException.class,
                 () -> grnItemService.deleteGrnItem(2L));
     }
 }

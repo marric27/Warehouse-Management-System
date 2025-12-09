@@ -1,22 +1,18 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
-import org.springframework.transaction.annotation.Transactional;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoundException;
 
 import java.util.List;
 
 public interface GrnItemService {
 
-    GrnItemDto createGrnItem(GrnItemDto dto) throws GrnExceptions.DuplicateGrnCodeException;
+    GrnItemDto createGrnItem(GrnItemDto dto);
 
     List<GrnItemDto> getAllGrnItems();
-    GrnItemDto getGrnItemById(Long id) throws GrnExceptions.GrnItemNotFoundException;
-    GrnItemDto getGrnItemByCode(String code) throws GrnExceptions.GrnItemNotFoundException;
-    GrnItemDto updateGrnItem(Long id, GrnItemDto grnItemDto) throws GrnExceptions.GrnItemNotFoundException;
-    void deleteGrnItem(Long id) throws GrnExceptions.GrnItemNotFoundException;
-
-    @Transactional
-    void addCheckingInfo(Long grnItemId, Long checkingInfoId) throws GrnExceptions.GrnItemNotFoundException;
-    // Opzionale: List<GrnItemDto> findByGrnId(Long grnId);
+    GrnItemDto getGrnItemById(Long id) throws GrnItemNotFoundException;
+    GrnItemDto getGrnItemByCode(String code) throws GrnItemNotFoundException;
+    GrnItemDto updateGrnItem(Long id, GrnItemDto grnItemDto) throws GrnItemNotFoundException;
+    void deleteGrnItem(Long id) throws GrnItemNotFoundException;
+    void addCheckingInfo(Long grnItemId, Long checkingInfoId) throws Exception;
 }

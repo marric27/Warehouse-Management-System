@@ -5,7 +5,8 @@ import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.dto.*;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.*;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
-import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoundException;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
 import com.relatech.warehouse_management_system.warehouse.service.SlotService;
@@ -27,8 +28,8 @@ public class PutawayService {
     private final GrnItemStateService stateService;
 
 
-    @Transactional(rollbackFor = {ResourceNotFoundException.class, UpdateEntityException.class, GrnExceptions.GrnItemNotFoundException.class}, propagation = Propagation.REQUIRES_NEW)
-    public SlotDTO assignStockUnitToSlot(Long stockUnitId, Long slotId) throws ResourceNotFoundException, UpdateEntityException, GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
+    @Transactional(rollbackFor = {ResourceNotFoundException.class, UpdateEntityException.class, GrnItemNotFoundException.class}, propagation = Propagation.REQUIRES_NEW)
+    public SlotDTO assignStockUnitToSlot(Long stockUnitId, Long slotId) throws ResourceNotFoundException, UpdateEntityException, GrnItemNotFoundException, GrnNotFoundException {
 
         SlotDTO slot = slotService.getSlotById(slotId);
         StockUnitDTO su = stockUnitService.getStockUnitById(stockUnitId);

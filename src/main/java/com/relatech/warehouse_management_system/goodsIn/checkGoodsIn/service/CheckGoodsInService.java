@@ -9,11 +9,11 @@ import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemSe
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignCIToGrnItemInClosedOrPutawayStateException;
-import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoundException;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -27,8 +27,8 @@ public class CheckGoodsInService {
     private final GrnItemService grnItemService;
     private final GrnItemStateService stateService;
 
-    @Transactional(rollbackFor = {CannotAssignCIToGrnItemInClosedOrPutawayStateException.class, DuplicateResourceException.class, GrnExceptions.GrnItemNotFoundException.class, GrnExceptions.GrnNotFoundException.class}, propagation = Propagation.REQUIRES_NEW)
-    public GrnItemDto createCheckingInfo(Long grnItemId, CheckingInfoDto ci, StockUnitDTO su) throws CannotAssignCIToGrnItemInClosedOrPutawayStateException, DuplicateResourceException, GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
+    @Transactional(rollbackFor = {CannotAssignCIToGrnItemInClosedOrPutawayStateException.class, DuplicateResourceException.class, GrnItemNotFoundException.class, GrnNotFoundException.class})
+    public GrnItemDto createCheckingInfoAndStockUnit(Long grnItemId, CheckingInfoDto ci, StockUnitDTO su) throws Exception {
 
         if(stateService.checkGrnItemIfCheckedOrPutaway(grnItemId))
             throw new CannotAssignCIToGrnItemInClosedOrPutawayStateException(grnItemId);

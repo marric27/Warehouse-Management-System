@@ -1,9 +1,6 @@
 package com.relatech.warehouse_management_system.common.exception;
 
-import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignCIToGrnItemInClosedOrPutawayStateException;
-import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignItemToGrnClosedException;
-import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
-import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
+import com.relatech.warehouse_management_system.goodsIn.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -13,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -47,12 +45,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(buildError(HttpStatus.CONFLICT, ex, req));
     }
 
-    @ExceptionHandler(GrnWithItemsException.class)
-    public ResponseEntity<ApiError> handleGrnWithItems(GrnWithItemsException ex, HttpServletRequest req) {
-        log.error("GrnWithItemsException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(buildError(HttpStatus.CONFLICT, ex, req));
-    }
-
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ApiError> handleValidation(ValidationException ex, HttpServletRequest req) {
         log.error("ValidationException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
@@ -69,7 +61,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleSpringValidation(MethodArgumentNotValidException ex, HttpServletRequest req) {
         String firstError = ex.getBindingResult().getFieldErrors().isEmpty()
                 ? "Validation error"
-                : ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
+                : ex.getBindingResult().getFieldErrors().getFirst().getDefaultMessage();
 
         log.error("MethodArgumentNotValidException at {} {} -> {}", req.getMethod(), req.getRequestURI(), firstError, ex);
 
@@ -106,30 +98,72 @@ public class GlobalExceptionHandler {
                 .body(buildError(HttpStatus.BAD_REQUEST, ex, req));
     }
 
-    @ExceptionHandler(GrnExceptions.GrnWithItemsException.class)
-    public ResponseEntity<ApiError> handleGrnWithItems(GrnExceptions.GrnWithItemsException ex, HttpServletRequest req) {
-        log.error("GrnWithItemsException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(buildError(HttpStatus.CONFLICT, ex, req));
-    }
-
     @ExceptionHandler(CannotAssignItemToGrnClosedException.class)
-    public ResponseEntity<ApiError> handleGrnWithItems(CannotAssignItemToGrnClosedException ex, HttpServletRequest req) {
+    public ResponseEntity<ApiError> handleCannotAssignItemToGrnClosedException(CannotAssignItemToGrnClosedException ex, HttpServletRequest req) {
         log.error("CannotAssignItemToGrnClosedException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildError(HttpStatus.CONFLICT, ex, req));
     }
 
     @ExceptionHandler(CannotAssignCIToGrnItemInClosedOrPutawayStateException.class)
-    public ResponseEntity<ApiError> handleGrnWithItems(CannotAssignCIToGrnItemInClosedOrPutawayStateException ex, HttpServletRequest req) {
+    public ResponseEntity<ApiError> handleCannotAssignCIToGrnItemInClosedOrPutawayStateException(CannotAssignCIToGrnItemInClosedOrPutawayStateException ex, HttpServletRequest req) {
         log.error("CannotAssignCIToGrnItemInClosedOrPutawayStateException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildError(HttpStatus.CONFLICT, ex, req));
     }
 
     @ExceptionHandler(UpdateEntityException.class)
-    public ResponseEntity<ApiError> handleGrnWithItems(UpdateEntityException ex, HttpServletRequest req) {
+    public ResponseEntity<ApiError> handleUpdateEntityException(UpdateEntityException ex, HttpServletRequest req) {
         log.error("UpdateEntityException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildError(HttpStatus.CONFLICT, ex, req));
+    }
+
+    @ExceptionHandler(GrnNotFoundException.class)
+    public ResponseEntity<ApiError> handleGrnNotFoundException(GrnNotFoundException ex, HttpServletRequest req) {
+        log.error("GrnNotFoundException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(buildError(HttpStatus.NOT_FOUND, ex, req));
+    }
+
+    @ExceptionHandler(GrnItemNotFoundException.class)
+    public ResponseEntity<ApiError> handleGrnItemNotFoundException(GrnItemNotFoundException ex, HttpServletRequest req) {
+        log.error("GrnItemNotFoundException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(buildError(HttpStatus.NOT_FOUND, ex, req));
+    }
+
+    @ExceptionHandler(GrnWithItemsException.class)
+    public ResponseEntity<ApiError> handleGrnWithItemsException(GrnWithItemsException ex, HttpServletRequest req) {
+        log.error("GrnWithItemsException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildError(HttpStatus.CONFLICT, ex, req));
+    }
+
+    @ExceptionHandler(InvalidQuantityException.class)
+    public ResponseEntity<ApiError> handleInvalidQuantityException(InvalidQuantityException ex, HttpServletRequest req) {
+        log.error("InvalidQuantityException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildError(HttpStatus.CONFLICT, ex, req));
+    }
+
+    @ExceptionHandler(InvalidStateTransitionException.class)
+    public ResponseEntity<ApiError> handleInvalidStateTransitionException(InvalidStateTransitionException ex, HttpServletRequest req) {
+        log.error("InvalidStateTransitionException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildError(HttpStatus.CONFLICT, ex, req));
+    }
+
+    @ExceptionHandler(QuantityMismatchException.class)
+    public ResponseEntity<ApiError> handleQuantityMismatchException(QuantityMismatchException ex, HttpServletRequest req) {
+        log.error("QuantityMismatchException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildError(HttpStatus.CONFLICT, ex, req));
+    }
+
+    @ExceptionHandler(OverReceivedQuantityException.class)
+    public ResponseEntity<ApiError> handleOverReceivedQuantityException(OverReceivedQuantityException ex, HttpServletRequest req) {
+        log.error("OverReceivedQuantityException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildError(HttpStatus.CONFLICT, ex, req));
     }

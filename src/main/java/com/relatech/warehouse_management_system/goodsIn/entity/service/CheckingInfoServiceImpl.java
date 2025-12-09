@@ -5,7 +5,6 @@ import com.relatech.warehouse_management_system.goodsIn.entity.CheckingInfo;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.CheckingInfoMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.CheckingInfoRepository;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
     }
 
     @Override
-    @Transactional(rollbackFor = {ResourceNotFoundException.class, Exception.class}, propagation = Propagation.REQUIRES_NEW)
+    @Transactional(rollbackFor = {ResourceNotFoundException.class, Exception.class})
     public CheckingInfoDto update(Long id, CheckingInfoDto dto) throws ResourceNotFoundException {
 
         CheckingInfo existing = checkingInfoRepository.findById(id)
