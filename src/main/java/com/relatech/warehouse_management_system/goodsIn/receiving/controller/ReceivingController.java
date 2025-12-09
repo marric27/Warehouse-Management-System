@@ -36,7 +36,7 @@ public class ReceivingController {
     public ResponseEntity<GrnDTO> createGRN(@Valid @RequestBody GrnDTO dto)
             throws GrnExceptions.DuplicateGrnCodeException {
 
-        log.info("Creating GRN {}", dto.getCode());
+        log.info("Creating GRN");
         GrnDTO result = receivingService.createGRN(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
@@ -68,7 +68,7 @@ public class ReceivingController {
             @PathVariable Long grnId,
             @Valid @RequestBody GrnItemDto dto) throws Exception {
 
-        log.info("Creating item {} for GRN {}", dto.getCode(), grnId);
+        log.info("Creating item for GRN {}", grnId);
         GrnItemDto result = receivingService.createItem(grnId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }

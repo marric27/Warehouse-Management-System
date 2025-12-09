@@ -34,7 +34,7 @@ class StockUnitRepositoryTest {
                 .batchNumber("BN123")
                 .expirationDate(LocalDate.now().plusDays(30))
                 .productCode("P001")
-                .uniqueCode("UNIQUE-123")
+                .code("UNIQUE-123")
                 .quantity(10)
                 .category(Category.STANDARD)
                 .build();
@@ -64,7 +64,7 @@ class StockUnitRepositoryTest {
         StockUnit saved = stockUnitRepository.save(su);
 
         assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getUniqueCode()).isEqualTo("UNIQUE-123");
+        assertThat(saved.getCode()).isEqualTo("UNIQUE-123");
     }
 
     @Test
@@ -79,18 +79,18 @@ class StockUnitRepositoryTest {
     }
 
     @Test
-    @DisplayName("Should find StockUnit by uniqueCode")
+    @DisplayName("Should find StockUnit by code")
     void testFindByUniqueCode() {
         stockUnitRepository.save(buildStockUnit());
 
-        StockUnit found = stockUnitRepository.findByUniqueCode("UNIQUE-123").orElse(null);
+        StockUnit found = stockUnitRepository.findByCode("UNIQUE-123").orElse(null);
 
         assertThat(found).isNotNull();
         assertThat(found.getProductCode()).isEqualTo("P001");
     }
 
     @Test
-    @DisplayName("Should fail saving duplicate uniqueCode")
+    @DisplayName("Should fail saving duplicate code")
     void testUniqueConstraint() {
         stockUnitRepository.save(buildStockUnit());
 

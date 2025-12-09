@@ -31,7 +31,6 @@ public class SlotMapper {
 
         Slot slot = new Slot();
         slot.setId(dto.getId());
-        slot.setCode(dto.getCode());
         slot.setAllowedCategory(dto.getAllowedCategory());
         slot.setCapacity(dto.getCapacity());
         slot.setProd(dto.getProduct() != null ? ProductMapper.toEntity(dto.getProduct()) : null);

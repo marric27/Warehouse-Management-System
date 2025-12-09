@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.goodsIn.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.relatech.warehouse_management_system.common.util.State;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
@@ -17,9 +18,9 @@ public class CheckingInfoDto {
     @Schema(description = "ID of the checking info", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
-    @NotBlank(message = "The code cannot be empty or null.")
-    @Schema(description = "Unique ID of the Checking info", example = "CI-1")
-    private String code; //TODO generato da app
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(description = "Unique ID of the Checking info", example = "CI-1", accessMode = Schema.AccessMode.READ_ONLY)
+    private String code;
 
     @NotBlank(message = "Batch number cannot be blank")
     @Schema(description = "Batch number or lot identifier", example = "BN-2025A")

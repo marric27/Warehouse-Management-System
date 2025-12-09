@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/slots")
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "Slot Management", description = "Complete crud for Slot")
+@Tag(name = "Warehouse Management", description = "Complete crud for Warehouse")
 public class SlotController {
     
     private final SlotService slotService;

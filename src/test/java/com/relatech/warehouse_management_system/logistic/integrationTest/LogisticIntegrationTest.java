@@ -66,7 +66,6 @@ class LogisticIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(slot.getId()))
-                .andExpect(jsonPath("$.code").value("SLOT001"))
                 .andExpect(jsonPath("$.product.id").value(productDTO.getId()))
                 .andExpect(jsonPath("$.product.name").value("Paracetamolo"))
                 .andExpect(jsonPath("$.product.category").value("STANDARD"));

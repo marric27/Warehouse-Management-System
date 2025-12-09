@@ -65,7 +65,6 @@ public class SlotServiceImpl implements SlotService {
         Slot existingSlot = slotRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", id));
 
-        existingSlot.setCode(slotDTO.getCode());
         existingSlot.setCapacity(slotDTO.getCapacity());
 
         if (existingSlot.getProd() == null)

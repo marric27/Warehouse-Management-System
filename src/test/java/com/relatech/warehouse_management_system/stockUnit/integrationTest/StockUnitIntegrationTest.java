@@ -42,7 +42,7 @@
 //
 //        stockUnitDTO = StockUnitDTO.builder()
 //                .batchNumber("BN001")
-//                .uniqueCode("UNIQUE001")
+//                .code("UNIQUE001")
 //                .productCode("P001")
 //                .category(Category.STANDARD)
 //                .quantity(50)
@@ -56,7 +56,7 @@
 //
 //        mockMvc.perform(get("/stock-units"))
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].uniqueCode").value("UNIQUE001"))
+//                .andExpect(jsonPath("$[0].code").value("UNIQUE001"))
 //                .andExpect(jsonPath("$[0].quantity").value(50));
 //    }
 //
@@ -66,7 +66,7 @@
 //
 //        mockMvc.perform(get("/stock-units/{id}", createdStockUnit.getId()))
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.uniqueCode").value("UNIQUE001"))
+//                .andExpect(jsonPath("$.code").value("UNIQUE001"))
 //                .andExpect(jsonPath("$.quantity").value(50));
 //    }
 //
@@ -82,7 +82,7 @@
 //                        .contentType(MediaType.APPLICATION_JSON)
 //                        .content(objectMapper.writeValueAsString(stockUnitDTO)))
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.uniqueCode").value("UNIQUE001"))
+//                .andExpect(jsonPath("$.code").value("UNIQUE001"))
 //                .andExpect(jsonPath("$.quantity").value(50));
 //    }
 //

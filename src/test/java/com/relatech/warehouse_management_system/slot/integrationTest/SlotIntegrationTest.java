@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 
+import static net.bytebuddy.implementation.FixedValue.value;
+import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,12 +46,12 @@ class SlotIntegrationTest {
     private StockUnitRepository stockUnitRepository;
 
     private final SlotDTO slotDTO = new SlotDTO(
-            null, "SLOT001", Category.STANDARD, 100, null, null
+            null, null, Category.STANDARD, 100, null, null
     );
 
     private final StockUnitDTO stockUnitDTO = new StockUnitDTO(
             null, "LOT20251333", LocalDate.now().plusDays(30),
-            "PRD-APPLE-006", "SU-0000003331", 50, Category.STANDARD, null,null
+            "PRD-APPLE-006", null, 50, Category.STANDARD, null,null
     );
 
     @BeforeEach
@@ -64,7 +66,6 @@ class SlotIntegrationTest {
 
         mockMvc.perform(get("/slots"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].code").value("SLOT001"))
                 .andExpect(jsonPath("$[0].capacity").value(100));
     }
 
@@ -74,7 +75,6 @@ class SlotIntegrationTest {
 
         mockMvc.perform(get("/slots/{id}", createdSlot.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("SLOT001"))
                 .andExpect(jsonPath("$.capacity").value(100));
     }
 
@@ -97,30 +97,13 @@ class SlotIntegrationTest {
     @Test
     void givenValidSlot_whenPost_thenReturnUpdatedObject() throws Exception {
         SlotDTO createdSlot = slotService.createSlot(slotDTO);
-        createdSlot.setCode("SLOT003");
         createdSlot.setCapacity(30);
 
         mockMvc.perform(put("/slots/{id}", createdSlot.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createdSlot)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.capacity").value(30))
-                .andExpect(jsonPath("$.code").value("SLOT003"));
+                .andExpect(jsonPath("$.capacity").value(30));
     }
 
-    @Test
-    void givenExistingProduct_whenUpdateProductWithExistingCode_thenReturnConflict() throws Exception {
-        SlotDTO slotDTO1 = new SlotDTO(null, "SLOT001", Category.STANDARD, 100, null, null);
-        SlotDTO slotDTO2 = new SlotDTO(null, "SLOT002", Category.STANDARD, 100, null, null);
-
-        SlotDTO first = slotService.createSlot(slotDTO1);
-        SlotDTO toUpdate = slotService.createSlot(slotDTO2);
-
-        toUpdate.setCode(first.getCode()); //duplicated code
-
-        mockMvc.perform(put("/slots/{id}", toUpdate.getId().toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(toUpdate)))
-                .andExpect(status().isConflict());
-    }
 }

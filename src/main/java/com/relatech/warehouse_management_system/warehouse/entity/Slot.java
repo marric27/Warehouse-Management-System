@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.warehouse.entity;
 
+import com.github.f4b6a3.ulid.UlidCreator;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.common.util.Category;
@@ -23,8 +24,16 @@ public class Slot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 15)
     private String code;
+
+    @PrePersist
+    public void prePersist() {
+        if (code == null) {
+            String ulid = UlidCreator.getUlid().toString();
+            this.code = "SLOT-" + ulid.substring(0, 10).toUpperCase();
+        }
+    }
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

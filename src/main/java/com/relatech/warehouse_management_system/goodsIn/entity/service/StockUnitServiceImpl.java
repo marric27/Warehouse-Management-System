@@ -60,7 +60,6 @@ public class StockUnitServiceImpl implements StockUnitService {
 
         existing.setBatchNumber(dto.getBatchNumber());
         existing.setExpirationDate(dto.getExpirationDate());
-        existing.setUniqueCode(dto.getUniqueCode());
         existing.setQuantity(dto.getQuantity());
         existing.setCategory(dto.getCategory());
 

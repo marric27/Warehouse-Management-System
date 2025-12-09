@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.goodsIn.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.common.util.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -31,9 +32,9 @@ public class StockUnitDTO {
     @NotBlank(message = "Product code is required")
     private String productCode;
 
-    @Schema(description = "Unique code identifying this stock unit", example = "STK-00001")
-    @NotBlank(message = "Unique code is required")
-    private String uniqueCode;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(description = "Unique code identifying this stock unit", example = "STK-00001", accessMode = Schema.AccessMode.READ_ONLY)
+    private String code;
 
     @Schema(description = "Available quantity of items", example = "150")
     @NotNull(message = "Quantity is required")
