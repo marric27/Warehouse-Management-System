@@ -21,7 +21,9 @@ public class SlotMapper {
         dto.setAllowedCategory(slot.getAllowedCategory());
         dto.setCapacity(slot.getCapacity());
         dto.setProduct(slot.getProd() != null ? ProductMapper.toDto(slot.getProd()) : null);
-        dto.setStockUnits(stockUnitMapper.toDTO(slot.getStockUnits() != null ? slot.getStockUnits() : new ArrayList<>()));
+        dto.setStockUnits(new ArrayList<>(stockUnitMapper.toDTO(
+                slot.getStockUnits() != null ? slot.getStockUnits() : new ArrayList<>()
+        )));
 
         return dto;
     }
@@ -34,7 +36,9 @@ public class SlotMapper {
         slot.setAllowedCategory(dto.getAllowedCategory());
         slot.setCapacity(dto.getCapacity());
         slot.setProd(dto.getProduct() != null ? ProductMapper.toEntity(dto.getProduct()) : null);
-        slot.setStockUnits(stockUnitMapper.toEntity(dto.getStockUnits() != null ? dto.getStockUnits() : new ArrayList<>()));
+        slot.setStockUnits(new ArrayList<>(stockUnitMapper.toEntity(
+                dto.getStockUnits() != null ? dto.getStockUnits() : new ArrayList<>()
+        )));
 
         return slot;
     }

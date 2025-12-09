@@ -23,26 +23,23 @@ public class GrnItemStateService {
     private final GrnItemService grnItemService;
 
     // VALIDAZIONE QUANTITÀ
-    public void validateItemQuantities(GrnItemDto item)
-            throws GrnExceptions.InvalidQuantityException,
-            GrnExceptions.QuantityMismatchException,
-            GrnExceptions.OverReceivedQuantityException {
+    public void validateItemQuantities(GrnItemDto item) throws GrnExceptions.InvalidQuantityException, GrnExceptions.QuantityMismatchException, GrnExceptions.OverReceivedQuantityException {
 
         int expected = item.getExpectedQty();
         int compliant = item.getCompliantQty();
         int notCompliant = item.getNotCompliantQty();
         int received = item.getReceivedQty();
 
+        if(received==0) item.setState(State.PUTAWAY);
+
         if (expected <= 0)
             throw new GrnExceptions.InvalidQuantityException("Expected qty must be > 0");
 
         if (received != compliant + notCompliant)
-            throw new GrnExceptions.QuantityMismatchException(
-                    "Received != compliant + notCompliant");
+            throw new GrnExceptions.QuantityMismatchException("Received != compliant + notCompliant");
 
         if (received > expected)
-            throw new GrnExceptions.OverReceivedQuantityException(
-                    "Over-received: expected=" + expected + " received=" + received);
+            throw new GrnExceptions.OverReceivedQuantityException("Over-received: expected=" + expected + " received=" + received);
     }
 
     // PROGRESSIONE AUTOMATICA DI STATO

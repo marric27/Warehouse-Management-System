@@ -49,7 +49,7 @@ public class Slot {
     private Product prod;
 
     @OneToMany(mappedBy = "slot")
-    private List<StockUnit> stockUnits;
+    private List<StockUnit> stockUnits = new ArrayList<>();
 
     public boolean canContain(Product p) {
         if (p == null) return false;

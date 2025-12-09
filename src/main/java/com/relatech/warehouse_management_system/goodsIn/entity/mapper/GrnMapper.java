@@ -14,7 +14,7 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class GrnMapper {
 
-    private final GrnItemMapper grnItemMapper;  //
+    private final GrnItemMapper grnItemMapper;
 
 
     public GrnDTO toDto(GRN entity) {
@@ -30,7 +30,7 @@ public class GrnMapper {
                 .state(entity.getState() != null ? entity.getState() : null)
                 .items(grnItemMapper.toDto(entity.getItems()))
 //                .items(entity.getItems() != null ?
-//                        new ArrayList<>(grnItemMapper.toDto(entity.getItems())) :
+//                        new ArrayList<>(grnItemMapper.toDto(entity.getItems())) ://TODO
 //                        new ArrayList<>())
                 .build();
     }
@@ -48,13 +48,5 @@ public class GrnMapper {
                 .state(State.OPEN) // Default state on creation
                 .items(grnItemMapper.toEntity(dto.getItems())) //TODO test
                 .build();
-    }
-
-
-    public static GrnDTO toDtoStatic(GRN entity) {
-        return new GrnMapper(null).toDto(entity);
-    }
-    public static GRN toEntityStatic(GrnDTO dto) {
-        return new GrnMapper(null).toEntity(dto);
     }
 }
