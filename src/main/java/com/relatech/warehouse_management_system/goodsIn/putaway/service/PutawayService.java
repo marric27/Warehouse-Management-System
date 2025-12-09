@@ -12,12 +12,12 @@ import com.relatech.warehouse_management_system.warehouse.service.SlotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
 public class PutawayService {
 
     private final SlotService slotService;
@@ -26,6 +26,8 @@ public class PutawayService {
     private final GrnItemService grnItemService;
     private final GrnItemStateService stateService;
 
+
+    @Transactional(rollbackFor = {ResourceNotFoundException.class, UpdateEntityException.class, GrnExceptions.GrnItemNotFoundException.class}, propagation = Propagation.REQUIRES_NEW)
     public SlotDTO assignStockUnitToSlot(Long stockUnitId, Long slotId) throws ResourceNotFoundException, UpdateEntityException, GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
 
         SlotDTO slot = slotService.getSlotById(slotId);

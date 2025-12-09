@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class GrnServiceImpl implements GrnService {
@@ -29,7 +28,7 @@ public class GrnServiceImpl implements GrnService {
     private final GrnItemMapper grnItemMapper;
 
     @Override
-    @Transactional(rollbackFor = GrnExceptions.DuplicateGrnCodeException.class, propagation = Propagation.REQUIRED)
+    @Transactional(rollbackFor = {GrnExceptions.DuplicateGrnCodeException.class, Exception.class}, propagation = Propagation.REQUIRED)
     public GrnDTO createGRN(GrnDTO grnDTO) {
         log.debug("Creating new GRN with ID: {}", grnDTO.getId());
 
@@ -40,6 +39,7 @@ public class GrnServiceImpl implements GrnService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GrnDTO getGRNById(Long id) throws GrnExceptions.GrnNotFoundException {
         log.debug("Fetching GRN with ID: {}", id);
         GRN entity = grnRepository.findById(id)
@@ -51,6 +51,7 @@ public class GrnServiceImpl implements GrnService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GrnDTO getGRNByCode(String code) throws GrnExceptions.GrnNotFoundException {
         log.debug("Fetching GRN with code: {}", code);
         GRN entity = grnRepository.findByCode(code)
@@ -62,6 +63,7 @@ public class GrnServiceImpl implements GrnService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GrnDTO> getAllGRNs() {
         log.debug("Fetching all GRNs");
         return grnRepository.findAll().stream()
@@ -70,6 +72,7 @@ public class GrnServiceImpl implements GrnService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<GrnDTO> getAllGRNsPaged(Pageable pageable) {
         log.debug("Fetching paginated GRNs: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
         Page<GRN> grnPage = grnRepository.findAll(pageable);
@@ -126,6 +129,7 @@ public class GrnServiceImpl implements GrnService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GrnDTO> searchGrns(String term) {
         log.debug("Searching GRNs with term: {}", term);
 

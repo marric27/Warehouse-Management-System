@@ -13,6 +13,7 @@ import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -26,6 +27,7 @@ public class CheckGoodsInService {
     private final GrnItemService grnItemService;
     private final GrnItemStateService stateService;
 
+    @Transactional(rollbackFor = {CannotAssignCIToGrnItemInClosedOrPutawayStateException.class, DuplicateResourceException.class, GrnExceptions.GrnItemNotFoundException.class, GrnExceptions.GrnNotFoundException.class}, propagation = Propagation.REQUIRES_NEW)
     public GrnItemDto createCheckingInfo(Long grnItemId, CheckingInfoDto ci, StockUnitDTO su) throws CannotAssignCIToGrnItemInClosedOrPutawayStateException, DuplicateResourceException, GrnExceptions.GrnItemNotFoundException, GrnExceptions.GrnNotFoundException {
 
         if(stateService.checkGrnItemIfCheckedOrPutaway(grnItemId))

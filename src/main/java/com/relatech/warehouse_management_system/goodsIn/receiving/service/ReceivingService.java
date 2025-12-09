@@ -19,7 +19,6 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
 public class ReceivingService {
 
     private final GrnService grnService;
@@ -27,6 +26,7 @@ public class ReceivingService {
     private final GrnItemStateService stateService;
 
     // CREATE GRN
+    @Transactional(rollbackFor = {GrnExceptions.DuplicateGrnCodeException.class, Exception.class})
     public GrnDTO createGRN(GrnDTO dto) throws GrnExceptions.DuplicateGrnCodeException {
         dto.setState(State.OPEN);
         if (dto.getReceivingDate() == null)
@@ -34,15 +34,18 @@ public class ReceivingService {
         return grnService.createGRN(dto);
     }
 
+    @Transactional(readOnly = true)
     public GrnDTO getGRN(Long id) throws GrnExceptions.GrnNotFoundException {
         return grnService.getGRNById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<GrnDTO> list() {
         return grnService.getAllGRNs();
     }
 
     // CREATE ITEM AND ASSIGN TO GRN BY ID
+    @Transactional(rollbackFor = {Exception.class})
     public GrnItemDto createItem(Long grnId, GrnItemDto item) throws Exception {
         if(stateService.checkGrnIfClosed(grnId))
             throw new CannotAssignItemToGrnClosedException(grnId);
@@ -56,6 +59,7 @@ public class ReceivingService {
     }
 
     // UPDATE ITEM
+    @Transactional(rollbackFor = {Exception.class})
     public GrnItemDto updateItem(Long itemId, GrnItemDto dto) throws Exception {
 
         GrnItemDto item = grnItemService.getGrnItemById(itemId);

@@ -10,6 +10,7 @@ import com.relatech.warehouse_management_system.goodsIn.exception.GrnExceptions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,7 +18,6 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class GrnItemServiceImpl implements GrnItemService {
 
     private final GrnItemRepository grnItemRepository;
@@ -26,7 +26,7 @@ public class GrnItemServiceImpl implements GrnItemService {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     public GrnItemDto createGrnItem(GrnItemDto dto) {
         log.debug("Creating new GRN item with ID: {}", dto.getId());
         GrnItem grnItem = grnItemMapper.toEntity(dto);
@@ -36,6 +36,7 @@ public class GrnItemServiceImpl implements GrnItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GrnItemDto> getAllGrnItems() {
         return grnItemRepository.findAll().stream()
                 .map(grnItemMapper::toDto)
@@ -43,6 +44,7 @@ public class GrnItemServiceImpl implements GrnItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GrnItemDto getGrnItemById(Long id) throws GrnExceptions.GrnItemNotFoundException {
         log.debug("Fetching GRN item with ID: {}", id);
         GrnItem grnItem = grnItemRepository.findById(id)
@@ -54,6 +56,7 @@ public class GrnItemServiceImpl implements GrnItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GrnItemDto getGrnItemByCode(String code) throws GrnExceptions.GrnItemNotFoundException {
         log.debug("Fetching GRN item with code: {}", code);
         GrnItem grnItem = grnItemRepository.findByCode(code)
@@ -65,7 +68,7 @@ public class GrnItemServiceImpl implements GrnItemService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {GrnExceptions.GrnItemNotFoundException.class, Exception.class}, propagation = Propagation.REQUIRES_NEW)
     public GrnItemDto updateGrnItem(Long id, GrnItemDto grnItemDto) throws GrnExceptions.GrnItemNotFoundException {
         GrnItem existingGrnItem = grnItemRepository.findById(id)
                 .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(id));
@@ -87,14 +90,14 @@ public class GrnItemServiceImpl implements GrnItemService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {GrnExceptions.GrnItemNotFoundException.class}, propagation = Propagation.REQUIRES_NEW)
     public void deleteGrnItem(Long id) throws GrnExceptions.GrnItemNotFoundException {
         grnItemRepository.findById(id)
                 .orElseThrow(() -> new GrnExceptions.GrnItemNotFoundException(id));
         grnItemRepository.deleteById(id);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = {GrnExceptions.GrnItemNotFoundException.class}, propagation = Propagation.REQUIRES_NEW)
     @Override
     public void addCheckingInfo(Long grnItemId, Long checkingInfoId) throws GrnExceptions.GrnItemNotFoundException {
         GrnItem item = grnItemRepository.findById(grnItemId)
