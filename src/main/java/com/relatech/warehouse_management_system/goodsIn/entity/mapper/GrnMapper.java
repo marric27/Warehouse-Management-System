@@ -7,14 +7,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class GrnMapper {
 
-    private final GrnItemMapper grnItemMapper;  //
+    private final GrnItemMapper grnItemMapper;
 
 
     public GrnDTO toDto(GRN entity) {
@@ -28,9 +26,7 @@ public class GrnMapper {
                 .supplier(entity.getSupplier())
                 .receivingDate(entity.getReceivingDate())
                 .state(entity.getState() != null ? entity.getState() : null)
-                .items(entity.getItems() != null ?
-                        new ArrayList<>(grnItemMapper.toDto(entity.getItems())) :
-                        new ArrayList<>())
+                .items(grnItemMapper.toDto(entity.getItems()))
                 .build();
     }
 
@@ -45,17 +41,7 @@ public class GrnMapper {
                 .supplier(dto.getSupplier())
                 .receivingDate(dto.getReceivingDate())
                 .state(State.OPEN) // Default state on creation
-                .items(dto.getItems() != null ?
-                        new ArrayList<>(grnItemMapper.toEntity(dto.getItems())) :
-                        new ArrayList<>())
+                .items(grnItemMapper.toEntity(dto.getItems()))
                 .build();
-    }
-
-
-    public static GrnDTO toDtoStatic(GRN entity) {
-        return new GrnMapper(null).toDto(entity);
-    }
-    public static GRN toEntityStatic(GrnDTO dto) {
-        return new GrnMapper(null).toEntity(dto);
     }
 }

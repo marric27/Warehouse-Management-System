@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.goodsIn.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.relatech.warehouse_management_system.common.util.State;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
@@ -17,8 +18,8 @@ public class GrnItemDto {
     @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
-    @NotBlank(message = "The code cannot be empty or null.")
-    @Schema(description = "Unique ID of the GRN item", example = "Item-1")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(description = "Unique ID of the GRN item", example = "Item-1", accessMode = Schema.AccessMode.READ_ONLY)
     private String code;
 
     @NotBlank(message = "Product code cannot be blank")
@@ -44,7 +45,7 @@ public class GrnItemDto {
     @Schema(description = "State of the GRN item", example = "OPEN")
     private State state;
 
-    @Schema(description = "GRN", example = "1")
+    @Schema(description = "GRN", accessMode = Schema.AccessMode.READ_ONLY)
     private Long grnId;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)

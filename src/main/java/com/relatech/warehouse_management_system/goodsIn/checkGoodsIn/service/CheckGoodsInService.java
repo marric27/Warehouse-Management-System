@@ -1,25 +1,24 @@
 package com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.service;
 
-import com.relatech.warehouse_management_system.common.util.State;
+import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
-import com.relatech.warehouse_management_system.goodsIn.entity.mapper.CheckingInfoMapper;
-import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
-import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.CheckingInfoService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
+import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
+import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignCIToGrnItemInClosedOrPutawayStateException;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoundException;
+import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-// obiettivo: creazione stockunit relative ad item e checkinginfo
-
-// CREO STOCKUNIT E CHECKING INFO VENGONO CREATE INSIEME
-
-// FUNZIONI DI ASSEGNAZIONE DI STOCK UNIT E CHECKING INFO A GRNITEM
+import java.util.List;
 
 @Service
 @Slf4j
@@ -27,39 +26,53 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CheckGoodsInService {
 
-    private final CheckingInfoService checkingInfoService;
     private final StockUnitService stockUnitService;
+    private final CheckingInfoService checkingInfoService;
     private final GrnItemService grnItemService;
+    private final GrnItemStateService stateService;
 
-    private final CheckingInfoMapper checkingInfoMapper;
-    private final StockUnitMapper stockUnitMapper;
-    private final GrnItemMapper grnItemMapper;
+    @Transactional(rollbackFor = {CannotAssignCIToGrnItemInClosedOrPutawayStateException.class, DuplicateResourceException.class, GrnItemNotFoundException.class, GrnNotFoundException.class})
+    public GrnItemDto createCheckingInfoAndStockUnit(Long grnItemId, CheckingInfoDto ci, StockUnitDTO su) throws Exception {
 
-    @Transactional
-    public GrnItemDto createCheckingInfoWithStockUnitAndAssignToGrnItem(CheckingInfoDto checkingInfoDto, StockUnitDTO stockUnitDTO, Long grnItemId) throws Exception {
+        if(stateService.checkGrnItemIfCheckedOrPutaway(grnItemId))
+            throw new CannotAssignCIToGrnItemInClosedOrPutawayStateException(grnItemId);
 
-        GrnItemDto grnItem = grnItemService.getGrnItemById(grnItemId);
+        // Create StockUnit
+        StockUnitDTO stockUnit = stockUnitService.createStockUnit(su);
 
-        StockUnitDTO savedStockUnit = stockUnitService.createStockUnit(stockUnitDTO);
+        // Create CheckingInfo
+        ci.setStockUnitId(stockUnit.getId());
+        ci.setGrnItemId(grnItemId);
+        CheckingInfoDto savedCI = checkingInfoService.create(ci);
 
-        checkingInfoDto.setGrnItemId(grnItemId);
-        checkingInfoDto.setStockUnitId(savedStockUnit.getId());
+        // assign to item
+        grnItemService.addCheckingInfo(grnItemId, savedCI.getId());
 
-        CheckingInfoDto savedChecking = checkingInfoService.create(checkingInfoDto);
+        // progress state
+        GrnItemDto item = grnItemService.getGrnItemById(grnItemId);
+        stateService.evaluateAndProgressItemState(item);
 
-        // 4. aggiorno quantita grn item TODO
-        grnItem.setReceivedQty(grnItem.getReceivedQty() + savedChecking.getQuantity());
-
-        if (savedChecking.getState() == State.OPEN) {
-            grnItem.setCompliantQty(grnItem.getCompliantQty() + savedChecking.getQuantity());
-        } else {
-            grnItem.setNotCompliantQty(grnItem.getNotCompliantQty() + savedChecking.getQuantity());
-        }
-
-        return grnItemService.updateGrnItem(grnItemId, grnItem);
+        return item;
     }
 
 
+    @Transactional(readOnly = true)
+    public List<CheckingInfoDto> listCheckinginfo() {
+        return checkingInfoService.getAll();
+    }
 
+    @Transactional(readOnly = true)
+    public Page<CheckingInfoDto> listCIPaged(Pageable pageable) {
+        return checkingInfoService.getAllPaged(pageable);
+    }
 
+    @Transactional(readOnly = true)
+    public List<StockUnitDTO> listStockUnit() {
+        return stockUnitService.getAllStockUnits();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<StockUnitDTO> listStockUnitPaged(Pageable pageable) {
+        return stockUnitService.getAllStockUnitsPaged(pageable);
+    }
 }

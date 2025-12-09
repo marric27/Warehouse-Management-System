@@ -2,8 +2,8 @@ package com.relatech.warehouse_management_system.stockUnit.dataJpaTest;
 
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.slot.entity.Slot;
-import com.relatech.warehouse_management_system.slot.repository.SlotRepository;
+import com.relatech.warehouse_management_system.warehouse.entity.Slot;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotRepository;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
 import com.relatech.warehouse_management_system.common.util.Category;
@@ -34,7 +34,7 @@ class StockUnitRepositoryTest {
                 .batchNumber("BN123")
                 .expirationDate(LocalDate.now().plusDays(30))
                 .productCode("P001")
-                .uniqueCode("UNIQUE-123")
+                .code("UNIQUE-123")
                 .quantity(10)
                 .category(Category.STANDARD)
                 .build();
@@ -64,7 +64,7 @@ class StockUnitRepositoryTest {
         StockUnit saved = stockUnitRepository.save(su);
 
         assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getUniqueCode()).isEqualTo("UNIQUE-123");
+        assertThat(saved.getCode()).isEqualTo("UNIQUE-123");
     }
 
     @Test
@@ -79,18 +79,18 @@ class StockUnitRepositoryTest {
     }
 
     @Test
-    @DisplayName("Should find StockUnit by uniqueCode")
+    @DisplayName("Should find StockUnit by code")
     void testFindByUniqueCode() {
         stockUnitRepository.save(buildStockUnit());
 
-        StockUnit found = stockUnitRepository.findByUniqueCode("UNIQUE-123").orElse(null);
+        StockUnit found = stockUnitRepository.findByCode("UNIQUE-123").orElse(null);
 
         assertThat(found).isNotNull();
         assertThat(found.getProductCode()).isEqualTo("P001");
     }
 
     @Test
-    @DisplayName("Should fail saving duplicate uniqueCode")
+    @DisplayName("Should fail saving duplicate code")
     void testUniqueConstraint() {
         stockUnitRepository.save(buildStockUnit());
 

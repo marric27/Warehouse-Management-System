@@ -1,8 +1,9 @@
 package com.relatech.warehouse_management_system.goodsIn.entity;
 
+import com.github.f4b6a3.ulid.UlidCreator;
 import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.product.entity.Product;
-import com.relatech.warehouse_management_system.slot.entity.Slot;
+import com.relatech.warehouse_management_system.warehouse.entity.Slot;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -24,19 +25,27 @@ public class StockUnit {
     private Long id;
 
     @Column(name = "batch_number", nullable = false)
-    private String batchNumber; // lotto
+    private String batchNumber;
 
     @Column(name = "expiration_date", nullable = false)
-    private LocalDate expirationDate; // data di scadenza
+    private LocalDate expirationDate;
 
     @Column(name = "product_code", nullable = false)
-    private String productCode; // codice prodotto
+    private String productCode;
 
-    @Column(name = "unique_code", nullable = false, unique = true)
-    private String uniqueCode; // codice univoco
+    @Column(name = "code", nullable = false, unique = true, length = 14)
+    private String code;
+
+    @PrePersist
+    public void prePersist() {
+        if (code == null) {
+            String ulid = UlidCreator.getUlid().toString();
+            this.code = "STK-" + ulid.substring(0, 10).toUpperCase();
+        }
+    }
 
     @Column(name = "quantity", nullable = false)
-    private Integer quantity; // quantità prodotto
+    private Integer quantity;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "product_category", nullable = false)

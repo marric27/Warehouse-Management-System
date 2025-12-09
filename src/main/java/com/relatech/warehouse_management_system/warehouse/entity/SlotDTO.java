@@ -1,7 +1,8 @@
-package com.relatech.warehouse_management_system.slot.dto;
+package com.relatech.warehouse_management_system.warehouse.entity;
 
-import com.relatech.warehouse_management_system.product.dto.ProductDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.product.dto.ProductDTO;
 import com.relatech.warehouse_management_system.common.util.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -19,8 +20,8 @@ public class SlotDTO {
     @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
-    @Schema(description = "Unique code of the slot", example = "SLOT-001")
-    @NotBlank(message = "The code cannot be empty or null.")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(description = "Unique code of the slot", example = "SLOT-001", accessMode = Schema.AccessMode.READ_ONLY)
     private String code;
 
     @Schema(description = "Category allowed in this slot", example = "CONTROLLED_DRUG")
@@ -34,6 +35,6 @@ public class SlotDTO {
     @Schema(description = "Product assigned to this slot (optional)")
     private ProductDTO product;
 
-    @Schema(description = "List of stock units stored in this slot")
+    @Schema(description = "List of stock units stored in this slot", accessMode = Schema.AccessMode.READ_ONLY)
     private List<StockUnitDTO> stockUnits;
 }

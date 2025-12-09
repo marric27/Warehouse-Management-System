@@ -15,10 +15,11 @@ public class StockUnitMapper {
                 .batchNumber(entity.getBatchNumber())
                 .expirationDate(entity.getExpirationDate())
                 .productCode(entity.getProductCode())
-                .uniqueCode(entity.getUniqueCode())
+                .code(entity.getCode())
                 .quantity(entity.getQuantity())
                 .category(entity.getCategory())
                 .productDto(entity.getProduct() != null ? ProductMapper.toDto(entity.getProduct()) : null)
+                .slotId(entity.getSlot() != null ? entity.getSlot().getId() : null)
                 .build();
     }
 
@@ -28,7 +29,7 @@ public class StockUnitMapper {
                 .batchNumber(dto.getBatchNumber())
                 .expirationDate(dto.getExpirationDate())
                 .productCode(dto.getProductCode())
-                .uniqueCode(dto.getUniqueCode())
+                .code(dto.getCode())
                 .quantity(dto.getQuantity())
                 .category(dto.getCategory())
                 .product(dto.getProductDto() != null ? ProductMapper.toEntity(dto.getProductDto()) : null)
@@ -36,14 +37,14 @@ public class StockUnitMapper {
     }
 
     public List<StockUnitDTO> toDTO(List<StockUnit> entities) {
-        if (entities == null) return null;
+        if (entities == null) return List.of();
         return entities.stream()
                 .map(this::toDTO)
                 .toList();
     }
 
     public List<StockUnit> toEntity(List<StockUnitDTO> dtos) {
-        if (dtos == null) return null;
+        if (dtos == null) return List.of();
         return dtos.stream()
                 .map(this::toEntity)
                 .toList();

@@ -1,11 +1,11 @@
-package com.relatech.warehouse_management_system.slot.mapper;
+package com.relatech.warehouse_management_system.warehouse.entity;
 
-import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
-import com.relatech.warehouse_management_system.slot.dto.SlotDTO;
-import com.relatech.warehouse_management_system.slot.entity.Slot;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
+import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 @Component
 @RequiredArgsConstructor
@@ -20,8 +20,10 @@ public class SlotMapper {
         dto.setCode(slot.getCode());
         dto.setAllowedCategory(slot.getAllowedCategory());
         dto.setCapacity(slot.getCapacity());
-        dto.setProduct(ProductMapper.toDto(slot.getProd()));
-        dto.setStockUnits(stockUnitMapper.toDTO(slot.getStockUnits()));
+        dto.setProduct(slot.getProd() != null ? ProductMapper.toDto(slot.getProd()) : null);
+        dto.setStockUnits(new ArrayList<>(stockUnitMapper.toDTO(
+                slot.getStockUnits() != null ? slot.getStockUnits() : new ArrayList<>()
+        )));
 
         return dto;
     }
@@ -31,11 +33,12 @@ public class SlotMapper {
 
         Slot slot = new Slot();
         slot.setId(dto.getId());
-        slot.setCode(dto.getCode());
         slot.setAllowedCategory(dto.getAllowedCategory());
         slot.setCapacity(dto.getCapacity());
-        slot.setProd(ProductMapper.toEntity(dto.getProduct()));
-        slot.setStockUnits(stockUnitMapper.toEntity(dto.getStockUnits()));
+        slot.setProd(dto.getProduct() != null ? ProductMapper.toEntity(dto.getProduct()) : null);
+        slot.setStockUnits(new ArrayList<>(stockUnitMapper.toEntity(
+                dto.getStockUnits() != null ? dto.getStockUnits() : new ArrayList<>()
+        )));
 
         return slot;
     }

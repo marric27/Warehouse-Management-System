@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface StockUnitRepository extends JpaRepository<StockUnit,Long>{
-        Optional<StockUnit> findByUniqueCode(String uniqueCode);
+        Optional<StockUnit> findByCode(String code);
     }
 
