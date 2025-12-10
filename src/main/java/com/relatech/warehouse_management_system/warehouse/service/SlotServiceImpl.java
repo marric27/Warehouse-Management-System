@@ -80,19 +80,32 @@ public class SlotServiceImpl implements SlotService {
         else if (existingSlot.getProd().getCategory().equals(slotDTO.getAllowedCategory())) {
             existingSlot.setAllowedCategory(slotDTO.getAllowedCategory());
         } else throw new UpdateEntityException(id);
+
         if (slotDTO.getStockUnits() != null) {
+            List<StockUnit> existingUnits = existingSlot.getStockUnits();
             for (StockUnitDTO stockUnitDTO : slotDTO.getStockUnits()) {
                 if (stockUnitDTO.getId() != null) {
-                    // Entità già persistente: fetch dal DB
+                    // StockUnit esistente → prendo dal DB
                     StockUnit stockUnit = stockUnitRepository.findById(stockUnitDTO.getId())
                             .orElseThrow(() -> new ResourceNotFoundException("StockUnit", stockUnitDTO.getId()));
-                    stockUnit.setSlot(existingSlot); // Associo allo slot
-                    existingSlot.getStockUnits().add(stockUnit);
+
+                    // Controllo duplicati
+                    boolean alreadyLinked = existingUnits.stream()
+                            .anyMatch(u -> u.getId().equals(stockUnit.getId()));
+
+                    if (!alreadyLinked) {
+                        stockUnit.setSlot(existingSlot);
+                        existingUnits.add(stockUnit);
+                    }
                 } else {
-                    // Nuova entità: creo e associo
+                    // StockUnit nuova
                     StockUnit stockUnit = stockUnitMapper.toEntity(stockUnitDTO);
                     stockUnit.setSlot(existingSlot);
-                    existingSlot.getStockUnits().add(stockUnit);
+
+                    // Evito duplicazioni per oggetti nuovi
+                    if (!existingUnits.contains(stockUnit)) {
+                        existingUnits.add(stockUnit);
+                    }
                 }
             }
         }

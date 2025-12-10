@@ -155,6 +155,7 @@
                                 <exclude>**/entity/**</exclude>
                                 <exclude>**/util/**</exclude>
                                 <exclude>**/config/**</exclude>
+                                <exclude>**/mapper/**</exclude>
                                 <!--exclude>**/exception/**</exclude-->
                                 <exclude>com/relatech/warehouse_management_system/WarehouseManagementSystemApplication*</exclude>
                             </excludes>
