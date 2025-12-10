@@ -34,7 +34,6 @@ public class GRN {
         }
     }
 
-
     @Column(name = "supplier", nullable = false, length = 100)
     private String supplier;
 

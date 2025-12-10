@@ -175,4 +175,155 @@ class SlotServiceTest {
 
         assertThrows(IllegalStateException.class, () -> slotService.deleteSlot(1L));
     }
+
+    @Test
+    void updateSlot_ok_whenNoProductPresent() throws Exception {
+        Long id = 1L;
+
+        SlotDTO dto = new SlotDTO();
+        dto.setCapacity(20);
+        dto.setAllowedCategory(Category.STANDARD);
+
+        Slot existing = new Slot();
+        existing.setId(id);
+        existing.setCapacity(10);
+        existing.setProd(null);  // Nessun prodotto presente
+
+        when(slotRepository.findById(id)).thenReturn(Optional.of(existing));
+        when(slotRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(slotMapper.toDto(any())).thenReturn(dto);
+
+        SlotDTO result = slotService.updateSlot(id, dto);
+
+        assertEquals(20, result.getCapacity());
+        assertEquals(Category.STANDARD, result.getAllowedCategory());
+    }
+
+    // ------------------------------
+    // 2. UPDATE OK — Categoria coerente col prodotto
+    // ------------------------------
+    @Test
+    void updateSlot_ok_whenCategoryMatchesProduct() throws Exception {
+        Long id = 1L;
+
+        SlotDTO dto = new SlotDTO();
+        dto.setAllowedCategory(Category.STANDARD);
+
+        Product prod = new Product();
+        prod.setCategory(Category.STANDARD);
+
+        Slot existing = new Slot();
+        existing.setId(id);
+        existing.setProd(prod);
+
+        when(slotRepository.findById(id)).thenReturn(Optional.of(existing));
+        when(slotRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(slotMapper.toDto(any())).thenReturn(dto);
+
+        SlotDTO result = slotService.updateSlot(id, dto);
+
+        assertEquals(Category.STANDARD, result.getAllowedCategory());
+    }
+
+    // ------------------------------
+    // 3. UPDATE FAIL — Categoria non coerente con prodotto
+    // ------------------------------
+    @Test
+    void updateSlot_fails_whenCategoryDifferentFromProduct() {
+        Long id = 1L;
+
+        SlotDTO dto = new SlotDTO();
+        dto.setAllowedCategory(Category.STANDARD);
+
+        Product prod = new Product();
+        prod.setCategory(Category.FLAMMABLE);
+
+        Slot existing = new Slot();
+        existing.setId(id);
+        existing.setProd(prod);
+
+        when(slotRepository.findById(id)).thenReturn(Optional.of(existing));
+
+        assertThrows(UpdateEntityException.class,
+                () -> slotService.updateSlot(id, dto));
+    }
+
+    // ------------------------------
+    // 4. UPDATE FAIL — Slot non trovato
+    // ------------------------------
+    @Test
+    void updateSlot_fails_whenSlotNotFound() {
+        Long id = 1L;
+        SlotDTO dto = new SlotDTO();
+
+        when(slotRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> slotService.updateSlot(id, dto));
+    }
+
+    // ------------------------------
+    // 5. STOCK UNITS — Aggiunta senza duplicati
+    // ------------------------------
+    @Test
+    void updateSlot_addsStockUnits_withoutDuplicates() throws Exception {
+
+        Long id = 1L;
+
+        // DTO con 1 stockUnit esistente
+        StockUnitDTO suDto = new StockUnitDTO();
+        suDto.setId(10L);
+
+        SlotDTO dto = new SlotDTO();
+        dto.setStockUnits(List.of(suDto));
+
+        // Slot esistente con lista vuota
+        Slot slot = new Slot();
+        slot.setId(id);
+        slot.setStockUnits(new ArrayList<>());
+
+        StockUnit su = new StockUnit();
+        su.setId(10L);
+
+        when(slotRepository.findById(id)).thenReturn(Optional.of(slot));
+        when(stockUnitRepository.findById(10L)).thenReturn(Optional.of(su));
+        when(slotRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(slotMapper.toDto(any())).thenReturn(dto);
+
+        SlotDTO result = slotService.updateSlot(id, dto);
+
+        assertEquals(1, slot.getStockUnits().size());
+        assertEquals(10L, slot.getStockUnits().get(0).getId());
+        assertSame(slot, slot.getStockUnits().get(0).getSlot());
+
+        // Ripeto update → NON deve raddoppiare
+        slotService.updateSlot(id, dto);
+
+        assertEquals(1, slot.getStockUnits().size());
+    }
+
+    // ------------------------------
+    // 6. STOCK UNIT non trovata -> errore
+    // ------------------------------
+    @Test
+    void updateSlot_fails_whenStockUnitNotFound() {
+
+        Long id = 1L;
+
+        StockUnitDTO suDto = new StockUnitDTO();
+        suDto.setId(99L);
+
+        SlotDTO dto = new SlotDTO();
+        dto.setStockUnits(List.of(suDto));
+
+        Slot slot = new Slot();
+        slot.setId(id);
+        slot.setStockUnits(new ArrayList<>());
+
+        when(slotRepository.findById(id)).thenReturn(Optional.of(slot));
+        when(stockUnitRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> slotService.updateSlot(id, dto));
+    }
 }

@@ -35,29 +35,6 @@ public class ReceivingService {
         return grnService.createGRN(dto);
     }
 
-    @Transactional(readOnly = true)
-    public GrnDTO getGRN(Long id) throws GrnNotFoundException {
-        return grnService.getGRNById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public List<GrnDTO> listGrn() {
-        return grnService.getAllGRNs();
-    }
-
-    public Page<GrnDTO> listGrnPaged(Pageable pageable) {
-        return grnService.getAllGRNsPaged(pageable);
-    }
-
-    @Transactional(readOnly = true)
-    public List<GrnItemDto> listGrnItems() {
-        return grnItemService.getAllGrnItems();
-    }
-
-    public Page<GrnItemDto> listGrnItemsPaged(Pageable pageable) {
-        return grnItemService.getAllGrnItemsPaged(pageable);
-    }
-
     // CREATE ITEM AND ASSIGN TO GRN BY ID
     @Transactional(rollbackFor = {Exception.class})
     public GrnItemDto createItem(Long grnId, GrnItemDto item) throws GrnNotFoundException, CannotAssignItemToGrnClosedException, InvalidQuantityException, QuantityMismatchException, OverReceivedQuantityException, GrnItemNotFoundException {
@@ -90,5 +67,28 @@ public class ReceivingService {
 
         stateService.evaluateAndProgressItemState(saved);
         return saved;
+    }
+
+    @Transactional(readOnly = true)
+    public GrnDTO getGRN(Long id) throws GrnNotFoundException {
+        return grnService.getGRNById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GrnDTO> listGrn() {
+        return grnService.getAllGRNs();
+    }
+
+    public Page<GrnDTO> listGrnPaged(Pageable pageable) {
+        return grnService.getAllGRNsPaged(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GrnItemDto> listGrnItems() {
+        return grnItemService.getAllGrnItems();
+    }
+
+    public Page<GrnItemDto> listGrnItemsPaged(Pageable pageable) {
+        return grnItemService.getAllGrnItemsPaged(pageable);
     }
 }
