@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -58,6 +59,31 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public Page<OrderDto> getAllOrdersPaged(Pageable pageable) {
         Page<Order> orderPage = orderRepository.findAll(pageable);
+        return orderPage.map(OrderMapper::toDto);
+    }
+
+    // FILTERS
+    @Override
+    public Page<OrderDto> filterByCustomer(String customerCode, Pageable pageable) {
+        Page<Order> orderPage =  orderRepository.findByCustomerCode(customerCode, pageable);
+        return orderPage.map(OrderMapper::toDto);
+    }
+
+    @Override
+    public Page<OrderDto> filterByDateRange(LocalDate start, LocalDate end, Pageable pageable) {
+        Page<Order> orderPage =  orderRepository.findByDateBetween(start, end, pageable);
+        return orderPage.map(OrderMapper::toDto);
+    }
+
+    @Override
+    public Page<OrderDto> filterByProduct(Long productId, Pageable pageable) {
+        Page<Order> orderPage =  orderRepository.findByProductId(productId, pageable);
+        return orderPage.map(OrderMapper::toDto);
+    }
+
+    @Override
+    public Page<OrderDto> filterOrders(String customerCode, Long productId, LocalDate start, LocalDate end, Pageable pageable) {
+        Page<Order> orderPage =  orderRepository.filterOrders(customerCode, productId, start, end, pageable);
         return orderPage.map(OrderMapper::toDto);
     }
 }
