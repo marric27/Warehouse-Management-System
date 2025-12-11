@@ -5,12 +5,10 @@ import com.relatech.warehouse_management_system.common.exception.DuplicateResour
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.outbound.dto.CustomerDTO;
 
-import com.relatech.warehouse_management_system.outbound.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CustomerService {
 

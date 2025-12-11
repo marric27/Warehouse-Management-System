@@ -10,9 +10,6 @@ import com.relatech.warehouse_management_system.common.exception.DuplicateResour
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.outbound.dto.CustomerDTO;
 import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
-import com.relatech.warehouse_management_system.outbound.entity.Customer;
-import com.relatech.warehouse_management_system.outbound.entity.Order;
-import com.relatech.warehouse_management_system.outbound.entity.mapper.OrderMapper;
 import com.relatech.warehouse_management_system.outbound.entity.service.CustomerService;
 import com.relatech.warehouse_management_system.outbound.entity.service.OrderService;
 import lombok.RequiredArgsConstructor;

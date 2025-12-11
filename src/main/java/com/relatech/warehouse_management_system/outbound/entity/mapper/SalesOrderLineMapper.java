@@ -4,7 +4,6 @@ import com.relatech.warehouse_management_system.outbound.dto.SalesOrderLineDto;
 import com.relatech.warehouse_management_system.outbound.entity.SalesOrderLine;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SalesOrderLineMapper {
 

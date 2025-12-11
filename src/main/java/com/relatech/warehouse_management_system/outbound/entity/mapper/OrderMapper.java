@@ -6,7 +6,6 @@ import com.relatech.warehouse_management_system.outbound.entity.SalesOrderLine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OrderMapper {
 
