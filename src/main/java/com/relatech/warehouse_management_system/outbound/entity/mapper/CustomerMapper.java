@@ -1,7 +1,7 @@
-package com.relatech.warehouse_management_system.customer.mapper;
+package com.relatech.warehouse_management_system.outbound.entity.mapper;
 
-import com.relatech.warehouse_management_system.customer.dto.CustomerDTO;
-import com.relatech.warehouse_management_system.customer.entity.Customer;
+import com.relatech.warehouse_management_system.outbound.dto.CustomerDTO;
+import com.relatech.warehouse_management_system.outbound.entity.Customer;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +16,7 @@ public class CustomerMapper {
                 .billingAddress(entity.getBillingAddress())
                 .email(entity.getEmail())
                 .taxCode(entity.getTaxCode())
+                .customerCode(entity.getCustomerCode())
                 .build();
     }
     public Customer toEntity(CustomerDTO dto) {
@@ -28,6 +29,7 @@ public class CustomerMapper {
                 .billingAddress(dto.getBillingAddress())
                 .email(dto.getEmail())
                 .taxCode(dto.getTaxCode())
+                .customerCode(dto.getCustomerCode())
                 .build();
     }
 }

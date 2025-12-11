@@ -1,9 +1,9 @@
-package com.relatech.warehouse_management_system.customer.service;
+package com.relatech.warehouse_management_system.outbound.entity.service;
 
 import com.relatech.warehouse_management_system.common.exception.CustomerWithActiveOrdersException;
 import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.customer.dto.CustomerDTO;
+import com.relatech.warehouse_management_system.outbound.dto.CustomerDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,4 +25,5 @@ public interface CustomerService {
     void deleteCustomer(Long id) throws ResourceNotFoundException, CustomerWithActiveOrdersException;
 
     List<CustomerDTO> searchCustomers(String term);
+
 }

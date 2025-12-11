@@ -1,5 +1,6 @@
-package com.relatech.warehouse_management_system.customer.entity;
+package com.relatech.warehouse_management_system.outbound.entity;
 
+import com.github.f4b6a3.ulid.UlidCreator;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,15 @@ public class Customer {
     @Column(name = "tax_code", nullable = false, length = 50, unique = true)
     private String taxCode;
 
+    @Column(name = "customer_code", nullable = false, unique = true)
+    private String customerCode;
 
+    @PrePersist
+    public void prePersist() {
+        if (customerCode == null) {
+            String ulid = UlidCreator.getUlid().toString();
+            this.customerCode = "CUST-" + ulid.substring(0, 10).toUpperCase();
+        }
+    }
 }
 

@@ -1,12 +1,12 @@
-package com.relatech.warehouse_management_system.customer.service;
+package com.relatech.warehouse_management_system.outbound.entity.service;
 
 import com.relatech.warehouse_management_system.common.exception.CustomerWithActiveOrdersException;
 import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.customer.dto.CustomerDTO;
-import com.relatech.warehouse_management_system.customer.entity.Customer;
-import com.relatech.warehouse_management_system.customer.mapper.CustomerMapper;
-import com.relatech.warehouse_management_system.customer.repository.CustomerRepository;
+import com.relatech.warehouse_management_system.outbound.dto.CustomerDTO;
+import com.relatech.warehouse_management_system.outbound.entity.Customer;
+import com.relatech.warehouse_management_system.outbound.entity.mapper.CustomerMapper;
+import com.relatech.warehouse_management_system.outbound.entity.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -55,13 +55,11 @@ public class CustomerServiceImpl implements CustomerService {
                 .map(customerMapper::toDTO).toList();
     }
 
-
     @Override
     public Page<CustomerDTO> getAllCustomersPaged(Pageable pageable) {
         Page<Customer> customersPage = customerRepository.findAll(pageable);
         return customersPage.map(customerMapper::toDTO);
     }
-
 
     @Override
     @Transactional(timeout = 5, propagation = Propagation.REQUIRED)

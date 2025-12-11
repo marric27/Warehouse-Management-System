@@ -40,7 +40,7 @@ public class GrnMapper {
                 .code(dto.getCode())
                 .supplier(dto.getSupplier())
                 .receivingDate(dto.getReceivingDate())
-                .state(State.OPEN) // Default state on creation
+                .state(State.OPEN) // Default state on creation TODO
                 .items(grnItemMapper.toEntity(dto.getItems()))
                 .build();
     }

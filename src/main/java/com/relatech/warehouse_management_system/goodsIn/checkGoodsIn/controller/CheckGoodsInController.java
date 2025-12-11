@@ -59,13 +59,13 @@ public class CheckGoodsInController {
         private StockUnitDTO stockUnit;
     }
 
-    @GetMapping("/checking-info")
+    @GetMapping("/checking-infos")
     @Operation(summary = "List all Checking Info")
     public ResponseEntity<List<CheckingInfoDto>> listCheckingInfo() {
         return ResponseEntity.ok(checkGoodsInService.listCheckinginfo());
     }
 
-    @GetMapping("/checking-info/paged")
+    @GetMapping("/checking-infos/paged")
     @Operation(summary = "List Checking Info paginated")
     public ResponseEntity<Page<CheckingInfoDto>> listCheckingInfoPaged(Pageable pageable) {
         return ResponseEntity.ok(checkGoodsInService.listCIPaged(pageable));
