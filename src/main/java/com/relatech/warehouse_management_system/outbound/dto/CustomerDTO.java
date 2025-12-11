@@ -1,5 +1,6 @@
-package com.relatech.warehouse_management_system.customer.dto;
+package com.relatech.warehouse_management_system.outbound.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,26 +11,26 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class CustomerDTO {
-    @Schema (accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
-    @Schema (description = "Unique identifier of the customer" , example = "123")
+    @Schema(description = "Customer's first name", example = "Mario")
     @NotBlank(message = "Name must not be blank")
     private String name;
 
-     @Schema(description = "Customer's first name", example = "Mario")
+    @Schema(description = "Customer's surname", example = "Rossi")
     @NotBlank(message = "Surname must not be blank")
     private String surname;
 
-     @Schema(description = "Customer's surname", example = "Rossi")
+
     @NotBlank(message = "Shipping address must not be blank")
     private String shippingAddress;
 
-     @Schema(description = "Billing address of the customer" , example = "Via Milano 20, Milan")
+    @Schema(description = "Billing address of the customer", example = "Via Milano 20, Milan")
     @NotBlank(message = "Billing address must not be blank")
     private String billingAddress;
 
-     @Schema(description = "Valid email address" , example = "mario.rossie@example.com")
+    @Schema(description = "Valid email address", example = "mario.rossie@example.com")
     @Email(message = "Email should be valid")
     @NotBlank(message = "Email must not be blank")
     private String email;
@@ -38,5 +39,9 @@ public class CustomerDTO {
     @NotBlank(message = "Tax code must not be blank")
     @Size(min = 16, max = 16, message = "Tax code must be 16 characters")
     private String taxCode;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(description = "Unique ID of the Customer", example = "CUST-001", accessMode = Schema.AccessMode.READ_ONLY)
+    private String customerCode;
 
 }

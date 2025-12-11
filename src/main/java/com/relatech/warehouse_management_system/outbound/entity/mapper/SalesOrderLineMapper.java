@@ -13,9 +13,11 @@ public class SalesOrderLineMapper {
 
         return SalesOrderLineDto.builder()
                 .id(entity.getId())
+                .salesOrderNumber(entity.getSalesOrderNumber())
                 .productId(entity.getProductId())
                 .quantity(entity.getQuantity())
                 .status(entity.getStatus())
+                .orderId(entity.getOrder() != null ? entity.getOrder().getId() : null)
                 .build();
     }
 
@@ -25,16 +27,17 @@ public class SalesOrderLineMapper {
         return SalesOrderLine.builder()
                 .id(dto.getId())
                 .productId(dto.getProductId())
+                .salesOrderNumber(dto.getSalesOrderNumber())
                 .quantity(dto.getQuantity())
                 .status(dto.getStatus())
                 .build();
     }
 
     public static List<SalesOrderLineDto> toDtoList(List<SalesOrderLine> entities) {
-        return entities.stream().map(SalesOrderLineMapper::toDto).collect(Collectors.toList());
+        return entities.stream().map(SalesOrderLineMapper::toDto).toList();
     }
 
     public static List<SalesOrderLine> toEntityList(List<SalesOrderLineDto> dtos) {
-        return dtos.stream().map(SalesOrderLineMapper::toEntity).collect(Collectors.toList());
+        return dtos.stream().map(SalesOrderLineMapper::toEntity).toList();
     }
 }

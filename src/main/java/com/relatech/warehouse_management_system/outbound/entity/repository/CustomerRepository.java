@@ -1,6 +1,6 @@
-package com.relatech.warehouse_management_system.customer.repository;
+package com.relatech.warehouse_management_system.outbound.entity.repository;
 
-import com.relatech.warehouse_management_system.customer.entity.Customer;
+import com.relatech.warehouse_management_system.outbound.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,5 +21,5 @@ Optional<Customer> findByTaxCode(String taxCode);
             "LOWER(c.billingAddress) LIKE LOWER(CONCAT('%', :term, '%')))")
     List<Customer> searchByTerm(@Param("term") String term);
 
-
+    Optional<Customer> findByCustomerCode(String customerCode);
 }

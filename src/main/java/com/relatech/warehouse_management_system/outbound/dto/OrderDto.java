@@ -28,12 +28,31 @@ public class OrderDto {
     @Schema(description = "Date when the order was created or registered", example = "2025-01-15")
     private LocalDate date;
 
-    @Schema(description = "Soft reference to the customer associated with the order", example = "CUST-00123")
+    @Schema(description = "Soft reference to the customer associated with the order", example = "CUST-00123", accessMode = Schema.AccessMode.READ_ONLY)
     private String customerCode;
 
     @Schema(description = "Order status", example = "OPEN")
     private OrderState state;
 
-    @Schema(description = "List of sales order lines associated with this order", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "List of sales order lines associated with this order", example = "[\n" +
+            "  {\n" +
+            "    \"id\": 1,\n" +
+            "    \"productId\": 987,\n" +
+            "    \"quantity\": 10,\n" +
+            "    \"status\": \"OPEN\"\n" +
+            "  },\n" +
+            "  {\n" +
+            "    \"id\": 2,\n" +
+            "    \"productId\": 654,\n" +
+            "    \"quantity\": 5,\n" +
+            "    \"status\": \"OPEN\"\n" +
+            "  },\n" +
+            "  {\n" +
+            "    \"id\": 3,\n" +
+            "    \"productId\": 321,\n" +
+            "    \"quantity\": 20,\n" +
+            "    \"status\": \"OPEN\"\n" +
+            "  }\n" +
+            "]")
     private List<SalesOrderLineDto> salesOrderLineList;
 }

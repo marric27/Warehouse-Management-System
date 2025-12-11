@@ -1,8 +1,8 @@
 package com.relatech.warehouse_management_system.customer.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.relatech.warehouse_management_system.customer.dto.CustomerDTO;
-import com.relatech.warehouse_management_system.customer.service.CustomerService;
+import com.relatech.warehouse_management_system.outbound.dto.CustomerDTO;
+import com.relatech.warehouse_management_system.outbound.entity.service.CustomerService;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
