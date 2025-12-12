@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/picklists")
 @RequiredArgsConstructor
@@ -21,6 +23,20 @@ import org.springframework.web.bind.annotation.*;
 public class PickListController {
 
     private final PickListGen pickListGen;
+
+    /**
+     * Endpoint per rilasciare ordini e generare PickList per cliente.
+     * @param orderIds lista di ID degli ordini da rilasciare
+     * @return lista di PickListDto generate
+     * @throws ResourceNotFoundException se qualche ordine non viene trovato
+     */
+    @PostMapping("/release")
+    public ResponseEntity<List<PickListDto>> releaseOrders(@RequestBody List<Long> orderIds)
+            throws ResourceNotFoundException {
+
+        List<PickListDto> pickLists = pickListGen.generatePickLists(orderIds);
+        return ResponseEntity.ok(pickLists);
+    }
 
     @PostMapping("/generate/{orderId}")
     @Operation(summary = "Generate picklist", description = "Generates a picklist DTO based on the order ID")
