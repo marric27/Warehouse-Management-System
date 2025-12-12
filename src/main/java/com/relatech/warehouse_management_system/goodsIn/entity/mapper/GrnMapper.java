@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.mapper;
 
-import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
-import com.relatech.warehouse_management_system.goodsIn.entity.GRN;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.Grn;
 import com.relatech.warehouse_management_system.common.util.State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,12 +15,12 @@ public class GrnMapper {
     private final GrnItemMapper grnItemMapper;
 
 
-    public GrnDTO toDto(GRN entity) {
+    public GrnDto toDto(Grn entity) {
         if (entity == null) {
             log.warn("Attempting to map null GRN entity to DTO");
             return null;
         }
-        return GrnDTO.builder()
+        return GrnDto.builder()
                 .id(entity.getId())
                 .code(entity.getCode())
                 .supplier(entity.getSupplier())
@@ -31,11 +31,11 @@ public class GrnMapper {
     }
 
 
-    public GRN toEntity(GrnDTO dto) {
+    public Grn toEntity(GrnDto dto) {
         if (dto == null) {
             throw new IllegalArgumentException("GrnDTO cannot be null");
         }
-        return GRN.builder()
+        return Grn.builder()
                 .id(dto.getId())
                 .code(dto.getCode())
                 .supplier(dto.getSupplier())

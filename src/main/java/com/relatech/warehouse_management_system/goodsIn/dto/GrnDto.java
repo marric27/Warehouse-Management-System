@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Schema(description = "Request/Response DTO for Goods Receipt Note")
-public class GrnDTO {
+public class GrnDto {
     @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 

@@ -2,7 +2,7 @@ package com.relatech.warehouse_management_system.logistic.controller;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.logistic.service.LogisticService;
-import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,21 +19,21 @@ public class LogisticController {
 
     // PATCH /api/slots/{slotId}/assign/{productId}
     @PatchMapping("/{slotId}/assign/{productId}")
-    public ResponseEntity<SlotDTO> assignProductToSlot(
+    public ResponseEntity<SlotDto> assignProductToSlot(
             @PathVariable Long slotId,
             @PathVariable Long productId
     ) throws ResourceNotFoundException {
         log.info("Received PATCH request for assign product with ID {} to slot with ID {} ", slotId, productId);
-        SlotDTO slotDTO = logisticService.assignProductToSlot(slotId, productId);
+        SlotDto slotDTO = logisticService.assignProductToSlot(slotId, productId);
         log.info("Successfully assigned product: {} to slot: {}", productId, slotId);
         return ResponseEntity.ok(slotDTO);
     }
 
     // PATCH /api/slots/{id}/remove-product
     @PatchMapping("/{id}/remove-product")
-    public ResponseEntity<SlotDTO> removeProductFromSlot(@PathVariable Long id) throws ResourceNotFoundException {
+    public ResponseEntity<SlotDto> removeProductFromSlot(@PathVariable Long id) throws ResourceNotFoundException {
         log.info("Received PATCH request for remove product from slot with ID {} ", id);
-        SlotDTO slotDTO = logisticService.removeProductFromSlot(id);
+        SlotDto slotDTO = logisticService.removeProductFromSlot(id);
         log.info("Successfully removed product from slot: {}",id);
         return ResponseEntity.ok(slotDTO);
     }

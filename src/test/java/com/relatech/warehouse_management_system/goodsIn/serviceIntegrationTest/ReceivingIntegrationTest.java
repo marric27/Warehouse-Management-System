@@ -2,7 +2,7 @@ package com.relatech.warehouse_management_system.goodsIn.serviceIntegrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.relatech.warehouse_management_system.common.util.State;
-import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class ReceivingIntegrationTest {
     @Test
     void testCreateAndFetchGRN() throws Exception {
 
-        GrnDTO dto = new GrnDTO();
+        GrnDto dto = new GrnDto();
         dto.setSupplier("ACME");
         dto.setReceivingDate(LocalDate.now());
 
@@ -47,7 +47,7 @@ public class ReceivingIntegrationTest {
                 .getResponse()
                 .getContentAsString();
 
-        GrnDTO created = mapper.readValue(response, GrnDTO.class);
+        GrnDto created = mapper.readValue(response, GrnDto.class);
 
         // FETCH
         mockMvc.perform(
@@ -63,7 +63,7 @@ public class ReceivingIntegrationTest {
     void testCreateItemAndUpdateItem() throws Exception {
 
         // --- Step 1: Create GRN ---
-        GrnDTO dto = new GrnDTO();
+        GrnDto dto = new GrnDto();
         dto.setSupplier("SupplierX");
         dto.setReceivingDate(LocalDate.now());
 
@@ -79,7 +79,7 @@ public class ReceivingIntegrationTest {
                 .getResponse()
                 .getContentAsString();
 
-        GrnDTO createdGrn = mapper.readValue(resp, GrnDTO.class);
+        GrnDto createdGrn = mapper.readValue(resp, GrnDto.class);
 
         // --- Step 2: Create Item ---
         GrnItemDto item = new GrnItemDto();

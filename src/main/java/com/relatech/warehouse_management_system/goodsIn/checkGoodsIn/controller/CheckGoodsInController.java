@@ -3,7 +3,7 @@ package com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.controller
 import com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.service.CheckGoodsInService;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
@@ -38,7 +38,7 @@ public class CheckGoodsInController {
     public ResponseEntity<GrnItemDto> createCheckingInfo(
             @PathVariable Long grnItemId,
             @RequestBody CreateCheckingInfoRequest request) throws Exception {
-        log.info("POST /{}/checking-info - creating checking-info {} and stockUnit {}", grnItemId, request.getCheckingInfo().getCode(), request.getStockUnit().getCode());
+        log.info("POST /{}/checking-info - creating checking-info and stockUnit for grnItem {}", grnItemId, grnItemId);
         GrnItemDto result = checkGoodsInService.createCheckingInfoAndStockUnit(
                 grnItemId,
                 request.getCheckingInfo(),
@@ -56,7 +56,7 @@ public class CheckGoodsInController {
     @Setter
     public static class CreateCheckingInfoRequest {
         private CheckingInfoDto checkingInfo;
-        private StockUnitDTO stockUnit;
+        private StockUnitDto stockUnit;
     }
 
     @GetMapping("/checking-infos")
@@ -73,13 +73,13 @@ public class CheckGoodsInController {
 
     @GetMapping("/stock-units")
     @Operation(summary = "List all Stock Units")
-    public ResponseEntity<List<StockUnitDTO>> listStockUnits() {
+    public ResponseEntity<List<StockUnitDto>> listStockUnits() {
         return ResponseEntity.ok(checkGoodsInService.listStockUnit());
     }
 
     @GetMapping("/stock-units/paged")
     @Operation(summary = "List Stock Units paginated")
-    public ResponseEntity<Page<StockUnitDTO>> listStockUnitsPaged(Pageable pageable) {
+    public ResponseEntity<Page<StockUnitDto>> listStockUnitsPaged(Pageable pageable) {
         return ResponseEntity.ok(checkGoodsInService.listStockUnitPaged(pageable));
     }
 }

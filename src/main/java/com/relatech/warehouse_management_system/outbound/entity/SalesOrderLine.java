@@ -30,7 +30,7 @@ public class SalesOrderLine {
     }
 
     @Column(name = "product_code", nullable = false)
-    private Long productCode;
+    private String productCode;
 
     @Column(nullable = false)
     private int quantity;

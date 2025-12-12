@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.slot.serviceUnitTest;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
 import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
 import com.relatech.warehouse_management_system.product.entity.Product;
@@ -9,7 +9,7 @@ import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
 import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import com.relatech.warehouse_management_system.warehouse.entity.Slot;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotMapper;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotRepository;
@@ -49,9 +49,9 @@ class SlotServiceTest {
     private SlotServiceImpl slotService;
 
     private Slot slot;
-    private SlotDTO slotDTO;
+    private SlotDto slotDTO;
     private StockUnit stockUnit;
-    private StockUnitDTO stockUnitDTO;
+    private StockUnitDto stockUnitDTO;
     private Product product;
 
     @BeforeEach
@@ -59,7 +59,7 @@ class SlotServiceTest {
         product = new Product(1L, "Test Product", null, Category.STANDARD);
 
         stockUnit = StockUnit.builder().id(1L).build();
-        stockUnitDTO = StockUnitDTO.builder().id(1L).build();
+        stockUnitDTO = StockUnitDto.builder().id(1L).build();
 
         slot = new Slot();
         slot.setId(1L);
@@ -68,7 +68,7 @@ class SlotServiceTest {
         slot.setAllowedCategory(Category.STANDARD);
         slot.setStockUnits(new ArrayList<>());
 
-        slotDTO = new SlotDTO();
+        slotDTO = new SlotDto();
         slotDTO.setId(1L);
         slotDTO.setCode("SLOT-01");
         slotDTO.setCapacity(10);
@@ -82,7 +82,7 @@ class SlotServiceTest {
         when(slotRepository.findAll()).thenReturn(List.of(slot));
         when(slotMapper.toDto(slot)).thenReturn(slotDTO);
 
-        List<SlotDTO> result = slotService.getAllSlots();
+        List<SlotDto> result = slotService.getAllSlots();
 
         assertEquals(1, result.size());
         verify(slotRepository, times(1)).findAll();
@@ -94,7 +94,7 @@ class SlotServiceTest {
         when(slotRepository.findById(1L)).thenReturn(Optional.of(slot));
         when(slotMapper.toDto(slot)).thenReturn(slotDTO);
 
-        SlotDTO result = slotService.getSlotById(1L);
+        SlotDto result = slotService.getSlotById(1L);
 
         assertNotNull(result);
         assertEquals(slotDTO.getId(), result.getId());
@@ -115,7 +115,7 @@ class SlotServiceTest {
         when(slotRepository.save(slot)).thenReturn(slot);
         when(slotMapper.toDto(slot)).thenReturn(slotDTO);
 
-        SlotDTO result = slotService.createSlot(slotDTO);
+        SlotDto result = slotService.createSlot(slotDTO);
 
         assertNotNull(result);
         assertEquals(slotDTO.getId(), result.getId());
@@ -129,7 +129,7 @@ class SlotServiceTest {
         when(slotRepository.save(slot)).thenReturn(slot);
         when(slotMapper.toDto(slot)).thenReturn(slotDTO);
 
-        SlotDTO result = slotService.updateSlot(1L, slotDTO);
+        SlotDto result = slotService.updateSlot(1L, slotDTO);
 
         assertEquals(slotDTO.getCode(), result.getCode());
         assertEquals(slotDTO.getCapacity(), result.getCapacity());
@@ -180,7 +180,7 @@ class SlotServiceTest {
     void updateSlot_ok_whenNoProductPresent() throws Exception {
         Long id = 1L;
 
-        SlotDTO dto = new SlotDTO();
+        SlotDto dto = new SlotDto();
         dto.setCapacity(20);
         dto.setAllowedCategory(Category.STANDARD);
 
@@ -193,7 +193,7 @@ class SlotServiceTest {
         when(slotRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         when(slotMapper.toDto(any())).thenReturn(dto);
 
-        SlotDTO result = slotService.updateSlot(id, dto);
+        SlotDto result = slotService.updateSlot(id, dto);
 
         assertEquals(20, result.getCapacity());
         assertEquals(Category.STANDARD, result.getAllowedCategory());
@@ -206,7 +206,7 @@ class SlotServiceTest {
     void updateSlot_ok_whenCategoryMatchesProduct() throws Exception {
         Long id = 1L;
 
-        SlotDTO dto = new SlotDTO();
+        SlotDto dto = new SlotDto();
         dto.setAllowedCategory(Category.STANDARD);
 
         Product prod = new Product();
@@ -220,7 +220,7 @@ class SlotServiceTest {
         when(slotRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         when(slotMapper.toDto(any())).thenReturn(dto);
 
-        SlotDTO result = slotService.updateSlot(id, dto);
+        SlotDto result = slotService.updateSlot(id, dto);
 
         assertEquals(Category.STANDARD, result.getAllowedCategory());
     }
@@ -232,7 +232,7 @@ class SlotServiceTest {
     void updateSlot_fails_whenCategoryDifferentFromProduct() {
         Long id = 1L;
 
-        SlotDTO dto = new SlotDTO();
+        SlotDto dto = new SlotDto();
         dto.setAllowedCategory(Category.STANDARD);
 
         Product prod = new Product();
@@ -254,7 +254,7 @@ class SlotServiceTest {
     @Test
     void updateSlot_fails_whenSlotNotFound() {
         Long id = 1L;
-        SlotDTO dto = new SlotDTO();
+        SlotDto dto = new SlotDto();
 
         when(slotRepository.findById(id)).thenReturn(Optional.empty());
 
@@ -271,10 +271,10 @@ class SlotServiceTest {
         Long id = 1L;
 
         // DTO con 1 stockUnit esistente
-        StockUnitDTO suDto = new StockUnitDTO();
+        StockUnitDto suDto = new StockUnitDto();
         suDto.setId(10L);
 
-        SlotDTO dto = new SlotDTO();
+        SlotDto dto = new SlotDto();
         dto.setStockUnits(List.of(suDto));
 
         // Slot esistente con lista vuota
@@ -290,7 +290,7 @@ class SlotServiceTest {
         when(slotRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         when(slotMapper.toDto(any())).thenReturn(dto);
 
-        SlotDTO result = slotService.updateSlot(id, dto);
+        SlotDto result = slotService.updateSlot(id, dto);
 
         assertEquals(1, slot.getStockUnits().size());
         assertEquals(10L, slot.getStockUnits().get(0).getId());
@@ -310,10 +310,10 @@ class SlotServiceTest {
 
         Long id = 1L;
 
-        StockUnitDTO suDto = new StockUnitDTO();
+        StockUnitDto suDto = new StockUnitDto();
         suDto.setId(99L);
 
-        SlotDTO dto = new SlotDTO();
+        SlotDto dto = new SlotDto();
         dto.setStockUnits(List.of(suDto));
 
         Slot slot = new Slot();

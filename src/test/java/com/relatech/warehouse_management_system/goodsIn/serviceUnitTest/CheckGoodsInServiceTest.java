@@ -4,7 +4,7 @@ import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.service.CheckGoodsInService;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.CheckingInfoService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
@@ -49,7 +49,7 @@ class CheckGoodsInServiceTest {
 
         assertThrows(
                 CannotAssignCIToGrnItemInClosedOrPutawayStateException.class,
-                () -> service.createCheckingInfoAndStockUnit(5L, new CheckingInfoDto(), new StockUnitDTO())
+                () -> service.createCheckingInfoAndStockUnit(5L, new CheckingInfoDto(), new StockUnitDto())
         );
     }
 
@@ -62,8 +62,8 @@ class CheckGoodsInServiceTest {
         when(stateService.checkGrnItemIfCheckedOrPutaway(grnItemId)).thenReturn(false);
 
         // ------ MOCK STOCK UNIT CREATION ------
-        StockUnitDTO su = new StockUnitDTO();
-        StockUnitDTO savedSu = new StockUnitDTO();
+        StockUnitDto su = new StockUnitDto();
+        StockUnitDto savedSu = new StockUnitDto();
         savedSu.setId(100L);
 
         when(stockUnitService.createStockUnit(su)).thenReturn(savedSu);
@@ -127,9 +127,9 @@ class CheckGoodsInServiceTest {
 
     @Test
     void listStockUnit_success() {
-        when(stockUnitService.getAllStockUnits()).thenReturn(List.of(new StockUnitDTO()));
+        when(stockUnitService.getAllStockUnits()).thenReturn(List.of(new StockUnitDto()));
 
-        List<StockUnitDTO> result = service.listStockUnit();
+        List<StockUnitDto> result = service.listStockUnit();
 
         assertEquals(1, result.size());
     }
@@ -137,11 +137,11 @@ class CheckGoodsInServiceTest {
     @Test
     void listStockUnitPaged_success() {
         Pageable pageable = mock(Pageable.class);
-        Page<StockUnitDTO> page = new PageImpl<>(List.of(new StockUnitDTO()));
+        Page<StockUnitDto> page = new PageImpl<>(List.of(new StockUnitDto()));
 
         when(stockUnitService.getAllStockUnitsPaged(pageable)).thenReturn(page);
 
-        Page<StockUnitDTO> result = service.listStockUnitPaged(pageable);
+        Page<StockUnitDto> result = service.listStockUnitPaged(pageable);
 
         assertEquals(1, result.getTotalElements());
     }

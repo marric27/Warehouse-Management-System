@@ -3,7 +3,7 @@ package com.relatech.warehouse_management_system.goodsIn.entity.service;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
@@ -29,32 +29,32 @@ public class StockUnitServiceImpl implements StockUnitService {
 
     @Override
     @Transactional(rollbackFor = {ValidationException.class, RuntimeException.class})
-    public StockUnitDTO createStockUnit(StockUnitDTO dto) throws ValidationException {
+    public StockUnitDto createStockUnit(StockUnitDto dto) throws ValidationException {
         StockUnit saved = stockUnitRepository.save(stockUnitMapper.toEntity(dto));
         return stockUnitMapper.toDTO(saved);
     }
 
     @Override
-    public StockUnitDTO getStockUnitById(Long id) throws ResourceNotFoundException {
+    public StockUnitDto getStockUnitById(Long id) throws ResourceNotFoundException {
         StockUnit stockUnit = stockUnitRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("StockUnit", id));
         return stockUnitMapper.toDTO(stockUnit);
     }
 
     @Override
-    public List<StockUnitDTO> getAllStockUnits() {
+    public List<StockUnitDto> getAllStockUnits() {
         return stockUnitRepository.findAll()
                 .stream().map(stockUnitMapper::toDTO).toList();
     }
 
     @Override
-    public Page<StockUnitDTO> getAllStockUnitsPaged(Pageable pageable) {
+    public Page<StockUnitDto> getAllStockUnitsPaged(Pageable pageable) {
         return stockUnitRepository.findAll(pageable).map(stockUnitMapper::toDTO);
     }
 
     @Override
     @Transactional(rollbackFor = {ValidationException.class, ResourceNotFoundException.class, RuntimeException.class})
-    public StockUnitDTO updateStockUnit(Long id, StockUnitDTO dto) throws ResourceNotFoundException, ValidationException {
+    public StockUnitDto updateStockUnit(Long id, StockUnitDto dto) throws ResourceNotFoundException, ValidationException {
         StockUnit existing = stockUnitRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("StockUnit", id));
 
@@ -77,7 +77,7 @@ public class StockUnitServiceImpl implements StockUnitService {
 
     @Override
     @Transactional(rollbackFor = {ResourceNotFoundException.class, RuntimeException.class})
-    public StockUnitDTO assignProductToStockUnit(Long stockUnitId, Long productId) throws ResourceNotFoundException {
+    public StockUnitDto assignProductToStockUnit(Long stockUnitId, Long productId) throws ResourceNotFoundException {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", productId));
         StockUnit su = stockUnitRepository.findById(stockUnitId)
@@ -89,7 +89,7 @@ public class StockUnitServiceImpl implements StockUnitService {
 
     @Override
     @Transactional(rollbackFor = {ResourceNotFoundException.class, RuntimeException.class})
-    public StockUnitDTO removeProductFromStockUnit(Long stockUnitId) throws ResourceNotFoundException {
+    public StockUnitDto removeProductFromStockUnit(Long stockUnitId) throws ResourceNotFoundException {
         StockUnit stockUnit = stockUnitRepository.findById(stockUnitId)
                 .orElseThrow(() -> new ResourceNotFoundException("Stock Unit", stockUnitId));
         stockUnit.setProduct(null);

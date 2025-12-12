@@ -3,7 +3,7 @@ package com.relatech.warehouse_management_system.outbound.entity.service;
 import com.relatech.warehouse_management_system.common.exception.CustomerWithActiveOrdersException;
 import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.outbound.dto.CustomerDTO;
+import com.relatech.warehouse_management_system.outbound.dto.CustomerDto;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,18 +12,18 @@ import java.util.List;
 
 public interface CustomerService {
 
-    CustomerDTO createCustomer(CustomerDTO customerDTO) throws DuplicateResourceException;
+    CustomerDto createCustomer(CustomerDto customerDTO) throws DuplicateResourceException;
 
-    CustomerDTO getCustomerById(Long id) throws ResourceNotFoundException;
+    CustomerDto getCustomerById(Long id) throws ResourceNotFoundException;
 
-    List<CustomerDTO> getAllCustomers();
+    List<CustomerDto> getAllCustomers();
 
-    Page<CustomerDTO> getAllCustomersPaged(Pageable pageable);
+    Page<CustomerDto> getAllCustomersPaged(Pageable pageable);
 
-    CustomerDTO updateCustomer(Long id, CustomerDTO customerDTO) throws ResourceNotFoundException;
+    CustomerDto updateCustomer(Long id, CustomerDto customerDTO) throws ResourceNotFoundException;
 
     void deleteCustomer(Long id) throws ResourceNotFoundException, CustomerWithActiveOrdersException;
 
-    List<CustomerDTO> searchCustomers(String term);
+    List<CustomerDto> searchCustomers(String term);
 
 }

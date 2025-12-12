@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.goodsIn.receiving.controller;
 
 import com.relatech.warehouse_management_system.common.util.State;
-import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.exception.InvalidStateTransitionException;
@@ -36,16 +36,16 @@ public class ReceivingController {
     @PostMapping("/grns")
     @Operation(summary = "Create GRN")
     @ApiResponse(responseCode = "201", description = "GRN created")
-    public ResponseEntity<GrnDTO> createGRN(@Valid @RequestBody GrnDTO dto) {
+    public ResponseEntity<GrnDto> createGRN(@Valid @RequestBody GrnDto dto) {
 
         log.info("Creating GRN");
-        GrnDTO result = receivingService.createGRN(dto);
+        GrnDto result = receivingService.createGRN(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @GetMapping("/grns/{id}")
     @Operation(summary = "Get GRN by ID")
-    public ResponseEntity<GrnDTO> getGRN(@PathVariable Long id)
+    public ResponseEntity<GrnDto> getGRN(@PathVariable Long id)
             throws GrnNotFoundException {
 
         log.info("Fetching GRN {}", id);
@@ -54,14 +54,14 @@ public class ReceivingController {
 
     @GetMapping("/grns")
     @Operation(summary = "List all GRNs")
-    public ResponseEntity<List<GrnDTO>> listGRNs() {
+    public ResponseEntity<List<GrnDto>> listGRNs() {
         log.info("Listing all GRNs");
         return ResponseEntity.ok(receivingService.listGrn());
     }
 
     @GetMapping("/grns-paged")
     @Operation(summary = "List all GRNs")
-    public ResponseEntity<Page<GrnDTO>> listGRNsPaged(Pageable pageable) {
+    public ResponseEntity<Page<GrnDto>> listGRNsPaged(Pageable pageable) {
         log.info("Listing all GRNs Paged");
         return ResponseEntity.ok(receivingService.listGrnPaged(pageable));
     }
@@ -113,7 +113,7 @@ public class ReceivingController {
 
     @PatchMapping("/grns/{id}/state/{state}")
     @Operation(summary = "Manually change GRN state")
-    public ResponseEntity<GrnDTO> changeGrnState(
+    public ResponseEntity<GrnDto> changeGrnState(
             @PathVariable Long id,
             @PathVariable State state)
             throws GrnNotFoundException, InvalidStateTransitionException {

@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.goodsIn.receiving.service;
 
 import com.relatech.warehouse_management_system.common.util.State;
-import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
@@ -28,7 +28,7 @@ public class ReceivingService {
 
     // CREATE GRN
     @Transactional(rollbackFor = {Exception.class})
-    public GrnDTO createGRN(GrnDTO dto) {
+    public GrnDto createGRN(GrnDto dto) {
         dto.setState(State.OPEN);
         if (dto.getReceivingDate() == null)
             dto.setReceivingDate(LocalDate.now());
@@ -70,16 +70,16 @@ public class ReceivingService {
     }
 
     @Transactional(readOnly = true)
-    public GrnDTO getGRN(Long id) throws GrnNotFoundException {
+    public GrnDto getGRN(Long id) throws GrnNotFoundException {
         return grnService.getGRNById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<GrnDTO> listGrn() {
+    public List<GrnDto> listGrn() {
         return grnService.getAllGRNs();
     }
 
-    public Page<GrnDTO> listGrnPaged(Pageable pageable) {
+    public Page<GrnDto> listGrnPaged(Pageable pageable) {
         return grnService.getAllGRNsPaged(pageable);
     }
 

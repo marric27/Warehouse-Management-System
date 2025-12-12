@@ -2,7 +2,7 @@ package com.relatech.warehouse_management_system.outbound.salesOrder;
 
 import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.outbound.dto.CustomerDTO;
+import com.relatech.warehouse_management_system.outbound.dto.CustomerDto;
 import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +24,9 @@ public class SalesOrderController {
     private final SalesOrderService salesOrderService;
 
     @PostMapping("/customer")
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO) throws DuplicateResourceException {
+    public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDTO) throws DuplicateResourceException {
         log.info("Creating Customer");
-        CustomerDTO created = salesOrderService.createCustomer(customerDTO);
+        CustomerDto created = salesOrderService.createCustomer(customerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -38,21 +38,21 @@ public class SalesOrderController {
     }
 
     @GetMapping("/customers")
-    public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
+    public ResponseEntity<List<CustomerDto>> getAllCustomers() {
         log.info("Request received: get all customers");
 
-        List<CustomerDTO> customers = salesOrderService.getAllCustomers();
+        List<CustomerDto> customers = salesOrderService.getAllCustomers();
 
         log.info("Returning {} customers", customers.size());
         return ResponseEntity.ok(customers);
     }
 
     @GetMapping("/customers-paged")
-    public ResponseEntity<Page<CustomerDTO>> getAllCustomersPaged(Pageable pageable) {
+    public ResponseEntity<Page<CustomerDto>> getAllCustomersPaged(Pageable pageable) {
         log.info("Request received: get customers paged (page={}, size={})",
                 pageable.getPageNumber(), pageable.getPageSize());
 
-        Page<CustomerDTO> customers = salesOrderService.getAllCustomersPaged(pageable);
+        Page<CustomerDto> customers = salesOrderService.getAllCustomersPaged(pageable);
 
         log.info("Returning {} customers for page {}", customers.getNumberOfElements(), customers.getNumber());
         return ResponseEntity.ok(customers);

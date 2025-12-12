@@ -9,6 +9,7 @@ import com.relatech.warehouse_management_system.outbound.entity.PickList;
 import com.relatech.warehouse_management_system.outbound.entity.mapper.PickListMapper;
 import com.relatech.warehouse_management_system.outbound.entity.service.OrderService;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListService;
+import com.relatech.warehouse_management_system.warehouse.service.SlotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class PickListGen {
 
     private final OrderService orderService;
     private final PickListService pickListService;
+    private final SlotService slotService;
 
     @Transactional
     public List<PickListDto> generatePickLists(List<Long> orderIds) throws ResourceNotFoundException {
@@ -47,7 +49,10 @@ public class PickListGen {
             for (SalesOrderLineDto line : orderDto.getSalesOrderLineList()) {
 
                 String productCode = String.valueOf(line.getProductCode());
-                String slotCode = "SLT-000"; // TODO: implementare algoritmo slotService.getBestSlotForProduct(line.getProductCode());
+
+                String slotCode = slotService.getSlotContainingProduct(line.getProductCode(), line.getQuantity())
+                        .orElseThrow(() -> new RuntimeException("No slot found for product " + line.getProductCode() + " with required quantity " + line.getQuantity()))
+                        .getCode();
 
                 PickListItemDto itemDTO = PickListItemDto.builder()
                         .productCode(productCode)

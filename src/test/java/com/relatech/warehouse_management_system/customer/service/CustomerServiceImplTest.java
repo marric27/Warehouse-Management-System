@@ -3,7 +3,7 @@ package com.relatech.warehouse_management_system.customer.service;
 import com.relatech.warehouse_management_system.common.exception.CustomerWithActiveOrdersException;
 import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.outbound.dto.CustomerDTO;
+import com.relatech.warehouse_management_system.outbound.dto.CustomerDto;
 import com.relatech.warehouse_management_system.outbound.entity.Customer;
 import com.relatech.warehouse_management_system.outbound.entity.mapper.CustomerMapper;
 import com.relatech.warehouse_management_system.outbound.entity.repository.CustomerRepository;
@@ -38,7 +38,7 @@ class CustomerServiceImplTest {
     @Test
     @DisplayName("Create Customer - Duplicate Email Exception")
     void whenCreateDuplicateEmail_thenThrow() {
-        CustomerDTO dto = CustomerDTO.builder().email("dupe@mail.com").taxCode("12345678901").build();
+        CustomerDto dto = CustomerDto.builder().email("dupe@mail.com").taxCode("12345678901").build();
         when(repository.findByEmail("dupe@mail.com")).thenReturn(Optional.of(new Customer()));
 
         assertThrows(DuplicateResourceException.class, () -> service.createCustomer(dto));
@@ -49,10 +49,10 @@ class CustomerServiceImplTest {
     void whenGetCustomerById_thenReturnDTO() throws ResourceNotFoundException {
         Customer customer = Customer.builder().id(1L).name("Name").build();
         when(repository.findById(1L)).thenReturn(Optional.of(customer));
-        CustomerDTO dto = CustomerDTO.builder().id(1L).name("Name").build();
+        CustomerDto dto = CustomerDto.builder().id(1L).name("Name").build();
         when(mapper.toDTO(customer)).thenReturn(dto);
 
-        CustomerDTO result = service.getCustomerById(1L);
+        CustomerDto result = service.getCustomerById(1L);
         assertEquals(1L, result.getId());
     }
 
@@ -71,23 +71,23 @@ class CustomerServiceImplTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Customer> pageEntity = new PageImpl<>(List.of(c1, c2), pageable, 2);
         when(repository.findAll(pageable)).thenReturn(pageEntity);
-        when(mapper.toDTO(c1)).thenReturn(CustomerDTO.builder().id(1L).build());
-        when(mapper.toDTO(c2)).thenReturn(CustomerDTO.builder().id(2L).build());
+        when(mapper.toDTO(c1)).thenReturn(CustomerDto.builder().id(1L).build());
+        when(mapper.toDTO(c2)).thenReturn(CustomerDto.builder().id(2L).build());
 
-        Page<CustomerDTO> result = service.getAllCustomersPaged(pageable);
+        Page<CustomerDto> result = service.getAllCustomersPaged(pageable);
         assertEquals(2, result.getContent().size());
     }
 
     @Test
     @DisplayName("Update Customer - Success")
     void whenUpdateCustomer_thenReturnUpdated() throws ResourceNotFoundException {
-        CustomerDTO updateDto = CustomerDTO.builder().name("Updated").build();
+        CustomerDto updateDto = CustomerDto.builder().name("Updated").build();
         Customer existing = Customer.builder().id(1L).build();
         when(repository.findById(1L)).thenReturn(Optional.of(existing));
         when(repository.save(existing)).thenReturn(existing);
         when(mapper.toDTO(existing)).thenReturn(updateDto);
 
-        CustomerDTO result = service.updateCustomer(1L, updateDto);
+        CustomerDto result = service.updateCustomer(1L, updateDto);
         assertEquals("Updated", result.getName());
     }
 
@@ -115,12 +115,12 @@ class CustomerServiceImplTest {
     @Test
     @DisplayName("Search Customers - Null or Empty Term Returns All")
     void whenSearchNullOrEmptyReturnsAll() {
-        List<CustomerDTO> allDtos = List.of(CustomerDTO.builder().id(1L).build());
+        List<CustomerDto> allDtos = List.of(CustomerDto.builder().id(1L).build());
         when(repository.findAll()).thenReturn(List.of(new Customer()));
         when(mapper.toDTO(any(Customer.class))).thenReturn(allDtos.get(0));
 
-        List<CustomerDTO> resultNull = service.searchCustomers(null);
-        List<CustomerDTO> resultEmpty = service.searchCustomers("");
+        List<CustomerDto> resultNull = service.searchCustomers(null);
+        List<CustomerDto> resultEmpty = service.searchCustomers("");
 
         assertEquals(1, resultNull.size());
         assertEquals(1, resultEmpty.size());
@@ -129,7 +129,7 @@ class CustomerServiceImplTest {
         @Test
         @DisplayName("Create Customer - Success if no duplicates")
         void whenCreateCustomerWithNoDuplicates_thenPersistsAndReturnsDTO() throws Exception {
-            CustomerDTO dto = CustomerDTO.builder()
+            CustomerDto dto = CustomerDto.builder()
                     .name("Mario")
                     .surname("Rossi")
                     .shippingAddress("Via Roma 1")
@@ -154,7 +154,7 @@ class CustomerServiceImplTest {
             when(repository.save(entity)).thenReturn(entity);
             when(mapper.toDTO(entity)).thenReturn(dto);
 
-            CustomerDTO result = service.createCustomer(dto);
+            CustomerDto result = service.createCustomer(dto);
             assertEquals("Mario", result.getName());
             verify(repository).save(entity);
         }
@@ -162,7 +162,7 @@ class CustomerServiceImplTest {
     @Test
     @DisplayName("Create Customer - Duplicate Email")
     void whenCreateCustomerWithDuplicateEmail_thenThrows() {
-        CustomerDTO dto = CustomerDTO.builder()
+        CustomerDto dto = CustomerDto.builder()
                 .name("Mario")
                 .surname("Rossi")
                 .shippingAddress("Via Roma 1")
@@ -180,7 +180,7 @@ class CustomerServiceImplTest {
     @Test
         @DisplayName("Create Customer - Duplicate TaxCode")
         void whenCreateCustomerWithDuplicateTaxCode_thenThrows() {
-            CustomerDTO dto = CustomerDTO.builder()
+            CustomerDto dto = CustomerDto.builder()
                     .name("Mario")
                     .surname("Rossi")
                     .shippingAddress("Via Roma 1")
@@ -207,9 +207,9 @@ class CustomerServiceImplTest {
                     .taxCode("MRRSSM80A01H501X")
                     .build();
             when(repository.findAll()).thenReturn(List.of(c));
-            when(mapper.toDTO(c)).thenReturn(CustomerDTO.builder().name("Mario").build());
+            when(mapper.toDTO(c)).thenReturn(CustomerDto.builder().name("Mario").build());
 
-            List<CustomerDTO> dtos = service.getAllCustomers();
+            List<CustomerDto> dtos = service.getAllCustomers();
             assertEquals(1, dtos.size());
             assertEquals("Mario", dtos.get(0).getName());
             verify(mapper).toDTO(c);
@@ -220,9 +220,9 @@ class CustomerServiceImplTest {
         void whenSearchCustomersWithNullTerm_thenGetAllCustomersCalled() {
             Customer c = Customer.builder().name("Mario").build();
             when(repository.findAll()).thenReturn(List.of(c));
-            when(mapper.toDTO(c)).thenReturn(CustomerDTO.builder().name("Mario").build());
+            when(mapper.toDTO(c)).thenReturn(CustomerDto.builder().name("Mario").build());
 
-            List<CustomerDTO> result = service.searchCustomers(null);
+            List<CustomerDto> result = service.searchCustomers(null);
             assertEquals(1, result.size());
         }
 
@@ -231,9 +231,9 @@ class CustomerServiceImplTest {
         void whenSearchCustomersWithTerm_thenSearchByTermCalled() {
             Customer c = Customer.builder().name("Mario").build();
             when(repository.searchByTerm("Mario")).thenReturn(List.of(c));
-            when(mapper.toDTO(c)).thenReturn(CustomerDTO.builder().name("Mario").build());
+            when(mapper.toDTO(c)).thenReturn(CustomerDto.builder().name("Mario").build());
 
-            List<CustomerDTO> result = service.searchCustomers("Mario");
+            List<CustomerDto> result = service.searchCustomers("Mario");
             assertEquals(1, result.size());
             assertEquals("Mario", result.get(0).getName());
         }

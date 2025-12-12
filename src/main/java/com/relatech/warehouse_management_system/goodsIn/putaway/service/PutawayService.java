@@ -8,7 +8,7 @@ import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
-import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import com.relatech.warehouse_management_system.warehouse.service.SlotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,17 +29,17 @@ public class PutawayService {
 
 
     @Transactional(rollbackFor = {ResourceNotFoundException.class, UpdateEntityException.class, GrnItemNotFoundException.class}, propagation = Propagation.REQUIRES_NEW)
-    public SlotDTO assignStockUnitToSlot(Long stockUnitId, Long slotId) throws ResourceNotFoundException, UpdateEntityException, GrnItemNotFoundException, GrnNotFoundException {
+    public SlotDto assignStockUnitToSlot(Long stockUnitId, Long slotId) throws ResourceNotFoundException, UpdateEntityException, GrnItemNotFoundException, GrnNotFoundException {
 
-        SlotDTO slot = slotService.getSlotById(slotId);
-        StockUnitDTO su = stockUnitService.getStockUnitById(stockUnitId);
+        SlotDto slot = slotService.getSlotById(slotId);
+        StockUnitDto su = stockUnitService.getStockUnitById(stockUnitId);
 
         if (!slot.getAllowedCategory().equals(su.getCategory()))
             throw new IllegalArgumentException("Category mismatch");
 
         slot.getStockUnits().add(su);
         su.setSlotId(slot.getId());
-        SlotDTO savedSlot = slotService.updateSlot(slotId, slot);
+        SlotDto savedSlot = slotService.updateSlot(slotId, slot);
 
         // update checkingInfo state → triggers item state change
         CheckingInfoDto ci = checkingInfoService.getByStockUnitId(stockUnitId);

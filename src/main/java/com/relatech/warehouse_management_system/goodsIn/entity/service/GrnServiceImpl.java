@@ -1,8 +1,8 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
-import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.goodsIn.entity.GRN;
+import com.relatech.warehouse_management_system.goodsIn.entity.Grn;
 import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnItemMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.GrnMapper;
@@ -30,20 +30,20 @@ public class GrnServiceImpl implements GrnService {
 
     @Override
     @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
-    public GrnDTO createGRN(GrnDTO grnDTO) {
+    public GrnDto createGRN(GrnDto grnDTO) {
         log.debug("Creating new GRN with ID: {}", grnDTO.getId());
 
-        GRN entity = grnMapper.toEntity(grnDTO);
-        GRN saved = grnRepository.save(entity);
+        Grn entity = grnMapper.toEntity(grnDTO);
+        Grn saved = grnRepository.save(entity);
         log.info("GRN created successfully with ID: {}", saved.getId());
         return grnMapper.toDto(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public GrnDTO getGRNById(Long id) throws GrnNotFoundException {
+    public GrnDto getGRNById(Long id) throws GrnNotFoundException {
         log.debug("Fetching GRN with ID: {}", id);
-        GRN entity = grnRepository.findById(id)
+        Grn entity = grnRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("GRN not found with ID: {}", id);
                     return new GrnNotFoundException(id);
@@ -53,9 +53,9 @@ public class GrnServiceImpl implements GrnService {
 
     @Override
     @Transactional(readOnly = true)
-    public GrnDTO getGRNByCode(String code) throws GrnNotFoundException {
+    public GrnDto getGRNByCode(String code) throws GrnNotFoundException {
         log.debug("Fetching GRN with code: {}", code);
-        GRN entity = grnRepository.findByCode(code)
+        Grn entity = grnRepository.findByCode(code)
                 .orElseThrow(() -> {
                     log.warn("GRN not found with code: {}", code);
                     return new GrnNotFoundException(code);
@@ -65,7 +65,7 @@ public class GrnServiceImpl implements GrnService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GrnDTO> getAllGRNs() {
+    public List<GrnDto> getAllGRNs() {
         log.debug("Fetching all GRNs");
         return grnRepository.findAll().stream()
                 .map(grnMapper::toDto)
@@ -74,16 +74,16 @@ public class GrnServiceImpl implements GrnService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<GrnDTO> getAllGRNsPaged(Pageable pageable) {
+    public Page<GrnDto> getAllGRNsPaged(Pageable pageable) {
         log.debug("Fetching paginated GRNs: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
-        Page<GRN> grnPage = grnRepository.findAll(pageable);
+        Page<Grn> grnPage = grnRepository.findAll(pageable);
         return grnPage.map(grnMapper::toDto);
     }
 
     @Override
     @Transactional(timeout = 5, propagation = Propagation.REQUIRED)
-    public GrnDTO updateGRN(Long id, GrnDTO grnDTO) throws GrnNotFoundException {
-        GRN existing = grnRepository.findById(id)
+    public GrnDto updateGRN(Long id, GrnDto grnDTO) throws GrnNotFoundException {
+        Grn existing = grnRepository.findById(id)
                 .orElseThrow(() -> new GrnNotFoundException(id));
 
         if (grnDTO.getSupplier() != null)
@@ -104,7 +104,7 @@ public class GrnServiceImpl implements GrnService {
         if (grnDTO.getState() != null)
             existing.setState(grnDTO.getState());
 
-        GRN saved = grnRepository.save(existing);
+        Grn saved = grnRepository.save(existing);
         return grnMapper.toDto(saved);
     }
 
@@ -114,7 +114,7 @@ public class GrnServiceImpl implements GrnService {
     public void deleteById(Long id) throws GrnNotFoundException, GrnWithItemsException {
         log.debug("Deleting GRN with ID: {}", id);
 
-        GRN grn = grnRepository.findById(id)
+        Grn grn = grnRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("GRN not found with ID: {}", id);
                     return new GrnNotFoundException(id);
@@ -131,7 +131,7 @@ public class GrnServiceImpl implements GrnService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GrnDTO> searchGrns(String term) {
+    public List<GrnDto> searchGrns(String term) {
         log.debug("Searching GRNs with term: {}", term);
 
         if (term == null || term.trim().isEmpty()) {

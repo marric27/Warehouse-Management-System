@@ -4,7 +4,7 @@ import com.relatech.warehouse_management_system.common.exception.ResourceNotFoun
 import com.relatech.warehouse_management_system.logistic.controller.LogisticController;
 import com.relatech.warehouse_management_system.logistic.service.LogisticService;
 import com.relatech.warehouse_management_system.product.dto.ProductDTO;
-import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import com.relatech.warehouse_management_system.common.util.Category;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -37,7 +37,7 @@ class LogisticControllerTest {
         productDTO.setName("Paracetamolo");
         productDTO.setCategory(Category.STANDARD);
 
-        SlotDTO slotDTO = new SlotDTO();
+        SlotDto slotDTO = new SlotDto();
         slotDTO.setId(1L);
         slotDTO.setCode("SLOT001");
         slotDTO.setAllowedCategory(Category.STANDARD);
@@ -59,7 +59,7 @@ class LogisticControllerTest {
 
     @Test
     void removeProductFromSlot_ShouldReturnSlotDTOWithNullProduct() throws Exception {
-        SlotDTO slotDTO = new SlotDTO();
+        SlotDto slotDTO = new SlotDto();
         slotDTO.setId(1L);
         slotDTO.setCode("SLOT001");
         slotDTO.setAllowedCategory(Category.STANDARD);

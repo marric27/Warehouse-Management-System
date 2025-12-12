@@ -2,7 +2,7 @@ package com.relatech.warehouse_management_system.warehouse.controller;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
-import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import com.relatech.warehouse_management_system.warehouse.service.SlotService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,14 +29,14 @@ public class SlotController {
     @GetMapping
     @Operation(summary = "List all slots", description = "Returns all warehouse slots")
     @ApiResponse(responseCode = "200", description = "Slots retrieved")
-    public ResponseEntity<List<SlotDTO>> listSlots() {
+    public ResponseEntity<List<SlotDto>> listSlots() {
         log.info("GET /slots - listing all slots");
         return ResponseEntity.ok(slotService.getAllSlots());
     }
 
     @GetMapping("/paged")
     @Operation(summary = "List Slots paginated")
-    public ResponseEntity<Page<SlotDTO>> listStockUnitsPaged(Pageable pageable) {
+    public ResponseEntity<Page<SlotDto>> listStockUnitsPaged(Pageable pageable) {
         return ResponseEntity.ok(slotService.getAllSlotsPaged(pageable));
     }
 
@@ -44,7 +44,7 @@ public class SlotController {
     @Operation(summary = "Get slot by ID")
     @ApiResponse(responseCode = "200", description = "Slot found")
     @ApiResponse(responseCode = "404", description = "Slot not found")
-    public ResponseEntity<SlotDTO> getSlot(@PathVariable Long id) throws ResourceNotFoundException {
+    public ResponseEntity<SlotDto> getSlot(@PathVariable Long id) throws ResourceNotFoundException {
         log.info("GET /slots/{} - fetching slot", id);
         return ResponseEntity.ok(slotService.getSlotById(id));
     }
@@ -52,9 +52,9 @@ public class SlotController {
     @PostMapping
     @Operation(summary = "Create slot")
     @ApiResponse(responseCode = "201", description = "Slot created")
-    public ResponseEntity<SlotDTO> createSlot(@RequestBody SlotDTO dto) {
-        log.info("POST /slots - creating slot {}", dto.getCode());
-        SlotDTO created = slotService.createSlot(dto);
+    public ResponseEntity<SlotDto> createSlot(@RequestBody SlotDto dto) {
+        log.info("POST /slots - creating slot ");
+        SlotDto created = slotService.createSlot(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -63,13 +63,13 @@ public class SlotController {
     @ApiResponse(responseCode = "200", description = "Slot updated")
     @ApiResponse(responseCode = "404", description = "Slot not found")
     @ApiResponse(responseCode = "409", description = "Invalid update (category conflict)")
-    public ResponseEntity<SlotDTO> updateSlot(
+    public ResponseEntity<SlotDto> updateSlot(
             @PathVariable Long id,
-            @RequestBody SlotDTO dto
+            @RequestBody SlotDto dto
     ) throws ResourceNotFoundException, UpdateEntityException {
 
         log.info("PUT /slots/{} - updating slot {}", id, dto.getCode());
-        SlotDTO updated = slotService.updateSlot(id, dto);
+        SlotDto updated = slotService.updateSlot(id, dto);
         return ResponseEntity.ok(updated);
     }
 

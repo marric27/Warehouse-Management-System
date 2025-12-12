@@ -4,7 +4,7 @@ import com.relatech.warehouse_management_system.common.exception.ResourceNotFoun
 import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
@@ -43,7 +43,7 @@ public class StockUnitServiceTest {
     private StockUnitMapper stockUnitMapper;
 
     private StockUnit stockUnit;
-    private StockUnitDTO stockUnitDTO;
+    private StockUnitDto stockUnitDTO;
     private Product product;
 
     @BeforeEach
@@ -60,7 +60,7 @@ public class StockUnitServiceTest {
                 .expirationDate(LocalDate.now().plusDays(10))
                 .build();
 
-        stockUnitDTO = StockUnitDTO.builder()
+        stockUnitDTO = StockUnitDto.builder()
                 .id(1L)
                 .batchNumber("B123")
                 .code("U123")
@@ -76,7 +76,7 @@ public class StockUnitServiceTest {
         when(stockUnitRepository.save(stockUnit)).thenReturn(stockUnit);
         when(stockUnitMapper.toDTO(stockUnit)).thenReturn(stockUnitDTO);
 
-        StockUnitDTO result = stockUnitService.createStockUnit(stockUnitDTO);
+        StockUnitDto result = stockUnitService.createStockUnit(stockUnitDTO);
 
         assertNotNull(result);
         assertEquals(stockUnitDTO.getId(), result.getId());
@@ -89,7 +89,7 @@ public class StockUnitServiceTest {
         when(stockUnitRepository.findById(1L)).thenReturn(Optional.of(stockUnit));
         when(stockUnitMapper.toDTO(stockUnit)).thenReturn(stockUnitDTO);
 
-        StockUnitDTO result = stockUnitService.getStockUnitById(1L);
+        StockUnitDto result = stockUnitService.getStockUnitById(1L);
 
         assertNotNull(result);
         assertEquals(stockUnitDTO.getId(), result.getId());
@@ -109,7 +109,7 @@ public class StockUnitServiceTest {
         when(stockUnitRepository.findAll()).thenReturn(List.of(stockUnit));
         when(stockUnitMapper.toDTO(stockUnit)).thenReturn(stockUnitDTO);
 
-        List<StockUnitDTO> result = stockUnitService.getAllStockUnits();
+        List<StockUnitDto> result = stockUnitService.getAllStockUnits();
 
         assertEquals(1, result.size());
         assertEquals(stockUnitDTO.getId(), result.getFirst().getId());
@@ -122,7 +122,7 @@ public class StockUnitServiceTest {
         when(stockUnitRepository.findAll(Pageable.unpaged())).thenReturn(page);
         when(stockUnitMapper.toDTO(stockUnit)).thenReturn(stockUnitDTO);
 
-        Page<StockUnitDTO> result = stockUnitService.getAllStockUnitsPaged(Pageable.unpaged());
+        Page<StockUnitDto> result = stockUnitService.getAllStockUnitsPaged(Pageable.unpaged());
 
         assertEquals(1, result.getTotalElements());
         assertEquals(stockUnitDTO.getId(), result.getContent().getFirst().getId());
@@ -131,7 +131,7 @@ public class StockUnitServiceTest {
     @Test
     @DisplayName("Should update StockUnit and return updated DTO")
     void updateStockUnit_ShouldReturnUpdatedDTO() throws ResourceNotFoundException {
-        StockUnitDTO updatedDTO = StockUnitDTO.builder()
+        StockUnitDto updatedDTO = StockUnitDto.builder()
                 .batchNumber("B456")
                 .code("U456")
                 .quantity(200)
@@ -143,7 +143,7 @@ public class StockUnitServiceTest {
         when(stockUnitRepository.save(stockUnit)).thenReturn(stockUnit);
         when(stockUnitMapper.toDTO(stockUnit)).thenReturn(updatedDTO);
 
-        StockUnitDTO result = stockUnitService.updateStockUnit(1L, updatedDTO);
+        StockUnitDto result = stockUnitService.updateStockUnit(1L, updatedDTO);
 
         assertEquals(updatedDTO.getBatchNumber(), result.getBatchNumber());
         assertEquals(updatedDTO.getQuantity(), result.getQuantity());
@@ -167,7 +167,7 @@ public class StockUnitServiceTest {
         when(stockUnitRepository.save(stockUnit)).thenReturn(stockUnit);
         when(stockUnitMapper.toDTO(stockUnit)).thenReturn(stockUnitDTO);
 
-        StockUnitDTO result = stockUnitService.assignProductToStockUnit(1L, 1L);
+        StockUnitDto result = stockUnitService.assignProductToStockUnit(1L, 1L);
 
         assertNotNull(result);
         verify(stockUnitRepository).save(stockUnit);
@@ -182,7 +182,7 @@ public class StockUnitServiceTest {
         when(stockUnitRepository.save(stockUnit)).thenReturn(stockUnit);
         when(stockUnitMapper.toDTO(stockUnit)).thenReturn(stockUnitDTO);
 
-        StockUnitDTO result = stockUnitService.removeProductFromStockUnit(1L);
+        StockUnitDto result = stockUnitService.removeProductFromStockUnit(1L);
 
         assertNotNull(result);
         assertNull(stockUnit.getProduct());

@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.customer.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.relatech.warehouse_management_system.outbound.dto.CustomerDTO;
+import com.relatech.warehouse_management_system.outbound.dto.CustomerDto;
 import com.relatech.warehouse_management_system.outbound.entity.service.CustomerService;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +38,7 @@ class CustomerControllerTest {
     @Test
     @DisplayName("POST /customers - Successful Creation")
     void whenValidCustomerDto_thenCreateCustomer() throws Exception {
-        CustomerDTO input = CustomerDTO.builder()
+        CustomerDto input = CustomerDto.builder()
                 .name("Mario")
                 .surname("Rossi")
                 .shippingAddress("Via Roma 1")
@@ -46,9 +46,9 @@ class CustomerControllerTest {
                 .email("mario@rossi.com")
                 .taxCode("MRRSSM80A01H501X")
                 .build();
-        CustomerDTO output = input.toBuilder().id(1L).build();
+        CustomerDto output = input.toBuilder().id(1L).build();
 
-        when(customerService.createCustomer(any(CustomerDTO.class))).thenReturn(output);
+        when(customerService.createCustomer(any(CustomerDto.class))).thenReturn(output);
 
         mockMvc.perform(post("/customers")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -61,7 +61,7 @@ class CustomerControllerTest {
     @Test
     @DisplayName("POST /customers - Validation Fail (Blank Name)")
     void whenCustomerDtoNameBlank_thenValidationError() throws Exception {
-        CustomerDTO input = CustomerDTO.builder()
+        CustomerDto input = CustomerDto.builder()
                 .name("")
                 .surname("Rossi")
                 .shippingAddress("Via Roma 1")
@@ -79,7 +79,7 @@ class CustomerControllerTest {
     @Test
     @DisplayName("GET /customers/{id} - Found")
     void whenGetCustomerById_thenReturnsCustomer() throws Exception {
-        CustomerDTO dto = CustomerDTO.builder().id(1L).name("Mario").build();
+        CustomerDto dto = CustomerDto.builder().id(1L).name("Mario").build();
         when(customerService.getCustomerById(1L)).thenReturn(dto);
 
         mockMvc.perform(get("/customers/1"))
@@ -99,11 +99,11 @@ class CustomerControllerTest {
     @Test
     @DisplayName("GET /customers - Paged Results")
     void whenGetAllCustomersPaged_thenReturnsPagedData() throws Exception {
-        CustomerDTO dto1 = CustomerDTO.builder().id(1L).name("Mario").build();
-        CustomerDTO dto2 = CustomerDTO.builder().id(2L).name("Luigi").build();
+        CustomerDto dto1 = CustomerDto.builder().id(1L).name("Mario").build();
+        CustomerDto dto2 = CustomerDto.builder().id(2L).name("Luigi").build();
 
         Pageable pageable = PageRequest.of(0, 10);
-        Page<CustomerDTO> page = new PageImpl<>(List.of(dto1, dto2), pageable, 2);
+        Page<CustomerDto> page = new PageImpl<>(List.of(dto1, dto2), pageable, 2);
 
         when(customerService.getAllCustomersPaged(any(Pageable.class))).thenReturn(page);
 
@@ -116,14 +116,14 @@ class CustomerControllerTest {
     @Test
     @DisplayName("PUT /customers/{id} - Update Success")
     void whenUpdateCustomerWithValidData_thenReturnUpdated() throws Exception {
-        CustomerDTO updateDto = CustomerDTO.builder()
+        CustomerDto updateDto = CustomerDto.builder()
                 .name("MarioUpdated").surname("Rossi").shippingAddress("New Address").billingAddress("New Billing")
                 .email("mario.updated@rossi.com").taxCode("MRRSSM80A01H501X")
                 .build();
 
-        CustomerDTO updated = updateDto.toBuilder().id(1L).build();
+        CustomerDto updated = updateDto.toBuilder().id(1L).build();
 
-        when(customerService.updateCustomer(eq(1L), any(CustomerDTO.class))).thenReturn(updated);
+        when(customerService.updateCustomer(eq(1L), any(CustomerDto.class))).thenReturn(updated);
 
         mockMvc.perform(put("/customers/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -145,7 +145,7 @@ class CustomerControllerTest {
     @Test
     @DisplayName("GET /customers/search - With Term")
     void whenSearchCustomersWithTerm_thenReturnMatching() throws Exception {
-        List<CustomerDTO> results = List.of(CustomerDTO.builder().id(1L).name("Mario").build());
+        List<CustomerDto> results = List.of(CustomerDto.builder().id(1L).name("Mario").build());
         when(customerService.searchCustomers("Mario")).thenReturn(results);
 
         mockMvc.perform(get("/customers/search").param("term", "Mario"))
@@ -156,7 +156,7 @@ class CustomerControllerTest {
     @Test
     @DisplayName("GET /customers/search - No Term Returns All")
     void whenSearchCustomersNoTerm_thenReturnAll() throws Exception {
-        List<CustomerDTO> allCustomers = List.of(CustomerDTO.builder().id(1L).name("Mario").build());
+        List<CustomerDto> allCustomers = List.of(CustomerDto.builder().id(1L).name("Mario").build());
         when(customerService.searchCustomers(null)).thenReturn(allCustomers);
         when(customerService.searchCustomers("")).thenReturn(allCustomers);
 

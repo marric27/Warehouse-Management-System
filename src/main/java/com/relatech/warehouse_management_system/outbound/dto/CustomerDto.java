@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class CustomerDTO {
+public class CustomerDto {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 

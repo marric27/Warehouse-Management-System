@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.goodsIn.serviceUnitTest;
 
 import com.relatech.warehouse_management_system.common.util.State;
-import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
@@ -34,15 +34,15 @@ class ReceivingServiceTest {
 
     @Test
     void createGRN_success() {
-        GrnDTO dto = new GrnDTO();
+        GrnDto dto = new GrnDto();
         dto.setReceivingDate(null);
 
-        GrnDTO saved = new GrnDTO();
+        GrnDto saved = new GrnDto();
         saved.setState(State.OPEN);
 
         when(grnService.createGRN(any())).thenReturn(saved);
 
-        GrnDTO result = receivingService.createGRN(dto);
+        GrnDto result = receivingService.createGRN(dto);
 
         assertEquals(State.OPEN, result.getState());
         assertNotNull(dto.getReceivingDate());
@@ -50,21 +50,21 @@ class ReceivingServiceTest {
 
     @Test
     void getGRN_success() throws Exception {
-        GrnDTO dto = new GrnDTO();
+        GrnDto dto = new GrnDto();
         dto.setId(1L);
 
         when(grnService.getGRNById(1L)).thenReturn(dto);
 
-        GrnDTO result = receivingService.getGRN(1L);
+        GrnDto result = receivingService.getGRN(1L);
 
         assertEquals(1L, result.getId());
     }
 
     @Test
     void listGrn_returnsList() {
-        when(grnService.getAllGRNs()).thenReturn(List.of(new GrnDTO()));
+        when(grnService.getAllGRNs()).thenReturn(List.of(new GrnDto()));
 
-        List<GrnDTO> result = receivingService.listGrn();
+        List<GrnDto> result = receivingService.listGrn();
 
         assertEquals(1, result.size());
     }
@@ -72,11 +72,11 @@ class ReceivingServiceTest {
     @Test
     void listGrnPaged_returnsPage() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<GrnDTO> page = new PageImpl<>(List.of(new GrnDTO()));
+        Page<GrnDto> page = new PageImpl<>(List.of(new GrnDto()));
 
         when(grnService.getAllGRNsPaged(pageable)).thenReturn(page);
 
-        Page<GrnDTO> result = receivingService.listGrnPaged(pageable);
+        Page<GrnDto> result = receivingService.listGrnPaged(pageable);
 
         assertEquals(1, result.getTotalElements());
     }
@@ -113,7 +113,7 @@ class ReceivingServiceTest {
 
     @Test
     void createItem_throwsGrnClosed() throws Exception {
-        when(grnService.getGRNById(10L)).thenReturn(new GrnDTO());
+        when(grnService.getGRNById(10L)).thenReturn(new GrnDto());
         when(stateService.checkGrnIfClosed(10L)).thenReturn(true);
 
         assertThrows(CannotAssignItemToGrnClosedException.class, () -> {
@@ -127,7 +127,7 @@ class ReceivingServiceTest {
         GrnItemDto savedItem = new GrnItemDto();
         savedItem.setId(1L);
 
-        when(grnService.getGRNById(5L)).thenReturn(new GrnDTO());
+        when(grnService.getGRNById(5L)).thenReturn(new GrnDto());
         when(stateService.checkGrnIfClosed(5L)).thenReturn(false);
         doNothing().when(stateService).validateItemQuantities(any());
         when(grnItemService.createGrnItem(any())).thenReturn(savedItem);
@@ -166,7 +166,7 @@ class ReceivingServiceTest {
 
     @Test
     void createItem_invalidQuantity_throws() throws Exception {
-        when(grnService.getGRNById(1L)).thenReturn(new GrnDTO());
+        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
         when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
 
         GrnItemDto item = new GrnItemDto();
@@ -181,7 +181,7 @@ class ReceivingServiceTest {
 
     @Test
     void createItem_expectedQtyZero_throwsInvalidQuantity() throws Exception {
-        when(grnService.getGRNById(1L)).thenReturn(new GrnDTO());
+        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
         when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
 
         GrnItemDto item = new GrnItemDto();
@@ -202,7 +202,7 @@ class ReceivingServiceTest {
     // -----------------------------------------------------
     @Test
     void createItem_receivedGreaterThanExpected_throwsOverReceived() throws Exception {
-        when(grnService.getGRNById(1L)).thenReturn(new GrnDTO());
+        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
         when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
 
         GrnItemDto item = new GrnItemDto();
@@ -223,7 +223,7 @@ class ReceivingServiceTest {
     // -----------------------------------------------------
     @Test
     void createItem_nullFields_throwsException() throws Exception {
-        when(grnService.getGRNById(1L)).thenReturn(new GrnDTO());
+        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
         when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
 
         GrnItemDto item = new GrnItemDto();
@@ -240,7 +240,7 @@ class ReceivingServiceTest {
     // -----------------------------------------------------
     @Test
     void createItem_malformedItem_throwsException() throws Exception {
-        when(grnService.getGRNById(1L)).thenReturn(new GrnDTO());
+        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
         when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
 
         GrnItemDto item = new GrnItemDto();

@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.mapper;
 
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
-import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import org.springframework.stereotype.Component;
 import java.util.List;
@@ -9,8 +9,8 @@ import java.util.List;
 @Component
 public class StockUnitMapper {
 
-    public StockUnitDTO toDTO(StockUnit entity) {
-        return StockUnitDTO.builder()
+    public StockUnitDto toDTO(StockUnit entity) {
+        return StockUnitDto.builder()
                 .id(entity.getId())
                 .batchNumber(entity.getBatchNumber())
                 .expirationDate(entity.getExpirationDate())
@@ -23,7 +23,7 @@ public class StockUnitMapper {
                 .build();
     }
 
-    public StockUnit toEntity(StockUnitDTO dto) {
+    public StockUnit toEntity(StockUnitDto dto) {
         return StockUnit.builder()
                 .id(dto.getId())
                 .batchNumber(dto.getBatchNumber())
@@ -36,14 +36,14 @@ public class StockUnitMapper {
                 .build();
     }
 
-    public List<StockUnitDTO> toDTO(List<StockUnit> entities) {
+    public List<StockUnitDto> toDTO(List<StockUnit> entities) {
         if (entities == null) return List.of();
         return entities.stream()
                 .map(this::toDTO)
                 .toList();
     }
 
-    public List<StockUnit> toEntity(List<StockUnitDTO> dtos) {
+    public List<StockUnit> toEntity(List<StockUnitDto> dtos) {
         if (dtos == null) return List.of();
         return dtos.stream()
                 .map(this::toEntity)

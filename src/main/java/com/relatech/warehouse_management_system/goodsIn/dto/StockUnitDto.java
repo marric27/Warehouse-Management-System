@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @Schema(description = "Data transfer object representing a stock unit")
-public class StockUnitDTO {
+public class StockUnitDto {
     @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 

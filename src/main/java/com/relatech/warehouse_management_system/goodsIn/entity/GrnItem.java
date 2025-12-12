@@ -58,7 +58,7 @@ public class GrnItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "grn_id")
     @JsonIgnore
-    private GRN grn;
+    private Grn grn;
 
     @OneToMany(mappedBy = "grnItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CheckingInfo> checkingInfoList = new ArrayList<>();

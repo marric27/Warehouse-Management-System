@@ -83,4 +83,10 @@ public class Slot {
         stockUnit.setSlot(this);
     }
 
+    public int getAvailableQuantity() {
+        return stockUnits.stream()
+                .mapToInt(StockUnit::getQuantity)
+                .sum();
+    }
+
 }

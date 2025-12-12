@@ -3,7 +3,7 @@ package com.relatech.warehouse_management_system.customer.controller;
 import com.relatech.warehouse_management_system.common.exception.CustomerWithActiveOrdersException;
 import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.outbound.dto.CustomerDTO;
+import com.relatech.warehouse_management_system.outbound.dto.CustomerDto;
 import com.relatech.warehouse_management_system.outbound.entity.service.CustomerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,31 +29,31 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerDTO dto) throws DuplicateResourceException {
+    public ResponseEntity<CustomerDto> createCustomer(@Valid @RequestBody CustomerDto dto) throws DuplicateResourceException {
         log.info("Request to create customer: {} {}", dto.getName(), dto.getSurname());
-        CustomerDTO created = customerService.createCustomer(dto);
+        CustomerDto created = customerService.createCustomer(dto);
         return ResponseEntity.ok(created);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable Long id) throws ResourceNotFoundException {
+    public ResponseEntity<CustomerDto> getCustomer(@PathVariable Long id) throws ResourceNotFoundException {
         log.info("Request to fetch customer with ID: {}", id);
-        CustomerDTO customer = customerService.getCustomerById(id);
+        CustomerDto customer = customerService.getCustomerById(id);
         return ResponseEntity.ok(customer);
     }
 
     @GetMapping
-    public ResponseEntity<Page<CustomerDTO>> getAllCustomersPaged(
+    public ResponseEntity<Page<CustomerDto>> getAllCustomersPaged(
             @PageableDefault(page = 0, size = 10) Pageable pageable) {
         log.info("Request to fetch customers paged: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
-        Page<CustomerDTO> customersPage = customerService.getAllCustomersPaged(pageable);
+        Page<CustomerDto> customersPage = customerService.getAllCustomersPaged(pageable);
         return ResponseEntity.ok(customersPage);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerDTO dto) throws ResourceNotFoundException {
+    public ResponseEntity<CustomerDto> updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerDto dto) throws ResourceNotFoundException {
         log.info("Request to update customer with ID: {}", id);
-        CustomerDTO updated = customerService.updateCustomer(id, dto);
+        CustomerDto updated = customerService.updateCustomer(id, dto);
         return ResponseEntity.ok(updated);
     }
 
@@ -65,9 +65,9 @@ public class CustomerController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<CustomerDTO>> searchCustomers(@RequestParam(name = "term", required = false) String term) {
+    public ResponseEntity<List<CustomerDto>> searchCustomers(@RequestParam(name = "term", required = false) String term) {
         log.info("Request to search customers with term: {}", term);
-        List<CustomerDTO> results = customerService.searchCustomers(term);
+        List<CustomerDto> results = customerService.searchCustomers(term);
         return ResponseEntity.ok(results);
     }
 }
