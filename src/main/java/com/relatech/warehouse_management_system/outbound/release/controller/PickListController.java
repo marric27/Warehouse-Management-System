@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/picklists")
+@RequestMapping("/picklists")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(

@@ -32,7 +32,6 @@ public class PickListGen {
     @Transactional
     public List<PickListDto> generatePickLists(List<Long> orderIds) throws ResourceNotFoundException {
 
-        // Mappa <customerCode, PickListDto>
         Map<String, PickListDto> pickListMap = new HashMap<>();
 
         for (Long orderId : orderIds) {
@@ -66,7 +65,6 @@ public class PickListGen {
             }
         }
 
-        // Salva tutte le PickList create
         List<PickListDto> result = new ArrayList<>();
         for (PickListDto dto : pickListMap.values()) {
             PickList pickListEntity = PickListMapper.toEntity(dto);
@@ -93,7 +91,9 @@ public class PickListGen {
         for (SalesOrderLineDto line : orderDto.getSalesOrderLineList()) {
 
             String productCode = String.valueOf(line.getProductCode());
-            String slotCode = "SLT-000"; // slotService.getBestSlotForProduct(line.getProductCode()); // TODO algoritmo ricerca slot nel magazzino
+            String slotCode = slotService.getSlotContainingProduct(line.getProductCode(), line.getQuantity())
+                    .orElseThrow(() -> new RuntimeException("No slot found for product " + line.getProductCode() + " with required quantity " + line.getQuantity()))
+                    .getCode();
 
             PickListItemDto itemDTO = PickListItemDto.builder()
                     .productCode(productCode)

@@ -7,6 +7,7 @@ import com.relatech.warehouse_management_system.warehouse.service.SlotService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -52,7 +53,7 @@ public class SlotController {
     @PostMapping
     @Operation(summary = "Create slot")
     @ApiResponse(responseCode = "201", description = "Slot created")
-    public ResponseEntity<SlotDto> createSlot(@RequestBody SlotDto dto) {
+    public ResponseEntity<SlotDto> createSlot(@Valid @RequestBody SlotDto dto) {
         log.info("POST /slots - creating slot ");
         SlotDto created = slotService.createSlot(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);

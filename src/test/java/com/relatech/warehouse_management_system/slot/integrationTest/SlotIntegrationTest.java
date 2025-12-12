@@ -83,12 +83,12 @@ class SlotIntegrationTest {
     }
 
     @Test
-    void givenNewSlotWithoutCode_whenPost_thenReturnBadRequest() throws Exception {
-        SlotDto slotWithoutCode = new SlotDto(null, null, Category.FLAMMABLE, 10, null, null);
+    void givenNewSlotWithoutCategory_whenPost_thenReturnBadRequest() throws Exception {
+        SlotDto slotWithoutCategory = new SlotDto(null, null, null, 10, null, null);
 
-        mockMvc.perform(post("/products")
+        mockMvc.perform(post("/slots")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(slotWithoutCode)))
+                        .content(objectMapper.writeValueAsString(slotWithoutCategory)))
                 .andExpect(status().isBadRequest());
     }
 
