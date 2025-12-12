@@ -39,102 +39,95 @@ public class TestComplete {
     @Autowired
     private ObjectMapper objectMapper;
 
-        // =================================================================================
-        //  DEFAULT GENERIC POST METHOD
-        // =================================================================================
-        private <T> T performPost(String url, Object body, Class<T> returnType) throws Exception {
-            String response = mockMvc.perform(
-                            post(url)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(body))
-                    )
-                    .andExpect(status().is2xxSuccessful())
-                    .andReturn()
-                    .getResponse()
-                    .getContentAsString();
-
-            return objectMapper.readValue(response, returnType);
-        }
-
-        private <T> T performPost(String url, Object body, TypeReference<T> typeRef) throws Exception {
-            String response = mockMvc.perform(
-                            post(url)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(objectMapper.writeValueAsString(body))
-                    )
-                    .andExpect(status().is2xxSuccessful())
-                    .andReturn()
-                    .getResponse()
-                    .getContentAsString();
-
-            return objectMapper.readValue(response, typeRef);
-        }
-
-    private <T> T performGet(String url, Class<T> returnType) throws Exception {
+    // =================================================================================
+    //  DEFAULT GENERIC POST METHOD
+    // =================================================================================
+    private <T> T performPost(String url, Object body, Class<T> returnType) throws Exception {
         String response = mockMvc.perform(
-                        get(url)
+                        post(url)
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(body))
                 )
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
+
         return objectMapper.readValue(response, returnType);
     }
 
+    private <T> T performPost(String url, Object body, TypeReference<T> typeRef) throws Exception {
+        String response = mockMvc.perform(
+                        post(url)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(body))
+                )
+                .andExpect(status().is2xxSuccessful())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        return objectMapper.readValue(response, typeRef);
+    }
+
+    private <T> T performGet(String url, Class<T> returnType) throws Exception {
+    String response = mockMvc.perform(
+                    get(url)
+                            .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().is2xxSuccessful())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    return objectMapper.readValue(response, returnType);
+}
+
     // =================================================================================
-        //  STEP METHODS
-        // =================================================================================
+    //  STEP METHODS
+    // =================================================================================
 
-        private SlotDto createSlot() throws Exception {
-            SlotDto slot = new SlotDto(null, null, Category.STANDARD, 100, null, null);
+    private SlotDto createSlot() throws Exception {
+        SlotDto slot = new SlotDto(null, null, Category.STANDARD, 100, null, null);
 
-            return performPost("/slots", slot, SlotDto.class);
-        }
+        return performPost("/slots", slot, SlotDto.class);
+    }
 
-        private GrnDto createGrn() throws Exception {
-            GrnDto grn = new GrnDto(null, null, "Supplier", LocalDate.now(), null, null);
+    private GrnDto createGrn() throws Exception {
+        GrnDto grn = new GrnDto(null, null, "Supplier", LocalDate.now(), null, null);
 
-            return performPost("/receiving/grns", grn, GrnDto.class);
-        }
+        return performPost("/receiving/grns", grn, GrnDto.class);
+    }
 
-        private GrnItemDto createGrnItem(Long grnId, String productCode) throws Exception {
-            GrnItemDto item = new GrnItemDto(null, null, productCode, 100, 100, 100, 0, State.OPEN, grnId, null);
+    private GrnItemDto createGrnItem(Long grnId, String productCode) throws Exception {
+        GrnItemDto item = new GrnItemDto(null, null, productCode, 100, 100, 100, 0, State.OPEN, grnId, null);
 
-            return performPost("/receiving/grns/" + grnId + "/items", item, GrnItemDto.class);
-        }
+        return performPost("/receiving/grns/" + grnId + "/items", item, GrnItemDto.class);
+    }
 
-        private GrnItemDto checkGoodsIn(Long itemId, String productCode) throws Exception {
+    private GrnItemDto checkGoodsIn(Long itemId, String productCode) throws Exception {
 
-            CheckingInfoDto checking = CheckingInfoDto.builder()
-                    .batchNumber("BN-2025A")
-                    .expirationDate(LocalDate.now().plusDays(10))
-                    .quantity(50)
-                    .state(State.OPEN)
-                    .build();
+        CheckingInfoDto checking = CheckingInfoDto.builder()
+                .batchNumber("BN-2025A")
+                .expirationDate(LocalDate.now().plusDays(10))
+                .quantity(50)
+                .state(State.OPEN)
+                .build();
 
-            StockUnitDto stock = StockUnitDto.builder()
-                    .batchNumber("BN-2025A")
-                    .expirationDate(LocalDate.now().plusDays(10))
-                    .productCode(productCode)
-                    .quantity(50)
-                    .category(Category.STANDARD)
-                    .build();
+        StockUnitDto stock = StockUnitDto.builder()
+                .batchNumber("BN-2025A")
+                .expirationDate(LocalDate.now().plusDays(10))
+                .productCode(productCode)
+                .quantity(50)
+                .category(Category.STANDARD)
+                .build();
 
-            CheckGoodsInController.CreateCheckingInfoRequest req = new CheckGoodsInController.CreateCheckingInfoRequest();
+        CheckGoodsInController.CreateCheckingInfoRequest req = new CheckGoodsInController.CreateCheckingInfoRequest();
 
-            req.setCheckingInfo(checking);
-            req.setStockUnit(stock);
+        req.setCheckingInfo(checking);
+        req.setStockUnit(stock);
 
-            return performPost("/check-goods-in/" + itemId + "/checking-info", req, GrnItemDto.class);
-        }
-
-        private CustomerDto createCustomer() throws Exception {
-            CustomerDto customer =
-                    new CustomerDto(null, "mario", "rossi", "via", "bill", "mail@mail.com", "rssmro", null);
-
-            return performPost("/sales-order/customer", customer, CustomerDto.class);
-        }
+        return performPost("/check-goods-in/" + itemId + "/checking-info", req, GrnItemDto.class);
+    }
 
     private final Faker faker = new Faker();
     private CustomerDto createCustomer(int index) throws Exception {
@@ -151,49 +144,51 @@ public class TestComplete {
         return performPost("/sales-order/customer", customer, CustomerDto.class);
     }
 
-        private OrderDto createOrder(CustomerDto customer, String productCode) throws Exception {
-            String salesOrderNumber = "SO-" + faker.number().digits(5);
-            SalesOrderLineDto line = SalesOrderLineDto.builder()
-                    .salesOrderNumber(salesOrderNumber)
-                    .productCode(productCode)
-                    .quantity(10)
-                    .status(OrderState.OPEN)
-                    .build();
+    private OrderDto createOrder(CustomerDto customer, String productCode) throws Exception {
+        String salesOrderNumber = "SO-" + faker.number().digits(5);
+        SalesOrderLineDto line = SalesOrderLineDto.builder()
+                .salesOrderNumber(salesOrderNumber)
+                .productCode(productCode)
+                .quantity(10)
+                .status(OrderState.OPEN)
+                .build();
 
-            OrderDto order =
-                    new OrderDto(null, null, LocalDate.now(), customer.getCustomerCode(), OrderState.OPEN, List.of(line));
+        OrderDto order =
+                new OrderDto(null, null, LocalDate.now(), customer.getCustomerCode(), OrderState.OPEN, List.of(line));
 
-            return performPost("/sales-order/create-order/" + customer.getId(), order, OrderDto.class);
-        }
+        return performPost("/sales-order/create-order/" + customer.getId(), order, OrderDto.class);
+    }
 
-        private List<PickListDto> generatePicklist(List<Long> orderIds) throws Exception {
-            return performPost(
-                    "/picklists/release",
-                    orderIds,
-                    new TypeReference<List<PickListDto>>() {}
-            );
-        }
+    private List<PickListDto> generatePicklist(List<Long> orderIds) throws Exception {
+        return performPost(
+                "/picklists/release",
+                orderIds,
+                new TypeReference<List<PickListDto>>() {}
+        );
+    }
 
-        // =================================================================================
-        //  MAIN TEST
-        // =================================================================================
+    // =================================================================================
+    //  MAIN TEST
+    // =================================================================================
 
     @Test
     void completeTest() throws Exception {
         // ===== 1) CREATE SLOTS =====
         List<SlotDto> slots = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             slots.add(createSlot());
         }
 
         // ===== 2) CREATE GRNs =====
         List<GrnDto> grns = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
+        List<String> products = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
             GrnDto grn = createGrn();
 
             // Genera 2-3 prodotti diversi per ogni GRN
-            for (int j = 0; j < 2 + faker.random().nextInt(2); j++) {
+            for (int j = 0; j < 2 + faker.random().nextInt(5); j++) {
                 String productCode = "PRD-" + String.format("%03d", faker.number().numberBetween(1, 10));
+                products.add(productCode);
                 createGrnItem(grn.getId(), productCode);
             }
 
@@ -209,7 +204,7 @@ public class TestComplete {
                 // PUTAWAY nel primo slot disponibile
                 for (CheckingInfoDto checkingInfo : updated.getCheckingInfoList()) {
                     performPost(
-                            "/putaway/" + checkingInfo.getId() + "/assignToSlot/" + slots.get(0).getId(),
+                            "/putaway/" + checkingInfo.getId() + "/assignToSlot/" + slots.get(faker.random().nextInt(slots.size())).getId(),
                             null,
                             GrnItemDto.class
                     );
@@ -219,16 +214,16 @@ public class TestComplete {
 
         // ===== 4) CREATE CUSTOMERS =====
         List<CustomerDto> customers = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             customers.add(createCustomer(i));
         }
 
         // ===== 5) CREATE ORDERS =====
         List<OrderDto> orders = new ArrayList<>();
         for (CustomerDto customer : customers) {
-            // ogni ordine ha 2 linee diverse
-            for (int i = 0; i < 2; i++) {
-                String productCode = "PRD-" + String.format("%03d", faker.number().numberBetween(1, 10));
+            // ogni ordine ha linee diverse
+            for (int i = 0; i < 2 + faker.random().nextInt(5); i++) {
+                String productCode = products.get(faker.random().nextInt(products.size()));
                 orders.add(createOrder(customer, productCode));
             }
         }
@@ -248,10 +243,5 @@ public class TestComplete {
             System.out.println("----------------------------------");
         }
     }
-
-
-
-
-
 
 }
