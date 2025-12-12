@@ -45,8 +45,7 @@ public class ReceivingController {
 
     @GetMapping("/grns/{id}")
     @Operation(summary = "Get GRN by ID")
-    public ResponseEntity<GrnDto> getGRN(@PathVariable Long id)
-            throws GrnNotFoundException {
+    public ResponseEntity<GrnDto> getGRN(@PathVariable Long id) throws GrnNotFoundException {
 
         log.info("Fetching GRN {}", id);
         return ResponseEntity.ok(receivingService.getGRN(id));
