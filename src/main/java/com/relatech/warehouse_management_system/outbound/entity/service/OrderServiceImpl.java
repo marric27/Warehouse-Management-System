@@ -77,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<OrderDto> filterByProduct(Long productId, Pageable pageable) {
-        Page<Order> orderPage =  orderRepository.findByProductId(productId, pageable);
+        Page<Order> orderPage =  orderRepository.findByProductCode(productId, pageable);
         return orderPage.map(OrderMapper::toDto);
     }
 

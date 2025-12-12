@@ -17,15 +17,15 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
 
     Page<Order> findByDateBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
 
-    @Query("SELECT o FROM Order o JOIN o.salesOrderLineList l WHERE l.productId = :productId")
-    Page<Order> findByProductId(@Param("productId") Long productId, Pageable pageable);
+    @Query("SELECT o FROM Order o JOIN o.salesOrderLineList l WHERE l.productCode = :productCode")
+    Page<Order> findByProductCode(@Param("productCode") Long productCode, Pageable pageable);
 
     @Query("SELECT o FROM Order o JOIN o.salesOrderLineList l " +
             "WHERE (:customerCode IS NULL OR o.customerCode = :customerCode) " +
-            "AND (:productId IS NULL OR l.productId = :productId) " +
+            "AND (:productCode IS NULL OR l.productCode = :productCode) " +
             "AND (:start IS NULL OR :end IS NULL OR o.date BETWEEN :start AND :end)")
     Page<Order> filterOrders(@Param("customerCode") String customerCode,
-                             @Param("productId") Long productId,
+                             @Param("productCode") Long productCode,
                              @Param("start") LocalDate startDate,
                              @Param("end") LocalDate endDate,
                              Pageable pageable);

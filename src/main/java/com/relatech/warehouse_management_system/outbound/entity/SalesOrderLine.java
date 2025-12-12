@@ -29,8 +29,8 @@ public class SalesOrderLine {
         }
     }
 
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
+    @Column(name = "product_code", nullable = false)
+    private Long productCode;
 
     @Column(nullable = false)
     private int quantity;

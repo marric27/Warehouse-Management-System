@@ -1,6 +1,5 @@
 package com.relatech.warehouse_management_system.outbound.release.service;
 
-
 import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
 import com.relatech.warehouse_management_system.outbound.entity.service.CustomerService;
 import com.relatech.warehouse_management_system.outbound.entity.service.OrderService;
@@ -39,10 +38,4 @@ public class ReleaseService {
     public Page<OrderDto> getOrdersByParameters(String customerCode, Long productId, LocalDate start, LocalDate end, Pageable pageable) {
         return orderService.filterOrders(customerCode, productId, start, end, pageable);
     }
-
-
-
-
-
-
 }
