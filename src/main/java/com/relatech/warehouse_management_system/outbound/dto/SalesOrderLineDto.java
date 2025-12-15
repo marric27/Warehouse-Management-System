@@ -19,7 +19,7 @@ public class SalesOrderLineDto {
     @Schema(description = "Sales order number", example = "SO-001")
     private String salesOrderLineNumber;
 
-    @Schema(description = "Soft reference to the product associated with this line", example = "PROD-987")
+    @Schema(description = "Soft reference to the product associated with this line", example = "PRD-987")
     private String productCode;
 
     @Schema(description = "Quantity of product ordered", example = "10")

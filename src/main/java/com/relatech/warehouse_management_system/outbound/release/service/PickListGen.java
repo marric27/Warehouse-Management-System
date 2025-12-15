@@ -1,6 +1,8 @@
 package com.relatech.warehouse_management_system.outbound.release.service;
 
+import com.github.f4b6a3.ulid.UlidCreator;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.util.OrderState;
 import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
@@ -28,22 +30,29 @@ public class PickListGen {
     private final OrderService orderService;
     private final PickListService pickListService;
     private final SlotService slotService;
+    private String releaseNumber = "RLS-";
 
     @Transactional
     public List<PickListDto> generatePickLists(List<Long> orderIds) throws ResourceNotFoundException {
 
+        List<OrderDto> ordersOpen = orderService.getOrdersByStateInIds(OrderState.OPEN, orderIds);
+
         Map<String, PickListDto> pickListMap = new HashMap<>();
 
-        for (Long orderId : orderIds) {
-            OrderDto orderDto = orderService.getOrderById(orderId);
+        // gen release number
+        String ulid = UlidCreator.getUlid().toString();
+        releaseNumber += ulid.substring(0, 10).toUpperCase();
+
+        for (OrderDto orderDto : ordersOpen) {
 
             // Se non esiste ancora una PickList per questo cliente, creala
             PickListDto pickListDTO = pickListMap.computeIfAbsent(orderDto.getCustomerCode(), customerCode ->
                     PickListDto.builder()
                             .customerCode(customerCode)
+                            .releaseNumber(releaseNumber)
                             .pickListItemList(new ArrayList<>())
                             .build()
-            );// TODO dati ordini, dividi per cust, per ogni entry cust creo la pick list, gen code uuid alla picklist relativo al rilascio
+            );
 
             for (SalesOrderLineDto line : orderDto.getSalesOrderLineList()) {
 
@@ -62,6 +71,7 @@ public class PickListGen {
                         .build();
 
                 pickListDTO.getPickListItemList().add(itemDTO);
+                orderService.updateOrderState(orderDto.getId(), OrderState.PICKING);
             }
         }
 

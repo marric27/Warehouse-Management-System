@@ -15,6 +15,7 @@ public class PickListMapper {
         PickList pickList = PickList.builder()
                 .id(dto.getId())
                 .code(dto.getCode())
+                .releaseNumber(dto.getReleaseNumber())
                 .customerCode(dto.getCustomerCode())
                 .build();
 
@@ -42,6 +43,7 @@ public class PickListMapper {
         PickListDto dto = PickListDto.builder()
                 .id(entity.getId())
                 .code(entity.getCode())
+                .releaseNumber(entity.getReleaseNumber())
                 .customerCode(entity.getCustomerCode())
                 .build();
 

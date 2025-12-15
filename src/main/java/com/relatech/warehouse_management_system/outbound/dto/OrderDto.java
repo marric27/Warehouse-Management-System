@@ -37,19 +37,19 @@ public class OrderDto {
     @Schema(description = "List of sales order lines associated with this order", example = "[\n" +
             "  {\n" +
             "    \"id\": 1,\n" +
-            "    \"productCode\": 987,\n" +
+            "    \"productCode\": \"PRD-001\",\n" +
             "    \"quantity\": 10,\n" +
             "    \"status\": \"OPEN\"\n" +
             "  },\n" +
             "  {\n" +
             "    \"id\": 2,\n" +
-            "    \"productCode\": 654,\n" +
+            "    \"productCode\": \"PRD-002\",\n" +
             "    \"quantity\": 5,\n" +
             "    \"status\": \"OPEN\"\n" +
             "  },\n" +
             "  {\n" +
             "    \"id\": 3,\n" +
-            "    \"productCode\": 321,\n" +
+            "    \"productCode\": \"PRD-003\",\n" +
             "    \"quantity\": 20,\n" +
             "    \"status\": \"OPEN\"\n" +
             "  }\n" +

@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.outbound.release.controller;
 
+import com.relatech.warehouse_management_system.common.util.OrderState;
 import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
 import com.relatech.warehouse_management_system.outbound.release.service.ReleaseService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,13 +53,13 @@ public class ReleaseController {
     /**
      * Filtro per productId
      */
-    @GetMapping("/orders/product/{productId}")
+    @GetMapping("/orders/product/{productCode}")
     public Page<OrderDto> getOrdersByProduct(
-            @PathVariable Long productId,
+            @PathVariable String productCode,
             Pageable pageable
     ) {
-        log.info("Filtering orders by productId={}", productId);
-        return releaseService.getOrdersByProduct(productId, pageable);
+        log.info("Filtering orders by productCode={}", productCode);
+        return releaseService.getOrdersByProduct(productCode, pageable);
     }
 
     /**
@@ -66,17 +67,18 @@ public class ReleaseController {
      */
     @GetMapping("/orders/filter")
     public Page<OrderDto> getOrdersByParameters(
+            @RequestParam(required = false) OrderState orderState,
             @RequestParam(required = false) String customerCode,
-            @RequestParam(required = false) Long productId,
+            @RequestParam(required = false) String productCode,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
             Pageable pageable
     ) {
-        log.info("Filtering orders by parameters -> customerCode={}, productId={}, start={}, end={}",
-                customerCode, productId, start, end);
+        log.info("Filtering orders by parameters -> customerCode={}, productCode={}, start={}, end={}",
+                customerCode, productCode, start, end);
 
-        return releaseService.getOrdersByParameters(customerCode, productId, start, end, pageable);
+        return releaseService.getOrdersByParameters(orderState, customerCode, productCode, start, end, pageable);
     }
 }

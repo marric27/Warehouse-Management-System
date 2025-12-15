@@ -20,6 +20,9 @@ public class PickListDto {
     @Schema(description = "Auto-generated unique pick list code.", accessMode = Schema.AccessMode.READ_ONLY)
     private String code;
 
+    @Schema(description = "Auto-generated pick list release number.", example = "RLS-01FZ3M7Y8C", accessMode = Schema.AccessMode.READ_ONLY)
+    private String releaseNumber;
+
     @Schema(description = "Code of the customer associated with the pick list.")
     private String customerCode;
 

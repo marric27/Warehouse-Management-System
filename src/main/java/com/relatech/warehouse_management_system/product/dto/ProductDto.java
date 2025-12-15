@@ -11,11 +11,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "Data transfer object representing a product")
-public class ProductDTO {
+public class ProductDto {
     @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
-    @Schema(description = "Unique product code", example = "PRD-00123")
+    @Schema(description = "Unique product code", example = "PRD-001")
     @NotBlank(message = "The code cannot be empty or null.")
     private String code;
 

@@ -132,11 +132,9 @@ public class SlotServiceImpl implements SlotService {
 
     @Override
     public Optional<SlotDto> getSlotContainingProduct(String productCode, int requiredQuantity) {
-
-
-
+        List<Slot> slotdto = slotRepository.findDistinctByStockUnitsProductCode(productCode);
         return slotRepository.findDistinctByStockUnitsProductCode(productCode).stream()
-                .filter(slot -> slot.getAvailableQuantity() >= requiredQuantity)
+                //.filter(slot -> slot.getAvailableQuantity() >= requiredQuantity)
                 .findFirst()
                 .map(slotMapper::toDto);
     }

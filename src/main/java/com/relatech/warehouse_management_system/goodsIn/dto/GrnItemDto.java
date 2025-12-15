@@ -23,7 +23,7 @@ public class GrnItemDto {
     private String code;
 
     @NotBlank(message = "Product code cannot be blank")
-    @Schema(description = "Product code", example = "PROD-001")
+    @Schema(description = "Product code", example = "PRD-001")
     private String productCode;
 
     @Min(value = 0, message = "Expected quantity cannot be negative")

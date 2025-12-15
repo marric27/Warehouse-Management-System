@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.product.serviceUnitTest;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.product.dto.ProductDTO;
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
@@ -31,7 +31,7 @@ public class ProductServiceTest {
     private ProductServiceImpl productService;
 
     private Product product;
-    private ProductDTO productDTO;
+    private ProductDto productDTO;
 
     @BeforeEach
     void setUp() {
@@ -49,7 +49,7 @@ public class ProductServiceTest {
     void givenProductExists_whenGetProductById_thenReturnProductDTO() throws ResourceNotFoundException {
         when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
 
-        ProductDTO result = productService.getProductById(product.getId());
+        ProductDto result = productService.getProductById(product.getId());
 
         assertThat(result).isNotNull();
         assertThat(result.getCode()).isEqualTo("P001");
@@ -71,7 +71,7 @@ public class ProductServiceTest {
     void givenValidProductDTO_whenCreateProduct_thenReturnSavedProductDTO() {
         when(productRepository.save(any(Product.class))).thenReturn(product);
 
-        ProductDTO result = productService.createProduct(productDTO);
+        ProductDto result = productService.createProduct(productDTO);
 
         assertThat(result.getCode()).isEqualTo("P001");
         verify(productRepository, times(1)).save(any(Product.class));
@@ -80,11 +80,11 @@ public class ProductServiceTest {
     @Test
     @DisplayName("Given existing product, when updateProduct, then update fields and return ProductDTO")
     void givenExistingProduct_whenUpdateProduct_thenReturnUpdatedDTO() throws Exception {
-        ProductDTO updatedDTO = new ProductDTO(1L, "P002", "Aspirina", Category.STANDARD);
+        ProductDto updatedDTO = new ProductDto(1L, "P002", "Aspirina", Category.STANDARD);
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
         when(productRepository.save(any(Product.class))).thenReturn(ProductMapper.toEntity(updatedDTO));
 
-        ProductDTO result = productService.updateProduct(1L, updatedDTO);
+        ProductDto result = productService.updateProduct(1L, updatedDTO);
 
         assertThat(result.getCode()).isEqualTo("P002");
         assertThat(result.getName()).isEqualTo("Aspirina");
@@ -95,7 +95,7 @@ public class ProductServiceTest {
     @DisplayName("Given product does not exist, when updateProduct, then throw ResourceNotFoundException")
     void givenNonExistingProduct_whenUpdateProduct_thenThrowException() {
         when(productRepository.findById(10L)).thenReturn(Optional.empty());
-        ProductDTO dto = new ProductDTO(10L, "X123", "Ibuprofene", Category.STANDARD);
+        ProductDto dto = new ProductDto(10L, "X123", "Ibuprofene", Category.STANDARD);
 
         assertThrows(ResourceNotFoundException.class, () -> productService.updateProduct(10L, dto));
 
@@ -127,7 +127,7 @@ public class ProductServiceTest {
     void givenMultipleProducts_whenGetAllProducts_thenReturnList() {
         when(productRepository.findAll()).thenReturn(List.of(product));
 
-        List<ProductDTO> result = productService.getAllProducts();
+        List<ProductDto> result = productService.getAllProducts();
 
         assertThat(result).hasSize(1);
         assertThat(result.getFirst().getCode()).isEqualTo("P001");
@@ -139,7 +139,7 @@ public class ProductServiceTest {
     void givenProductsWithCategory_whenGetAllByProductCategory_thenReturnList() {
         when(productRepository.findByCategory(Category.STANDARD)).thenReturn(List.of(product));
 
-        List<ProductDTO> result = productService.getAllProductByProductCategory(Category.STANDARD);
+        List<ProductDto> result = productService.getAllProductByProductCategory(Category.STANDARD);
 
         assertThat(result).isNotEmpty();
         assertThat(result.getFirst().getCategory()).isEqualTo(Category.STANDARD);

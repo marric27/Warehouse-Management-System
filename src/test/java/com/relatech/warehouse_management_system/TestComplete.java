@@ -235,7 +235,32 @@ public class TestComplete {
         // ===== 7) PRINT RESULTS =====
         System.out.println("\n===== PICKLISTS =====");
         for (PickListDto pl : picklists) {
-            System.out.println("PICKLIST ID: " + pl.getId() + ", Customer: " + pl.getCustomerCode());
+            System.out.println("PICKLIST ID: " + pl.getId() + ", Customer: " + pl.getCustomerCode() + ", ReleaseNumber: " + pl.getReleaseNumber());
+            for (var item : pl.getPickListItemList()) {
+                System.out.println("  Product: " + item.getProductCode() + ", Qty: " + item.getQuantity()
+                        + ", Slot: " + item.getSlotCode() + ", Order: " + item.getSalesOrderCode());
+            }
+            System.out.println("----------------------------------");
+        }
+
+        // ===== 5) CREATE ORDERS =====
+        orders = new ArrayList<>();
+        for (CustomerDto customer : customers) {
+            // ogni ordine ha linee diverse
+            for (int i = 0; i < 2 + faker.random().nextInt(5); i++) {
+                String productCode = products.get(faker.random().nextInt(products.size()));
+                orders.add(createOrder(customer, productCode));
+            }
+        }
+
+        // ===== 6) GENERATE PICKLIST =====
+        orderIds = orders.stream().map(OrderDto::getId).toList();
+        picklists = generatePicklist(orderIds);
+
+        // ===== 7) PRINT RESULTS =====
+        System.out.println("\n===== PICKLISTS =====");
+        for (PickListDto pl : picklists) {
+            System.out.println("PICKLIST ID: " + pl.getId() + ", Customer: " + pl.getCustomerCode() + ", ReleaseNumber: " + pl.getReleaseNumber());
             for (var item : pl.getPickListItemList()) {
                 System.out.println("  Product: " + item.getProductCode() + ", Qty: " + item.getQuantity()
                         + ", Slot: " + item.getSlotCode() + ", Order: " + item.getSalesOrderCode());

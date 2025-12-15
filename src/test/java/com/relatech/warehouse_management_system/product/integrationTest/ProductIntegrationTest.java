@@ -2,7 +2,7 @@ package com.relatech.warehouse_management_system.product.integrationTest;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.relatech.warehouse_management_system.product.dto.ProductDTO;
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import com.relatech.warehouse_management_system.product.service.ProductService;
 import com.relatech.warehouse_management_system.common.util.Category;import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ class ProductIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final ProductDTO productDTO = new ProductDTO(
+    private final ProductDto productDTO = new ProductDto(
             null, "P001", "Paracetamolo", Category.STANDARD
     );
 
@@ -65,8 +65,8 @@ class ProductIntegrationTest {
 
     @Test
     void givenExistingProducts_whenGetProductByCategory_thenReturnProduct() throws Exception {
-        ProductDTO product1 = new ProductDTO(null, "C001", "Tachipirina", Category.STANDARD);
-        ProductDTO product2 = new ProductDTO(null, "C991", "Brufen", Category.FLAMMABLE);
+        ProductDto product1 = new ProductDto(null, "C001", "Tachipirina", Category.STANDARD);
+        ProductDto product2 = new ProductDto(null, "C991", "Brufen", Category.FLAMMABLE);
         productService.createProduct(product1);
         productService.createProduct(product2);
 
@@ -103,7 +103,7 @@ class ProductIntegrationTest {
     void whenPostDuplicateMovie_thenReturnConflict() throws Exception {
         productService.createProduct(productDTO);
 
-        ProductDTO duplicate = new ProductDTO(null, "P001", "Brufen", Category.FLAMMABLE);
+        ProductDto duplicate = new ProductDto(null, "P001", "Brufen", Category.FLAMMABLE);
 
         mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +113,7 @@ class ProductIntegrationTest {
 
     @Test
     void givenNewProductWithoutCode_whenPost_thenReturnBadRequest() throws Exception {
-        ProductDTO prodWithoutCode = new ProductDTO(null, null, "Brufen", Category.FLAMMABLE);
+        ProductDto prodWithoutCode = new ProductDto(null, null, "Brufen", Category.FLAMMABLE);
 
         mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -128,7 +128,7 @@ class ProductIntegrationTest {
                         .content(objectMapper.writeValueAsString(productDTO)))
                 .andReturn().getResponse().getContentAsString();
 
-        ProductDTO created = objectMapper.readValue(createResult, ProductDTO.class);
+        ProductDto created = objectMapper.readValue(createResult, ProductDto.class);
         created.setName("Aspirina");
         created.setCode("P002");
 
@@ -146,7 +146,7 @@ class ProductIntegrationTest {
                         .content(objectMapper.writeValueAsString(productDTO)))
                 .andReturn().getResponse().getContentAsString();
 
-        ProductDTO created = objectMapper.readValue(createResult, ProductDTO.class);
+        ProductDto created = objectMapper.readValue(createResult, ProductDto.class);
 
         mockMvc.perform(delete("/products/{id}", created.getId()))
                 .andExpect(status().isNoContent());

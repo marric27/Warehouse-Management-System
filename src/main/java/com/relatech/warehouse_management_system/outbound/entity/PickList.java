@@ -32,6 +32,9 @@ public class PickList {
     }
 
     @Column(nullable = false)
+    private String releaseNumber;
+
+    @Column(nullable = false)
     private String customerCode;
 
     @Builder.Default

@@ -3,7 +3,7 @@ package com.relatech.warehouse_management_system.logistic.controllerUnitTest;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.logistic.controller.LogisticController;
 import com.relatech.warehouse_management_system.logistic.service.LogisticService;
-import com.relatech.warehouse_management_system.product.dto.ProductDTO;
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import com.relatech.warehouse_management_system.common.util.Category;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class LogisticControllerTest {
 
     @Test
     void assignProductToSlot_ShouldReturnSlotDTOWithProduct() throws Exception {
-        ProductDTO productDTO = new ProductDTO();
+        ProductDto productDTO = new ProductDto();
         productDTO.setId(1L);
         productDTO.setCode("PRD-001");
         productDTO.setName("Paracetamolo");

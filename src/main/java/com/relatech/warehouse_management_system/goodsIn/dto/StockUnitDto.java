@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.goodsIn.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.relatech.warehouse_management_system.product.dto.ProductDTO;
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.common.util.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
@@ -46,7 +46,7 @@ public class StockUnitDto {
     private Category category;
 
     @Schema(description = "Associated product details", accessMode = Schema.AccessMode.READ_ONLY)
-    private ProductDTO productDto;
+    private ProductDto productDto;
 
     @Schema(description = "Storage slot information", accessMode = Schema.AccessMode.READ_ONLY)
     private Long slotId;

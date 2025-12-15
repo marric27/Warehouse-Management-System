@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.product.service;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.product.dto.ProductDTO;
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
@@ -24,7 +24,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProductDTO getProductById(Long id) throws ResourceNotFoundException {
+    public ProductDto getProductById(Long id) throws ResourceNotFoundException {
         return productRepository.findById(id)
                 .map(ProductMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", id));
@@ -32,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProductDTO getProductByCode(String code) throws ResourceNotFoundException {
+    public ProductDto getProductByCode(String code) throws ResourceNotFoundException {
         return productRepository.findByCode(code)
                 .map(ProductMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", code));
@@ -40,14 +40,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductDTO createProduct(ProductDTO productDTO) {
+    public ProductDto createProduct(ProductDto productDTO) {
         Product product = ProductMapper.toEntity(productDTO);
         return ProductMapper.toDto(productRepository.save(product));
     }
 
     @Override
     @Transactional
-    public ProductDTO updateProduct(Long id, ProductDTO productDTO) throws Exception {
+    public ProductDto updateProduct(Long id, ProductDto productDTO) throws Exception {
         Product existing = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", id));
 
@@ -66,14 +66,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProductDTO> getAllProducts() {
+    public List<ProductDto> getAllProducts() {
         return productRepository.findAll()
                 .stream()
                 .map(ProductMapper::toDto).toList();
     }
 
     @Override
-    public Page<ProductDTO> getAllProductsPaged(Pageable pageable) {
+    public Page<ProductDto> getAllProductsPaged(Pageable pageable) {
         log.debug("Fetching paginated GRNs: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
         Page<Product> productPage = productRepository.findAll(pageable);
         return productPage.map(ProductMapper::toDto);
@@ -81,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProductDTO> getAllProductByProductCategory(Category category) {
+    public List<ProductDto> getAllProductByProductCategory(Category category) {
         return productRepository.findByCategory(category)
                 .stream()
                 .map(ProductMapper::toDto).toList();
