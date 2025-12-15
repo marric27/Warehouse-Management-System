@@ -1,4 +1,4 @@
-package com.relatech.warehouse_management_system.outbound.entity;
+package com.relatech.warehouse_management_system.customer.entity;
 
 import com.github.f4b6a3.ulid.UlidCreator;
 import jakarta.persistence.*;

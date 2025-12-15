@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.customer.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.relatech.warehouse_management_system.outbound.dto.CustomerDto;
+import com.relatech.warehouse_management_system.customer.entity.CustomerDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

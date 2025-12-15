@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.outbound.release.service;
 
 import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
-import com.relatech.warehouse_management_system.outbound.entity.service.CustomerService;
+import com.relatech.warehouse_management_system.customer.service.CustomerService;
 import com.relatech.warehouse_management_system.outbound.entity.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

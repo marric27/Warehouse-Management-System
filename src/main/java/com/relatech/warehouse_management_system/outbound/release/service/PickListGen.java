@@ -43,7 +43,7 @@ public class PickListGen {
                             .customerCode(customerCode)
                             .pickListItemList(new ArrayList<>())
                             .build()
-            );
+            );// TODO dati ordini, dividi per cust, per ogni entry cust creo la pick list, gen code uuid alla picklist relativo al rilascio
 
             for (SalesOrderLineDto line : orderDto.getSalesOrderLineList()) {
 

@@ -1,4 +1,4 @@
-package com.relatech.warehouse_management_system.outbound.dto;
+package com.relatech.warehouse_management_system.customer.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;

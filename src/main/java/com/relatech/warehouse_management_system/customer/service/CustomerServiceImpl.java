@@ -1,12 +1,12 @@
-package com.relatech.warehouse_management_system.outbound.entity.service;
+package com.relatech.warehouse_management_system.customer.service;
 
 import com.relatech.warehouse_management_system.common.exception.CustomerWithActiveOrdersException;
 import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.outbound.dto.CustomerDto;
-import com.relatech.warehouse_management_system.outbound.entity.Customer;
-import com.relatech.warehouse_management_system.outbound.entity.mapper.CustomerMapper;
-import com.relatech.warehouse_management_system.outbound.entity.repository.CustomerRepository;
+import com.relatech.warehouse_management_system.customer.entity.Customer;
+import com.relatech.warehouse_management_system.customer.entity.CustomerDto;
+import com.relatech.warehouse_management_system.customer.entity.CustomerMapper;
+import com.relatech.warehouse_management_system.customer.entity.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

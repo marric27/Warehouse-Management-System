@@ -17,7 +17,7 @@ public class SalesOrderLineDto {
     private Long id;
 
     @Schema(description = "Sales order number", example = "SO-001")
-    private String salesOrderNumber;
+    private String salesOrderNumber;//TODO
 
     @Schema(description = "Soft reference to the product associated with this line", example = "PROD-987")
     private String productCode;

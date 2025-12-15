@@ -10,8 +10,8 @@ import com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.controller.
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.customer.entity.CustomerDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
-import com.relatech.warehouse_management_system.outbound.dto.CustomerDto;
 import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
 import com.relatech.warehouse_management_system.outbound.dto.SalesOrderLineDto;
@@ -138,10 +138,10 @@ public class TestComplete {
                 faker.address().streetAddress(),
                 faker.company().name(),
                 faker.internet().emailAddress(),
-                faker.idNumber().valid(),
+                faker.regexify("[A-Z0-9]{16}"),
                 null
         );
-        return performPost("/sales-order/customer", customer, CustomerDto.class);
+        return performPost("/customers", customer, CustomerDto.class);
     }
 
     private OrderDto createOrder(CustomerDto customer, String productCode) throws Exception {

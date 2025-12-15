@@ -6,11 +6,10 @@ package com.relatech.warehouse_management_system.outbound.salesOrder;
 // creazione salesorderline insieme al order o anche aggiunta dopo? per ora creo tutto insieme
 
 
-import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.outbound.dto.CustomerDto;
+import com.relatech.warehouse_management_system.customer.entity.CustomerDto;
 import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
-import com.relatech.warehouse_management_system.outbound.entity.service.CustomerService;
+import com.relatech.warehouse_management_system.customer.service.CustomerService;
 import com.relatech.warehouse_management_system.outbound.entity.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,26 +27,11 @@ public class SalesOrderService {
     private final CustomerService customerService;
     private final OrderService orderService;
 
-    @Transactional(rollbackFor = {DuplicateResourceException.class})
-    public CustomerDto createCustomer(CustomerDto customerDTO) throws DuplicateResourceException {
-        return customerService.createCustomer(customerDTO);
-    }
-
     @Transactional(rollbackFor = ResourceNotFoundException.class)
     public OrderDto createOrderAndAssign(Long customerId, OrderDto orderDto) throws ResourceNotFoundException {
         CustomerDto customerDTO = customerService.getCustomerById(customerId);
         orderDto.setCustomerCode(customerDTO.getCustomerCode());
         return orderService.createOrder(orderDto);
-    }
-
-    @Transactional(readOnly = true)
-    public List<CustomerDto> getAllCustomers() {
-        return customerService.getAllCustomers();
-    }
-
-    @Transactional(readOnly = true)
-    public Page<CustomerDto> getAllCustomersPaged(Pageable pageable) {
-        return customerService.getAllCustomersPaged(pageable);
     }
 
     @Transactional(readOnly = true)

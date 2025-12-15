@@ -1,7 +1,5 @@
-package com.relatech.warehouse_management_system.outbound.entity.mapper;
+package com.relatech.warehouse_management_system.customer.entity;
 
-import com.relatech.warehouse_management_system.outbound.dto.CustomerDto;
-import com.relatech.warehouse_management_system.outbound.entity.Customer;
 import org.springframework.stereotype.Component;
 
 @Component
