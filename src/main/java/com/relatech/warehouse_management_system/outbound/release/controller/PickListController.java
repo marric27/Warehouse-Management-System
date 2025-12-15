@@ -68,4 +68,10 @@ public class PickListController {
         Page<PickListDto> pickLists = pickListService.getAllPickListPaged(pageable);
         return ResponseEntity.ok(pickLists);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PickListDto> listickListById(@PathVariable Long id) throws ResourceNotFoundException {
+        PickListDto pickLists = pickListService.getPickListById(id);
+        return ResponseEntity.ok(pickLists);
+    }
 }
