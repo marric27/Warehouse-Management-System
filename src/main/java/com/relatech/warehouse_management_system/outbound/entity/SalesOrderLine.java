@@ -18,14 +18,14 @@ public class SalesOrderLine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "sales_order_number", nullable = false, unique = true) //TODO intero progressivo
-    private String salesOrderNumber;
+    @Column(name = "sales_order_line_number", nullable = false, unique = true) //TODO intero progressivo
+    private String salesOrderLineNumber;
 
     @PrePersist
     public void prePersist() {
-        if (salesOrderNumber == null) {
+        if (salesOrderLineNumber == null) {
             String ulid = UlidCreator.getUlid().toString();
-            this.salesOrderNumber = "SO-" + ulid;
+            this.salesOrderLineNumber = "SO-" + ulid;
         }
     }
 

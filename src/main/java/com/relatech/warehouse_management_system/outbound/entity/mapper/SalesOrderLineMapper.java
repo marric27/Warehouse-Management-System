@@ -12,7 +12,7 @@ public class SalesOrderLineMapper {
 
         return SalesOrderLineDto.builder()
                 .id(entity.getId())
-                .salesOrderNumber(entity.getSalesOrderNumber())
+                .salesOrderLineNumber(entity.getSalesOrderLineNumber())
                 .productCode(entity.getProductCode())
                 .quantity(entity.getQuantity())
                 .status(entity.getStatus())
@@ -26,7 +26,7 @@ public class SalesOrderLineMapper {
         return SalesOrderLine.builder()
                 .id(dto.getId())
                 .productCode(dto.getProductCode())
-                .salesOrderNumber(dto.getSalesOrderNumber())
+                .salesOrderLineNumber(dto.getSalesOrderLineNumber())
                 .quantity(dto.getQuantity())
                 .status(dto.getStatus())
                 .build();

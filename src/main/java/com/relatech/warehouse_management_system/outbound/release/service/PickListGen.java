@@ -58,7 +58,7 @@ public class PickListGen {
                         .quantity(line.getQuantity())
                         .slotCode(slotCode)
                         .salesOrderCode(orderDto.getCode())
-                        .salesOrderLineNumber(line.getSalesOrderNumber())
+                        .salesOrderLineNumber(line.getSalesOrderLineNumber())
                         .build();
 
                 pickListDTO.getPickListItemList().add(itemDTO);
@@ -70,7 +70,7 @@ public class PickListGen {
             PickList pickListEntity = PickListMapper.toEntity(dto);
             pickListService.create(dto);
             result.add(PickListMapper.toDto(pickListEntity));
-            log.info("Generated PickListEntity with {} items for customer {}",
+            log.info("Generated PickList with {} items for customer {}",
                     pickListEntity.getPickListItemList().size(),
                     dto.getCustomerCode());
         }
@@ -100,7 +100,7 @@ public class PickListGen {
                     .quantity(line.getQuantity())
                     .slotCode(slotCode)
                     .salesOrderCode(orderDto.getCode())
-                    .salesOrderLineNumber(line.getSalesOrderNumber())
+                    .salesOrderLineNumber(line.getSalesOrderLineNumber())
                     .build();
 
             pickListDTO.getPickListItemList().add(itemDTO);

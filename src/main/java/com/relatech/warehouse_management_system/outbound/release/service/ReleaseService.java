@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @Slf4j
 @RequiredArgsConstructor
 public class ReleaseService {
-    private final CustomerService customerService;
     private final OrderService orderService;
 
     @Transactional(readOnly = true)

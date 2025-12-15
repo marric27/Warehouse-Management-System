@@ -147,7 +147,7 @@ public class TestComplete {
     private OrderDto createOrder(CustomerDto customer, String productCode) throws Exception {
         String salesOrderNumber = "SO-" + faker.number().digits(5);
         SalesOrderLineDto line = SalesOrderLineDto.builder()
-                .salesOrderNumber(salesOrderNumber)
+                .salesOrderLineNumber(salesOrderNumber)
                 .productCode(productCode)
                 .quantity(10)
                 .status(OrderState.OPEN)
