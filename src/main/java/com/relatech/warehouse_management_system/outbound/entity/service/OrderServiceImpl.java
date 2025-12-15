@@ -6,8 +6,6 @@ import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
 import com.relatech.warehouse_management_system.outbound.entity.Order;
 import com.relatech.warehouse_management_system.outbound.entity.mapper.OrderMapper;
 import com.relatech.warehouse_management_system.outbound.entity.repository.OrderRepository;
-import com.relatech.warehouse_management_system.product.entity.Product;
-import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

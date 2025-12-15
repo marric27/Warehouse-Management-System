@@ -34,25 +34,26 @@ public class OrderDto {
     @Schema(description = "Order status", example = "OPEN")
     private OrderState state;
 
-    @Schema(description = "List of sales order lines associated with this order", example = "[\n" +
-            "  {\n" +
-            "    \"id\": 1,\n" +
-            "    \"productCode\": \"PRD-001\",\n" +
-            "    \"quantity\": 10,\n" +
-            "    \"status\": \"OPEN\"\n" +
-            "  },\n" +
-            "  {\n" +
-            "    \"id\": 2,\n" +
-            "    \"productCode\": \"PRD-002\",\n" +
-            "    \"quantity\": 5,\n" +
-            "    \"status\": \"OPEN\"\n" +
-            "  },\n" +
-            "  {\n" +
-            "    \"id\": 3,\n" +
-            "    \"productCode\": \"PRD-003\",\n" +
-            "    \"quantity\": 20,\n" +
-            "    \"status\": \"OPEN\"\n" +
-            "  }\n" +
-            "]")
+    @Schema(description = "List of sales order lines associated with this order", example = """
+            [
+              {
+                "id": 1,
+                "productCode": "PRD-001",
+                "quantity": 10,
+                "status": "OPEN"
+              },
+              {
+                "id": 2,
+                "productCode": "PRD-002",
+                "quantity": 5,
+                "status": "OPEN"
+              },
+              {
+                "id": 3,
+                "productCode": "PRD-003",
+                "quantity": 20,
+                "status": "OPEN"
+              }
+            ]""")
     private List<SalesOrderLineDto> salesOrderLineList;
 }
