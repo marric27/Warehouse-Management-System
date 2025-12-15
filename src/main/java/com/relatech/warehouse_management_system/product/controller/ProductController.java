@@ -2,7 +2,7 @@ package com.relatech.warehouse_management_system.product.controller;
 
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.product.dto.ProductDTO;
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.product.service.ProductService;
 import com.relatech.warehouse_management_system.common.util.Category;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,55 +27,55 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) throws ResourceNotFoundException {
+    public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) throws ResourceNotFoundException {
         log.info("Received GET request for product with ID: {}", id);
-        ProductDTO product = productService.getProductById(id);
+        ProductDto product = productService.getProductById(id);
         log.info("Returning product: {}", product);
         return ResponseEntity.ok(product);
     }
 
     @GetMapping("/code/{code}")
-    public ResponseEntity<ProductDTO> getProductByCode(@PathVariable String code) throws ResourceNotFoundException {
+    public ResponseEntity<ProductDto> getProductByCode(@PathVariable String code) throws ResourceNotFoundException {
         log.info("Received GET request for product with code: {}", code);
-        ProductDTO product = productService.getProductByCode(code);
+        ProductDto product = productService.getProductByCode(code);
         log.info("Returning product: {}", product);
         return ResponseEntity.ok(product);
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
         log.info("Received GET request for all products");
-        List<ProductDTO> products = productService.getAllProducts();
+        List<ProductDto> products = productService.getAllProducts();
         log.info("Returning products: {}", products);
         return ResponseEntity.ok(products);
     }
 
     @GetMapping("/paged")
     @Operation(summary = "List Stock Units paginated")
-    public ResponseEntity<Page<ProductDTO>> listStockUnitsPaged(Pageable pageable) {
+    public ResponseEntity<Page<ProductDto>> listStockUnitsPaged(Pageable pageable) {
         return ResponseEntity.ok(productService.getAllProductsPaged(pageable));
     }
 
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable Category category) {
+    public ResponseEntity<List<ProductDto>> getProductsByCategory(@PathVariable Category category) {
         log.info("Received GET request for product with category: {}", category);
-        List<ProductDTO> products = productService.getAllProductByProductCategory(category);
+        List<ProductDto> products = productService.getAllProductByProductCategory(category);
         log.info("Returning products: {}", products);
         return ResponseEntity.ok(products);
     }
 
     @PostMapping
-    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDTO) {
+    public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody ProductDto productDTO) {
         log.info("Received POST request to create product : {}", productDTO);
-        ProductDTO created = productService.createProduct(productDTO);
+        ProductDto created = productService.createProduct(productDTO);
         log.info("Product created with ID: {}", created);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductDTO productDTO) throws Exception {
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductDto productDTO) throws Exception {
         log.info("Received PUT request to update product with ID: {}", id);
-        ProductDTO updated = productService.updateProduct(id, productDTO);
+        ProductDto updated = productService.updateProduct(id, productDTO);
         log.info("Product updated: {} (ID: {})", updated.getName(), id);
         return ResponseEntity.ok(updated);
     }

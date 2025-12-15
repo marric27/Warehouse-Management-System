@@ -1,11 +1,10 @@
 package com.relatech.warehouse_management_system.warehouse.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
-import com.relatech.warehouse_management_system.product.dto.ProductDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.common.util.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -16,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "Data transfer object representing a storage slot")
-public class SlotDTO {
+public class SlotDto {
     @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
@@ -32,9 +31,10 @@ public class SlotDTO {
     @NotNull(message = "The capacity cannot be null.")
     private int capacity;
 
-    @Schema(description = "Product assigned to this slot (optional)")
-    private ProductDTO product;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(description = "Product assigned to this slot (optional)", accessMode = Schema.AccessMode.READ_ONLY)
+    private ProductDto product;
 
     @Schema(description = "List of stock units stored in this slot", accessMode = Schema.AccessMode.READ_ONLY)
-    private List<StockUnitDTO> stockUnits;
+    private List<StockUnitDto> stockUnits;
 }

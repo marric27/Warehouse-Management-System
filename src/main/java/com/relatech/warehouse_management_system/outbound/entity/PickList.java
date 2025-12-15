@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.outbound.entity;
 
+import com.github.f4b6a3.ulid.UlidCreator;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,12 +23,21 @@ public class PickList {
     @Column(nullable = false, unique = true)
     private String code;
 
+    @PrePersist
+    public void prePersist() {
+        if (code == null) {
+            String ulid = UlidCreator.getUlid().toString();
+            this.code = "PKL-" + ulid.substring(0, 10).toUpperCase();
+        }
+    }
+
+    @Column(nullable = false)
+    private String releaseNumber;
+
     @Column(nullable = false)
     private String customerCode;
 
-    @Column(nullable = false)
-    private String salesOrderCode;
-
+    @Builder.Default
     @OneToMany(
             mappedBy = "pickList",
             cascade = CascadeType.ALL,

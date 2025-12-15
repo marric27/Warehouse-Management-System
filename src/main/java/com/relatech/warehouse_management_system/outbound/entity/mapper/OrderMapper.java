@@ -36,10 +36,15 @@ public class OrderMapper {
                 .date(dto.getDate())
                 .customerCode(dto.getCustomerCode())
                 .state(dto.getState())
-                .salesOrderLineList(lines)
+                .salesOrderLineList(new ArrayList<>())
                 .build();
 
-        lines.forEach(line -> line.setOrder(order));
+        if (dto.getSalesOrderLineList() != null) {
+            dto.getSalesOrderLineList().forEach(lineDto -> {
+                SalesOrderLine line = SalesOrderLineMapper.toEntity(lineDto);
+                order.addSalesOrderLine(line);
+            });
+        }
 
         return order;
     }

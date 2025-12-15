@@ -3,7 +3,7 @@ package com.relatech.warehouse_management_system.goodsIn.serviceUnitTest;
 import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
-import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
@@ -129,7 +129,7 @@ class GrnItemStateServiceTest {
         when(grnItemService.updateGrnItem(eq(1L), any())).thenReturn(item);
 
         // mock GRN
-        GrnDTO grn = new GrnDTO();
+        GrnDto grn = new GrnDto();
         grn.setItems(List.of(item));
         when(grnService.getGRNById(5L)).thenReturn(grn);
 
@@ -162,7 +162,7 @@ class GrnItemStateServiceTest {
         GrnItemDto i2 = new GrnItemDto();
         i2.setState(State.PUTAWAY);
 
-        GrnDTO grn = new GrnDTO();
+        GrnDto grn = new GrnDto();
         grn.setId(5L);
         grn.setItems(List.of(i1, i2));
 
@@ -181,7 +181,7 @@ class GrnItemStateServiceTest {
         GrnItemDto i2 = new GrnItemDto();
         i2.setState(State.CHECKED);
 
-        GrnDTO grn = new GrnDTO();
+        GrnDto grn = new GrnDto();
         grn.setId(5L);
         grn.setItems(List.of(i1, i2));
 
@@ -194,7 +194,7 @@ class GrnItemStateServiceTest {
 
     @Test
     void checkGrnIfClosed_true() throws Exception {
-        GrnDTO grn = new GrnDTO();
+        GrnDto grn = new GrnDto();
         grn.setState(State.CLOSED);
 
         when(grnService.getGRNById(10L)).thenReturn(grn);
@@ -205,7 +205,7 @@ class GrnItemStateServiceTest {
 
     @Test
     void checkGrnIfClosed_false() throws Exception {
-        GrnDTO grn = new GrnDTO();
+        GrnDto grn = new GrnDto();
         grn.setState(State.OPEN);
 
         when(grnService.getGRNById(10L)).thenReturn(grn);

@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.mapper;
 
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.goodsIn.entity.GRN;
+import com.relatech.warehouse_management_system.goodsIn.entity.Grn;
 import com.relatech.warehouse_management_system.goodsIn.entity.GrnItem;
 import org.springframework.stereotype.Component;
 
@@ -33,9 +33,9 @@ public class GrnItemMapper {
 
     public GrnItem toEntity(GrnItemDto dto) {
         if (dto == null) return null;
-        GRN grnRef = null;
+        Grn grnRef = null;
         if (dto.getGrnId() != null) {
-            grnRef = GRN.builder()
+            grnRef = Grn.builder()
                     .id(dto.getGrnId())
                     .build();
         }

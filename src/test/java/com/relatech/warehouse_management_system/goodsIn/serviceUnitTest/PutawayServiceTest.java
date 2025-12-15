@@ -6,7 +6,7 @@ import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import com.relatech.warehouse_management_system.goodsIn.dto.*;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.*;
 import com.relatech.warehouse_management_system.goodsIn.putaway.service.PutawayService;
-import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import com.relatech.warehouse_management_system.warehouse.service.SlotService;
 
 import org.junit.jupiter.api.Test;
@@ -40,12 +40,12 @@ class PutawayServiceTest {
     @Test
     void assignStockUnitToSlot_categoryMismatch_throws() throws Exception {
 
-        SlotDTO slot = new SlotDTO();
+        SlotDto slot = new SlotDto();
         slot.setId(1L);
         slot.setAllowedCategory(Category.STANDARD);
         slot.setStockUnits(new ArrayList<>());
 
-        StockUnitDTO su = new StockUnitDTO();
+        StockUnitDto su = new StockUnitDto();
         su.setId(10L);
         su.setCategory(Category.FLAMMABLE);
 
@@ -65,13 +65,13 @@ class PutawayServiceTest {
         Long suId = 10L;
 
         // ------ SLOT ------
-        SlotDTO slot = new SlotDTO();
+        SlotDto slot = new SlotDto();
         slot.setId(slotId);
         slot.setAllowedCategory(Category.STANDARD);
         slot.setStockUnits(new ArrayList<>());
 
         // ------ STOCK UNIT ------
-        StockUnitDTO su = new StockUnitDTO();
+        StockUnitDto su = new StockUnitDto();
         su.setId(suId);
         su.setCategory(Category.STANDARD);
 
@@ -91,7 +91,7 @@ class PutawayServiceTest {
         when(grnItemService.getGrnItemById(ci.getGrnItemId())).thenReturn(item);
 
         // MOCK UPDATE
-        SlotDTO savedSlot = new SlotDTO();
+        SlotDto savedSlot = new SlotDto();
         savedSlot.setId(slotId);
         savedSlot.setStockUnits(new ArrayList<>());
         savedSlot.getStockUnits().add(su);
@@ -102,7 +102,7 @@ class PutawayServiceTest {
         doNothing().when(stateService).evaluateAndProgressItemState(item);
 
         // ------ CALL SERVICE ------
-        SlotDTO result = service.assignStockUnitToSlot(suId, slotId);
+        SlotDto result = service.assignStockUnitToSlot(suId, slotId);
 
         // ------ VERIFY SLOT + STOCK UNIT UPDATES ------
         assertEquals(slotId, result.getId());

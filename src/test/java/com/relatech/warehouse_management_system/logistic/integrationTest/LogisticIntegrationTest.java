@@ -1,11 +1,11 @@
 package com.relatech.warehouse_management_system.logistic.integrationTest;
 
-import com.relatech.warehouse_management_system.product.dto.ProductDTO;
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import com.relatech.warehouse_management_system.product.service.ProductService;
-import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import com.relatech.warehouse_management_system.warehouse.entity.Slot;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotMapper;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotRepository;
@@ -46,8 +46,8 @@ class LogisticIntegrationTest {
     @Autowired
     private SlotMapper slotMapper;
 
-    private final SlotDTO slotDTO = new SlotDTO(null, "SLOT001", Category.STANDARD, 100, null, null);
-    private final ProductDTO productDTO = new ProductDTO(null, "PRD-001", "Paracetamolo", Category.STANDARD);
+    private final SlotDto slotDTO = new SlotDto(null, "SLOT001", Category.STANDARD, 100, null, null);
+    private final ProductDto productDTO = new ProductDto(null, "PRD-001", "Paracetamolo", Category.STANDARD);
 
     @BeforeEach
     void setup() {
@@ -57,9 +57,9 @@ class LogisticIntegrationTest {
 
     @Test
     void assignProductToSlot_ShouldAssignProduct() throws Exception {
-        SlotDTO slotDTO = slotService.createSlot(this.slotDTO);
+        SlotDto slotDTO = slotService.createSlot(this.slotDTO);
         Slot slot = slotMapper.toEntity(slotDTO);
-        ProductDTO productDTO = productService.createProduct(this.productDTO);
+        ProductDto productDTO = productService.createProduct(this.productDTO);
         Product product = ProductMapper.toEntity(productDTO);
 
         mockMvc.perform(patch("/logistic/" + slot.getId() + "/assign/" + product.getId())
@@ -73,7 +73,7 @@ class LogisticIntegrationTest {
 
     @Test
     void removeProductFromSlot_ShouldSetProductToNull() throws Exception {
-        SlotDTO slotDTO = slotService.createSlot(this.slotDTO);
+        SlotDto slotDTO = slotService.createSlot(this.slotDTO);
         Slot slot = slotMapper.toEntity(slotDTO);
 
         productService.createProduct(productDTO);
@@ -90,9 +90,9 @@ class LogisticIntegrationTest {
 
     @Test
     void canSlotContainProduct_ShouldReturnTrue() throws Exception {
-        SlotDTO slotDTO = slotService.createSlot(this.slotDTO);
+        SlotDto slotDTO = slotService.createSlot(this.slotDTO);
         Slot slot = slotMapper.toEntity(slotDTO);
-        ProductDTO productDTO = productService.createProduct(this.productDTO);
+        ProductDto productDTO = productService.createProduct(this.productDTO);
         Product product = ProductMapper.toEntity(productDTO);
         mockMvc.perform(get("/logistic/" + slot.getId() + "/can-contain/" + product.getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -103,7 +103,7 @@ class LogisticIntegrationTest {
 
     @Test
     void assignProductToSlot_ShouldReturnNotFound_WhenSlotDoesNotExist() throws Exception {
-        ProductDTO productDTO = productService.createProduct(this.productDTO);
+        ProductDto productDTO = productService.createProduct(this.productDTO);
         Product product = ProductMapper.toEntity(productDTO);
 
         Long invalidSlotId = 999L;
@@ -122,7 +122,7 @@ class LogisticIntegrationTest {
 
     @Test
     void canSlotContainProduct_ShouldReturnNotFound_WhenSlotDoesNotExist() throws Exception {
-        ProductDTO productDTO = productService.createProduct(this.productDTO);
+        ProductDto productDTO = productService.createProduct(this.productDTO);
         Product product = ProductMapper.toEntity(productDTO);
 
         Long invalidSlotId = 999L;

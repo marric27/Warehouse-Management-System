@@ -5,7 +5,7 @@ import com.relatech.warehouse_management_system.common.exception.ResourceNotFoun
 import com.relatech.warehouse_management_system.logistic.service.LogisticServiceImpl;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import com.relatech.warehouse_management_system.warehouse.entity.Slot;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotMapper;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotRepository;
@@ -47,9 +47,9 @@ class LogisticServiceTest {
         when(slotRepository.findById(1L)).thenReturn(Optional.of(slot));
         when(productRepository.findById(10L)).thenReturn(Optional.of(product));
         when(slotRepository.save(any(Slot.class))).thenReturn(slot);
-        when(slotMapper.toDto(any(Slot.class))).thenReturn(new SlotDTO(1L,null,null,0,null,null));
+        when(slotMapper.toDto(any(Slot.class))).thenReturn(new SlotDto(1L,null,null,0,null,null));
 
-        SlotDTO result = logisticService.assignProductToSlot(1L, 10L);
+        SlotDto result = logisticService.assignProductToSlot(1L, 10L);
 
         assertNotNull(result);
         assertEquals(1L, result.getId());
@@ -84,9 +84,9 @@ class LogisticServiceTest {
 
         when(slotRepository.findById(1L)).thenReturn(Optional.of(slot));
         when(slotRepository.save(any(Slot.class))).thenReturn(slot);
-        when(slotMapper.toDto(any(Slot.class))).thenReturn(new SlotDTO());
+        when(slotMapper.toDto(any(Slot.class))).thenReturn(new SlotDto());
 
-        SlotDTO result = logisticService.removeProductFromSlot(1L);
+        SlotDto result = logisticService.removeProductFromSlot(1L);
 
         assertNotNull(result);
         assertNull(slot.getProd());

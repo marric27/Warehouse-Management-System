@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.customer.repository;
 
-import com.relatech.warehouse_management_system.outbound.entity.Customer;
-import com.relatech.warehouse_management_system.outbound.entity.repository.CustomerRepository;
+import com.relatech.warehouse_management_system.customer.entity.Customer;
+import com.relatech.warehouse_management_system.customer.entity.CustomerRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

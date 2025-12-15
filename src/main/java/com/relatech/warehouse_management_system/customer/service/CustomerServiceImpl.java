@@ -1,12 +1,12 @@
-package com.relatech.warehouse_management_system.outbound.entity.service;
+package com.relatech.warehouse_management_system.customer.service;
 
 import com.relatech.warehouse_management_system.common.exception.CustomerWithActiveOrdersException;
 import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.outbound.dto.CustomerDTO;
-import com.relatech.warehouse_management_system.outbound.entity.Customer;
-import com.relatech.warehouse_management_system.outbound.entity.mapper.CustomerMapper;
-import com.relatech.warehouse_management_system.outbound.entity.repository.CustomerRepository;
+import com.relatech.warehouse_management_system.customer.entity.Customer;
+import com.relatech.warehouse_management_system.customer.entity.CustomerDto;
+import com.relatech.warehouse_management_system.customer.entity.CustomerMapper;
+import com.relatech.warehouse_management_system.customer.entity.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,7 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional(rollbackFor = DuplicateResourceException.class)
-    public CustomerDTO createCustomer(CustomerDTO customerDTO) throws DuplicateResourceException {
+    public CustomerDto createCustomer(CustomerDto customerDTO) throws DuplicateResourceException {
         if (customerRepository.findByEmail(customerDTO.getEmail()).isPresent()) {
             throw new DuplicateResourceException("Customer", "email", customerDTO.getEmail());
         }
@@ -42,28 +42,28 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerDTO getCustomerById(Long id) throws ResourceNotFoundException {
+    public CustomerDto getCustomerById(Long id) throws ResourceNotFoundException {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", id));
         return customerMapper.toDTO(customer);
     }
 
     @Override
-    public List<CustomerDTO> getAllCustomers() {
+    public List<CustomerDto> getAllCustomers() {
         return customerRepository.findAll()
                 .stream()
                 .map(customerMapper::toDTO).toList();
     }
 
     @Override
-    public Page<CustomerDTO> getAllCustomersPaged(Pageable pageable) {
+    public Page<CustomerDto> getAllCustomersPaged(Pageable pageable) {
         Page<Customer> customersPage = customerRepository.findAll(pageable);
         return customersPage.map(customerMapper::toDTO);
     }
 
     @Override
     @Transactional(timeout = 5, propagation = Propagation.REQUIRED)
-    public CustomerDTO updateCustomer(Long id, CustomerDTO customerDTO) throws ResourceNotFoundException {
+    public CustomerDto updateCustomer(Long id, CustomerDto customerDTO) throws ResourceNotFoundException {
         Customer existing = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", id));
         existing.setName(customerDTO.getName());
@@ -96,7 +96,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerDTO> searchCustomers(String term) {
+    public List<CustomerDto> searchCustomers(String term) {
         if (term == null || term.isEmpty()) {
             return getAllCustomers();
         }

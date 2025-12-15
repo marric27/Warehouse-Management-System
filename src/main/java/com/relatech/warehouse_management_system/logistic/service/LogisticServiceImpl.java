@@ -3,7 +3,7 @@ package com.relatech.warehouse_management_system.logistic.service;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.warehouse.entity.SlotDTO;
+import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import com.relatech.warehouse_management_system.warehouse.entity.Slot;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotMapper;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotRepository;
@@ -25,7 +25,7 @@ public class LogisticServiceImpl implements LogisticService {
 
     @Override
     @Transactional
-    public SlotDTO assignProductToSlot(Long slotId, Long productId) throws ResourceNotFoundException {
+    public SlotDto assignProductToSlot(Long slotId, Long productId) throws ResourceNotFoundException {
         Slot slot = slotRepository.findById(slotId)
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", slotId));
         Product product = productRepository.findById(productId)
@@ -37,7 +37,7 @@ public class LogisticServiceImpl implements LogisticService {
 
     @Override
     @Transactional
-    public SlotDTO removeProductFromSlot(Long id) throws ResourceNotFoundException {
+    public SlotDto removeProductFromSlot(Long id) throws ResourceNotFoundException {
         Slot slot = slotRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", id));
         slot.setProd(null);

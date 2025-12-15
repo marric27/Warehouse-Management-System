@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.customer.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.relatech.warehouse_management_system.outbound.dto.CustomerDTO;
+import com.relatech.warehouse_management_system.customer.entity.CustomerDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ class CustomerIntegrationTest {
     @Test
     @DisplayName("Create Customer - Missing Required Field Should Return 400")
     void whenCreateCustomerWithMissingName_thenReturnsBadRequest() throws Exception {
-        CustomerDTO invalidCustomer = CustomerDTO.builder()
+        CustomerDto invalidCustomer = CustomerDto.builder()
                 .surname("Rossi")
                 .shippingAddress("Address1")
                 .billingAddress("Address2")
@@ -81,7 +81,7 @@ class CustomerIntegrationTest {
     @DisplayName("Update Customer - Change Email and Verify Change Persistence")
     void whenUpdateCustomerEmail_thenEmailIsUpdated() throws Exception {
         // Prima crea un customer da aggiornare
-        CustomerDTO newCustomer = CustomerDTO.builder()
+        CustomerDto newCustomer = CustomerDto.builder()
                 .name("Test")
                 .surname("User")
                 .shippingAddress("Addr1")
@@ -96,10 +96,10 @@ class CustomerIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        CustomerDTO created = fromJsonResult(createResult, CustomerDTO.class);
+        CustomerDto created = fromJsonResult(createResult, CustomerDto.class);
 
 
-        CustomerDTO updatedDTO = created.toBuilder().email("updated.email@email.com").build();
+        CustomerDto updatedDTO = created.toBuilder().email("updated.email@email.com").build();
 
         mockMvc.perform(put("/customers/" + created.getId())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -117,7 +117,7 @@ class CustomerIntegrationTest {
     @DisplayName("Delete Customer - Verify Deletion and Subsequent NotFound")
     void whenDeleteCustomer_thenNotFoundOnGet() throws Exception {
 
-        CustomerDTO newCustomer = CustomerDTO.builder()
+        CustomerDto newCustomer = CustomerDto.builder()
                 .name("Delete")
                 .surname("Me")
                 .shippingAddress("Addr1")
@@ -132,7 +132,7 @@ class CustomerIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        CustomerDTO created = fromJsonResult(createResult, CustomerDTO.class);
+        CustomerDto created = fromJsonResult(createResult, CustomerDto.class);
 
 
         mockMvc.perform(delete("/customers/" + created.getId()))

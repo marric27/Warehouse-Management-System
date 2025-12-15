@@ -3,7 +3,7 @@ package com.relatech.warehouse_management_system.product.controllerUnitTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.product.controller.ProductController;
-import com.relatech.warehouse_management_system.product.dto.ProductDTO;
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.product.service.ProductService;
 import com.relatech.warehouse_management_system.common.util.Category;import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class ProductControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final ProductDTO productDTO = new ProductDTO(
+    private final ProductDto productDTO = new ProductDto(
             1L, "P001", "Paracetamolo", Category.STANDARD
     );
 
@@ -108,7 +108,7 @@ class ProductControllerTest {
     @Test
     @DisplayName("POST /products - should create new product and return 201")
     void givenValidProduct_whenCreate_thenReturnCreated() throws Exception {
-        when(productService.createProduct(any(ProductDTO.class))).thenReturn(productDTO);
+        when(productService.createProduct(any(ProductDto.class))).thenReturn(productDTO);
 
         mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -121,8 +121,8 @@ class ProductControllerTest {
     @Test
     @DisplayName("PUT /products/{id} - should update product and return updated DTO")
     void givenProductExists_whenUpdate_thenReturnUpdated() throws Exception {
-        ProductDTO updated = new ProductDTO(1L, "P002", "Aspirina", Category.STANDARD);
-        when(productService.updateProduct(eq(1L), any(ProductDTO.class))).thenReturn(updated);
+        ProductDto updated = new ProductDto(1L, "P002", "Aspirina", Category.STANDARD);
+        when(productService.updateProduct(eq(1L), any(ProductDto.class))).thenReturn(updated);
 
         mockMvc.perform(put("/products/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -135,7 +135,7 @@ class ProductControllerTest {
     @Test
     @DisplayName("PUT /products/{id} - should return 404 when product not found")
     void givenProductNotFound_whenUpdate_thenReturn404() throws Exception {
-        when(productService.updateProduct(eq(99L), any(ProductDTO.class)))
+        when(productService.updateProduct(eq(99L), any(ProductDto.class)))
                 .thenThrow(new ResourceNotFoundException("Product",99L));
 
         mockMvc.perform(put("/products/99")

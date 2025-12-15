@@ -3,7 +3,7 @@ package com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.service;
 import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
-import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.CheckingInfoService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
@@ -32,13 +32,13 @@ public class CheckGoodsInService {
     private final GrnItemStateService stateService;
 
     @Transactional(rollbackFor = {CannotAssignCIToGrnItemInClosedOrPutawayStateException.class, DuplicateResourceException.class, GrnItemNotFoundException.class, GrnNotFoundException.class})
-    public GrnItemDto createCheckingInfoAndStockUnit(Long grnItemId, CheckingInfoDto ci, StockUnitDTO su) throws Exception {
+    public GrnItemDto createCheckingInfoAndStockUnit(Long grnItemId, CheckingInfoDto ci, StockUnitDto su) throws Exception {
 
         if(stateService.checkGrnItemIfCheckedOrPutaway(grnItemId))
             throw new CannotAssignCIToGrnItemInClosedOrPutawayStateException(grnItemId);
 
         // Create StockUnit
-        StockUnitDTO stockUnit = stockUnitService.createStockUnit(su);
+        StockUnitDto stockUnit = stockUnitService.createStockUnit(su);
 
         // Create CheckingInfo
         ci.setStockUnitId(stockUnit.getId());
@@ -67,12 +67,12 @@ public class CheckGoodsInService {
     }
 
     @Transactional(readOnly = true)
-    public List<StockUnitDTO> listStockUnit() {
+    public List<StockUnitDto> listStockUnit() {
         return stockUnitService.getAllStockUnits();
     }
 
     @Transactional(readOnly = true)
-    public Page<StockUnitDTO> listStockUnitPaged(Pageable pageable) {
+    public Page<StockUnitDto> listStockUnitPaged(Pageable pageable) {
         return stockUnitService.getAllStockUnitsPaged(pageable);
     }
 }

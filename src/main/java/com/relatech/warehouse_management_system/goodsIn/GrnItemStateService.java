@@ -2,7 +2,7 @@ package com.relatech.warehouse_management_system.goodsIn;
 
 import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
-import com.relatech.warehouse_management_system.goodsIn.dto.GrnDTO;
+import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
@@ -54,7 +54,7 @@ public class GrnItemStateService {
 
         // OPEN → CHECKED
         if (assigned >= expected && current == State.OPEN) {
-            log.info("AUTO: Item {} → CHECKED (qty complete)", item.getId());
+            log.info("AUTO: Item {} -> CHECKED (qty complete)", item.getId());
             item.setState(State.CHECKED);
             grnItemService.updateGrnItem(item.getId(), item);
             current = State.CHECKED;
@@ -66,7 +66,7 @@ public class GrnItemStateService {
                 && !checks.isEmpty()
                 && checks.stream().allMatch(c -> c.getState() == State.PUTAWAY)) {
 
-            log.info("AUTO: Item {} → PUTAWAY (all checks PUTAWAY)", item.getId());
+            log.info("AUTO: Item {} -> PUTAWAY (all checks PUTAWAY)", item.getId());
             item.setState(State.PUTAWAY);
             grnItemService.updateGrnItem(item.getId(), item);
 
@@ -79,7 +79,7 @@ public class GrnItemStateService {
     public void evaluateAndProgressGrnState(Long grnId)
             throws GrnNotFoundException {
 
-        GrnDTO grn = grnService.getGRNById(grnId);
+        GrnDto grn = grnService.getGRNById(grnId);
 
         boolean allPutaway =
                 grn.getItems().stream().allMatch(i -> i.getState() == State.PUTAWAY);
@@ -87,7 +87,7 @@ public class GrnItemStateService {
         if (allPutaway) {
             grn.setState(State.CLOSED);
             grnService.updateGRN(grnId, grn);
-            log.info("AUTO: GRN {} → CLOSED (all items PUTAWAY)", grnId);
+            log.info("AUTO: GRN {} -> CLOSED (all items PUTAWAY)", grnId);
         }
     }
 

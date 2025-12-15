@@ -12,10 +12,10 @@ import java.util.ArrayList;
 public class SlotMapper {
     private final StockUnitMapper stockUnitMapper;
 
-    public SlotDTO toDto(Slot slot) {
+    public SlotDto toDto(Slot slot) {
         if (slot == null) return null;
 
-        SlotDTO dto = new SlotDTO();
+        SlotDto dto = new SlotDto();
         dto.setId(slot.getId());
         dto.setCode(slot.getCode());
         dto.setAllowedCategory(slot.getAllowedCategory());
@@ -28,7 +28,7 @@ public class SlotMapper {
         return dto;
     }
 
-    public Slot toEntity(SlotDTO dto) {
+    public Slot toEntity(SlotDto dto) {
         if (dto == null) return null;
 
         Slot slot = new Slot();
