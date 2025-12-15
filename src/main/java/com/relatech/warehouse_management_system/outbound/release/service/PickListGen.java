@@ -30,7 +30,6 @@ public class PickListGen {
     private final OrderService orderService;
     private final PickListService pickListService;
     private final SlotService slotService;
-    private String releaseNumber = "RLS-";
 
     @Transactional
     public List<PickListDto> generatePickLists(List<Long> orderIds) throws ResourceNotFoundException {
@@ -41,10 +40,9 @@ public class PickListGen {
 
         // gen release number
         String ulid = UlidCreator.getUlid().toString();
-        releaseNumber += ulid.substring(0, 10).toUpperCase();
+        String releaseNumber = "RLS-" + ulid.substring(0, 10).toUpperCase();
 
         for (OrderDto orderDto : ordersOpen) {
-
             // Se non esiste ancora una PickList per questo cliente, creala
             PickListDto pickListDTO = pickListMap.computeIfAbsent(orderDto.getCustomerCode(), customerCode ->
                     PickListDto.builder()

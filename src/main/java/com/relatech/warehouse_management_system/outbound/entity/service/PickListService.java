@@ -5,7 +5,12 @@ import com.relatech.warehouse_management_system.outbound.entity.PickList;
 import com.relatech.warehouse_management_system.outbound.entity.mapper.PickListMapper;
 import com.relatech.warehouse_management_system.outbound.entity.repository.PickListRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +22,16 @@ public class PickListService {
         return PickListMapper.toDto(pickListRepository.save(pickList));
     }
 
+    public List<PickListDto> getAll() {
+        return pickListRepository.findAll()
+                .stream().map(PickListMapper::toDto).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PickListDto> getAllPickListPaged(Pageable pageable) {
+        Page<PickList> pickListPage = pickListRepository.findAll(pageable);
+        return pickListPage.map(PickListMapper::toDto);
+    }
 
 
 }

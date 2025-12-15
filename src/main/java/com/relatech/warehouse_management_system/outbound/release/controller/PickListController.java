@@ -2,11 +2,14 @@ package com.relatech.warehouse_management_system.outbound.release.controller;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
+import com.relatech.warehouse_management_system.outbound.entity.service.PickListService;
 import com.relatech.warehouse_management_system.outbound.release.service.PickListGen;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +26,7 @@ import java.util.List;
 public class PickListController {
 
     private final PickListGen pickListGen;
+    private final PickListService pickListService;
 
     /**
      * Endpoint per rilasciare ordini e generare PickList per cliente.
@@ -51,5 +55,17 @@ public class PickListController {
             log.error("Error generating picklist for order {}", orderId, e);
             return ResponseEntity.status(500).build();
         }
+    }
+
+    @GetMapping("/release")
+    public ResponseEntity<List<PickListDto>> listAllPickList() {
+        List<PickListDto> pickLists = pickListService.getAll();
+        return ResponseEntity.ok(pickLists);
+    }
+
+    @GetMapping("/release-paged")
+    public ResponseEntity<Page<PickListDto>> listAllPickListPaged(Pageable pageable) {
+        Page<PickListDto> pickLists = pickListService.getAllPickListPaged(pageable);
+        return ResponseEntity.ok(pickLists);
     }
 }
