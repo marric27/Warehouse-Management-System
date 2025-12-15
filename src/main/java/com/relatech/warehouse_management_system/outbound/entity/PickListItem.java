@@ -29,7 +29,7 @@ public class PickListItem {
     private String salesOrderCode;
 
     @Column(nullable = false)
-    private String salesOrderLineNumber;
+    private Integer salesOrderLineNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pick_list_id", nullable = false)

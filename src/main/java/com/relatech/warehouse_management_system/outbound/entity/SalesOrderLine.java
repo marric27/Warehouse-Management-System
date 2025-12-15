@@ -6,7 +6,12 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "sales_order_line")
+@Table(
+        name = "sales_order_line",
+        uniqueConstraints = @UniqueConstraint(
+                columnNames = {"order_id", "sales_order_line_number"}
+        )
+)
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -18,16 +23,8 @@ public class SalesOrderLine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "sales_order_line_number", nullable = false, unique = true) //TODO intero progressivo
-    private String salesOrderLineNumber;
-
-    @PrePersist
-    public void prePersist() {
-        if (salesOrderLineNumber == null) {
-            String ulid = UlidCreator.getUlid().toString();
-            this.salesOrderLineNumber = "SO-" + ulid;
-        }
-    }
+    @Column(name = "sales_order_line_number", nullable = false) //TODO intero progressivo
+    private Integer salesOrderLineNumber;
 
     @Column(name = "product_code", nullable = false)
     private String productCode;

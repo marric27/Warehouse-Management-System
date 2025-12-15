@@ -27,5 +27,5 @@ public class PickListItemDto {
     private String salesOrderCode;
 
     @Schema(description = "Line number of the sales order associated with this item.")
-    private String salesOrderLineNumber;
+    private Integer salesOrderLineNumber;
 }

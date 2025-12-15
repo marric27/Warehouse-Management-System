@@ -37,10 +37,18 @@ public class Order {
     @OneToMany(
             mappedBy = "order",
             cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY
+            orphanRemoval = true
     )
+    @OrderBy("salesOrderLineNumber ASC")
+    @Builder.Default
     private List<SalesOrderLine> salesOrderLineList = new ArrayList<>();
+
+    public void addSalesOrderLine(SalesOrderLine line) {
+        int nextLineNumber = salesOrderLineList.size() + 1;
+        line.setSalesOrderLineNumber(nextLineNumber);
+        line.setOrder(this);
+        salesOrderLineList.add(line);
+    }
 
     @PrePersist
     public void prePersist() {
