@@ -58,7 +58,7 @@ public class PickListMapper {
         return dto;
     }
 
-    private static PickListItemDto toItemDto(PickListItem item) {
+    public static PickListItemDto toItemDto(PickListItem item) {
         if (item == null) return null;
 
         return PickListItemDto.builder()

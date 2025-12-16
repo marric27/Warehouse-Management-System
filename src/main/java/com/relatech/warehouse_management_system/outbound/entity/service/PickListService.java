@@ -1,10 +1,13 @@
 package com.relatech.warehouse_management_system.outbound.entity.service;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.util.PickListItemState;
 import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
+import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.outbound.entity.PickList;
-import com.relatech.warehouse_management_system.outbound.entity.mapper.OrderMapper;
+import com.relatech.warehouse_management_system.outbound.entity.PickListItem;
 import com.relatech.warehouse_management_system.outbound.entity.mapper.PickListMapper;
+import com.relatech.warehouse_management_system.outbound.entity.repository.PickListItemRepository;
 import com.relatech.warehouse_management_system.outbound.entity.repository.PickListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PickListService {
     private final PickListRepository pickListRepository;
+    private final PickListItemRepository pickListItemRepository;
 
     @Transactional
     public PickListDto create(PickListDto pickListDto) {
@@ -43,6 +47,13 @@ public class PickListService {
                 .map(PickListMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("PickList", id));
     }
+
+    @Transactional(readOnly = true)
+    public List<PickListItemDto> findOpenItemsOrdered(List<Long> plIds, PickListItemState state, Pageable pageable) {
+        List<PickListItem> result = pickListItemRepository.findOpenItemsOrdered(plIds, state, pageable);
+        return result.stream().map(PickListMapper::toItemDto).toList();
+    }
+
 
 
 }
