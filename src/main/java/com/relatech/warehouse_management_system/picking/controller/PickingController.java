@@ -22,10 +22,13 @@ public class PickingController {
 
     @PostMapping("/next-item")
     public ResponseEntity<PickListItemDto> getNextPickListItem(@RequestBody List<Long> pickListIds) {
+        log.info("Get next pick list item from pick list(s) with id(s) {}", pickListIds);
         PickListItemDto nextItem = pickingService.getNextPickListItem(pickListIds);
         if (nextItem == null) {
+            log.info("No next items found");
             return ResponseEntity.noContent().build();
         }
+        log.info("Next item found {}", nextItem);
         return ResponseEntity.ok(nextItem);
     }
 

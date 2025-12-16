@@ -16,7 +16,7 @@ public interface PickListItemRepository extends JpaRepository<PickListItem, Long
                 FROM PickListItem pli
                 WHERE pli.pickList.id IN :plIds
                   AND pli.state = :state
-                ORDER BY pli.id ASC
+                ORDER BY pli.pickingSequence ASC, pli.slotCode ASC
             """)
     List<PickListItem> findOpenItemsOrdered(@Param("plIds") List<Long> plIds, @Param("state") PickListItemState state, Pageable pageable);
 }

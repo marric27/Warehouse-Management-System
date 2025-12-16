@@ -28,6 +28,9 @@ public class PickListItem {
     private int qty;
 
     @Column(nullable = false)
+    private Integer pickingSequence;
+
+    @Column(nullable = false)
     private String slotCode;
 
     @Column(nullable = false)

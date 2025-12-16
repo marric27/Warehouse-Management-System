@@ -24,7 +24,7 @@ public class PickingService {
             return null;
         }
         Pageable limitOne = PageRequest.of(0, 1); // get first result
-        List<PickListItemDto> result = pickListService.findOpenItemsOrdered(plIds, PickListItemState.OPEN, limitOne);//passa anche la slot o solo pickseq e slotcode
+        List<PickListItemDto> result = pickListService.findOpenItemsOrdered(plIds, PickListItemState.OPEN, limitOne);
 
         if (result.isEmpty()) {
             log.info("Nessun PickListItem OPEN trovato");

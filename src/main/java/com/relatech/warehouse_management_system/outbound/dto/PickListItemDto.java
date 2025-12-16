@@ -6,6 +6,7 @@ import lombok.*;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -23,6 +24,9 @@ public class PickListItemDto {
 
     @Schema(description = "Quantity to be picked.")
     private Integer quantity;
+
+    @Schema(description = "Picking sequence number of slot where the product is stored.")
+    private Integer pickingSequence;
 
     @Schema(description = "Warehouse slot/location where the product is stored.")
     private String slotCode;
