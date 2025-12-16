@@ -24,7 +24,9 @@ public class PickListMapper {
                 PickListItem item = PickListItem.builder()
                         .id(itemDto.getId())
                         .productCode(itemDto.getProductCode())
+                        .state(itemDto.getState())
                         .qty(itemDto.getQuantity())
+                        .pickingSequence(itemDto.getPickingSequence())
                         .slotCode(itemDto.getSlotCode())
                         .salesOrderCode(itemDto.getSalesOrderCode())
                         .salesOrderLineNumber(itemDto.getSalesOrderLineNumber())
@@ -57,13 +59,14 @@ public class PickListMapper {
         return dto;
     }
 
-    private static PickListItemDto toItemDto(PickListItem item) {
+    public static PickListItemDto toItemDto(PickListItem item) {
         if (item == null) return null;
 
         return PickListItemDto.builder()
                 .id(item.getId())
                 .productCode(item.getProductCode())
                 .quantity(item.getQty())
+                .pickingSequence(item.getPickingSequence())
                 .slotCode(item.getSlotCode())
                 .salesOrderCode(item.getSalesOrderCode())
                 .salesOrderLineNumber(item.getSalesOrderLineNumber())

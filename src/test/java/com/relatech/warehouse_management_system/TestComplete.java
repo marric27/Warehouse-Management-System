@@ -87,7 +87,7 @@ public class TestComplete {
     // =================================================================================
 
     private SlotDto createSlot() throws Exception {
-        SlotDto slot = new SlotDto(null, null, Category.STANDARD, 100, null, null);
+        SlotDto slot = new SlotDto(null, null, 1, Category.STANDARD, 100, null, null);
 
         return performPost("/slots", slot, SlotDto.class);
     }

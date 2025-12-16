@@ -1,6 +1,5 @@
 package com.relatech.warehouse_management_system.outbound.entity;
 
-import com.github.f4b6a3.ulid.UlidCreator;
 import com.relatech.warehouse_management_system.common.util.OrderState;
 import jakarta.persistence.*;
 import lombok.*;

@@ -35,6 +35,9 @@ public class Slot {
         }
     }
 
+    @Column(nullable = false)
+    private Integer pickingSequence;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     Category allowedCategory;

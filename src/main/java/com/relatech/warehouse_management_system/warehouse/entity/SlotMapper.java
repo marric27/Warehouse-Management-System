@@ -18,6 +18,7 @@ public class SlotMapper {
         SlotDto dto = new SlotDto();
         dto.setId(slot.getId());
         dto.setCode(slot.getCode());
+        dto.setPickingSequence(slot.getPickingSequence());
         dto.setAllowedCategory(slot.getAllowedCategory());
         dto.setCapacity(slot.getCapacity());
         dto.setProduct(slot.getProd() != null ? ProductMapper.toDto(slot.getProd()) : null);
@@ -34,6 +35,7 @@ public class SlotMapper {
         Slot slot = new Slot();
         slot.setId(dto.getId());
         slot.setAllowedCategory(dto.getAllowedCategory());
+        slot.setPickingSequence(dto.getPickingSequence());
         slot.setCapacity(dto.getCapacity());
         slot.setProd(dto.getProduct() != null ? ProductMapper.toEntity(dto.getProduct()) : null);
         slot.setStockUnits(new ArrayList<>(stockUnitMapper.toEntity(

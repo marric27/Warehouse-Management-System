@@ -47,7 +47,7 @@ class LogisticServiceTest {
         when(slotRepository.findById(1L)).thenReturn(Optional.of(slot));
         when(productRepository.findById(10L)).thenReturn(Optional.of(product));
         when(slotRepository.save(any(Slot.class))).thenReturn(slot);
-        when(slotMapper.toDto(any(Slot.class))).thenReturn(new SlotDto(1L,null,null,0,null,null));
+        when(slotMapper.toDto(any(Slot.class))).thenReturn(new SlotDto(1L,null,1,null,0,null,null));
 
         SlotDto result = logisticService.assignProductToSlot(1L, 10L);
 
