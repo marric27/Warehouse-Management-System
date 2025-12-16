@@ -44,7 +44,7 @@ class SlotIntegrationTest {
     private StockUnitRepository stockUnitRepository;
 
     private final SlotDto slotDTO = new SlotDto(
-            null, null, Category.STANDARD, 100, null, null
+            null, null, 1, Category.STANDARD, 100, null, null
     );
 
     private final StockUnitDto stockUnitDTO = new StockUnitDto(
@@ -84,7 +84,7 @@ class SlotIntegrationTest {
 
     @Test
     void givenNewSlotWithoutCategory_whenPost_thenReturnBadRequest() throws Exception {
-        SlotDto slotWithoutCategory = new SlotDto(null, null, null, 10, null, null);
+        SlotDto slotWithoutCategory = new SlotDto(null, null, 1,null, 10, null, null);
 
         mockMvc.perform(post("/slots")
                         .contentType(MediaType.APPLICATION_JSON)

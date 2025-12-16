@@ -40,6 +40,7 @@ public class SlotRepositoryTest {
     private Slot createTestSlot() {
         Slot slot = new Slot();
         slot.setCode("SLOT001");
+        slot.setPickingSequence(1);
         slot.setAllowedCategory(Category.STANDARD);
         slot.setCapacity(100);
         return slot;

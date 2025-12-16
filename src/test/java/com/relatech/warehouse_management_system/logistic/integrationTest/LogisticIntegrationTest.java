@@ -46,7 +46,7 @@ class LogisticIntegrationTest {
     @Autowired
     private SlotMapper slotMapper;
 
-    private final SlotDto slotDTO = new SlotDto(null, "SLOT001", Category.STANDARD, 100, null, null);
+    private final SlotDto slotDTO = new SlotDto(null, "SLOT001", 1, Category.STANDARD, 100, null, null);
     private final ProductDto productDTO = new ProductDto(null, "PRD-001", "Paracetamolo", Category.STANDARD);
 
     @BeforeEach
