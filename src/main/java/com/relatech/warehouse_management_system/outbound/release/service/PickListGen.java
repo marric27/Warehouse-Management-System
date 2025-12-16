@@ -3,6 +3,7 @@ package com.relatech.warehouse_management_system.outbound.release.service;
 import com.github.f4b6a3.ulid.UlidCreator;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.OrderState;
+import com.relatech.warehouse_management_system.common.util.PickListItemState;
 import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
@@ -62,6 +63,7 @@ public class PickListGen {
 
                 PickListItemDto itemDTO = PickListItemDto.builder()
                         .productCode(productCode)
+                        .state(PickListItemState.OPEN)
                         .quantity(line.getQuantity())
                         .slotCode(slotCode)
                         .salesOrderCode(orderDto.getCode())

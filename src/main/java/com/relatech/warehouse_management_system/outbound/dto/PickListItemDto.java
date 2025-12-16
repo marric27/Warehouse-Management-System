@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.outbound.dto;
 
+import com.relatech.warehouse_management_system.common.util.PickListItemState;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -16,6 +17,9 @@ public class PickListItemDto {
 
     @Schema(description = "SKU or product identifier.")
     private String productCode;
+
+    @Schema(description = "PickListItem status", example = "OPEN")
+    private PickListItemState state;
 
     @Schema(description = "Quantity to be picked.")
     private Integer quantity;

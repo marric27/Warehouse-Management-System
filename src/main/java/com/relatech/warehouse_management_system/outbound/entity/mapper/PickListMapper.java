@@ -24,6 +24,7 @@ public class PickListMapper {
                 PickListItem item = PickListItem.builder()
                         .id(itemDto.getId())
                         .productCode(itemDto.getProductCode())
+                        .state(itemDto.getState())
                         .qty(itemDto.getQuantity())
                         .slotCode(itemDto.getSlotCode())
                         .salesOrderCode(itemDto.getSalesOrderCode())
