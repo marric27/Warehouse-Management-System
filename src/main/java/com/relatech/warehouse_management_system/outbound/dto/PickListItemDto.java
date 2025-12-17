@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.outbound.dto;
 
+import com.relatech.warehouse_management_system.common.util.ErrorReason;
 import com.relatech.warehouse_management_system.common.util.PickListItemState;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -32,6 +33,9 @@ public class PickListItemDto {
 
     @Schema(description = "Picking sequence number of slot where the product is stored.")
     private Integer pickingSequence;
+
+    @Schema(description = "Reason for a picking discrepancy or issue.")
+    private ErrorReason errorReason;
 
     @Schema(description = "Warehouse slot/location where the product is stored.")
     private String slotCode;

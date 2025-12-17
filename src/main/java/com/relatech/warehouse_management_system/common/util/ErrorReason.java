@@ -1,16 +1,25 @@
 package com.relatech.warehouse_management_system.common.util;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@Getter
-@RequiredArgsConstructor
+@Schema(description = "Reason for a picking discrepancy or issue.")
 public enum ErrorReason {
-    MISSING_QTY("Quantità insufficiente"),
-    INVALID_PRICE("Prezzo non valido"),
-    OUT_OF_STOCK("Prodotto non disponibile"),
-    UNAUTHORIZED("Utente non autorizzato"),
-    NOT_FOUND("Risorsa non trovata");
 
-    private final String message;
+    @Schema(description = "Picked quantity is lower than the requested quantity.")
+    MISSING_QTY,
+
+    @Schema(description = "Goods were found damaged during picking.")
+    DAMAGED_GOODS,
+
+    @Schema(description = "Wrong item or SKU was found in the picking location.")
+    WRONG_ITEM,
+
+    @Schema(description = "Goods were expired or not suitable for shipment.")
+    EXPIRED_GOODS,
+
+    @Schema(description = "Picking operation was interrupted or cancelled.")
+    PICKING_ABORTED,
+
+    @Schema(description = "Other unspecified reason.")
+    OTHER
 }

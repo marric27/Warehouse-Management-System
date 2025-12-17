@@ -70,7 +70,7 @@ public class PickingService {
 
         ErrorReason errorReason = resolveErrorReason(request.getErrorReason(), totalPickedQty, pickListItem.getQuantity());
         executePicking(request.getStockUnitQuantities(), stockUnitsByCode, errorReason);
-        updatePickListItem(pickListItem, totalPickedQty);
+        updatePickListItem(pickListItem, totalPickedQty, errorReason);
     }
 
     /* =======================
@@ -149,13 +149,13 @@ public class PickingService {
         }
     }
 
-
-    private void updatePickListItem(PickListItemDto item, int totalPickedQty) throws ResourceNotFoundException {
+    private void updatePickListItem(PickListItemDto item, int totalPickedQty, ErrorReason errorReason) throws ResourceNotFoundException {
 
         if (totalPickedQty == item.getQuantity()) {
             pickListItemService.updateState(item.getCode(), PickListItemState.PICKED);
         } else {
             pickListItemService.updateQuantity(item.getCode(), item.getQuantity() - totalPickedQty);
+            pickListItemService.updateErrorReason(item.getCode(), errorReason);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.relatech.warehouse_management_system.outbound.entity.service;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.util.ErrorReason;
 import com.relatech.warehouse_management_system.common.util.PickListItemState;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.outbound.entity.PickListItem;
@@ -39,5 +40,15 @@ public class PickListItemService {
         return PickListMapper.toItemDto(saved);
     }
 
+    @Transactional(rollbackFor = ResourceNotFoundException.class)
+    public PickListItemDto updateErrorReason(String pickListItemCode, ErrorReason errorReason) throws ResourceNotFoundException {
+        PickListItem existing = pickListItemRepository.findByCode(pickListItemCode)
+                .orElseThrow(() -> new ResourceNotFoundException("PickListItem", pickListItemCode));
 
+
+        existing.setErrorReason(errorReason);
+
+        PickListItem saved = pickListItemRepository.save(existing);
+        return PickListMapper.toItemDto(saved);
+    }
 }
