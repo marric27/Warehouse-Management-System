@@ -97,16 +97,22 @@ public class PickingService {
                 throw new IllegalArgumentException("Quantità non valida per StockUnit " + stockUnitCode);
             } else if (pickedQty > 0 && pickedQty < stockUnitDto.getQuantity()) {
                 log.info("Setto la error reason obbligatoriamente poiche pickedQty < stockunitQty");
-                if(request.getErrorReason() == null) reason = ErrorReason.MISSING_QTY;
+                if (request.getErrorReason() == null) reason = ErrorReason.MISSING_QTY;
                 else reason = request.getErrorReason();
-            } else if (pickedQty == 0) {
+                // creo picking info
+                createPickingInfo(stockUnitDto, reason);
+                log.info("item qty -= qty picked");
+                log.info("item error reason to be set");
+            } else if (pickedQty.equals(stockUnitDto.getQuantity())) {
+                log.info("itemstate = picked");
+                //itemstate = picked;
+                // creo picking info
+                createPickingInfo(stockUnitDto, reason);
+            } else {
                 // pickedQty = 0 non creo picking info
                 log.info("pickedQty = 0 quindi non creo picking info");
                 return;
             }
-
-            // creo picking info
-            createPickingInfo(stockUnitDto, reason);
         }
 
     }
@@ -123,16 +129,6 @@ public class PickingService {
 
         pickingInfoService.create(pickingInfoDto);
         log.info("created pickinginfo {}", pickingInfoDto);
-
-
-        if(errorReason == null) {
-            log.info("itemstate = picked");
-            //itemstate = picked;
-        } else {
-            log.info("item qty -= qty picked");
-            log.info("item error reason to be set");
-        }
-
     }
 
     private void updateStatuses() {
