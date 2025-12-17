@@ -100,14 +100,14 @@ public class PickingService {
                 if (request.getErrorReason() == null) reason = ErrorReason.MISSING_QTY;
                 else reason = request.getErrorReason();
                 // creo picking info
-                createPickingInfo(stockUnitDto, reason);
+                createPickingInfo(stockUnitDto, pickedQty, reason);
                 log.info("item qty -= qty picked");
                 log.info("item error reason to be set");
             } else if (pickedQty.equals(stockUnitDto.getQuantity())) {
                 log.info("itemstate = picked");
                 //itemstate = picked;
                 // creo picking info
-                createPickingInfo(stockUnitDto, reason);
+                createPickingInfo(stockUnitDto, pickedQty, reason);
             } else {
                 // pickedQty = 0 non creo picking info
                 log.info("pickedQty = 0 quindi non creo picking info");
@@ -117,14 +117,14 @@ public class PickingService {
 
     }
 
-    private void createPickingInfo(StockUnitDto stockUnitDto, ErrorReason errorReason) {
+    private void createPickingInfo(StockUnitDto stockUnitDto, Integer pickedQty, ErrorReason errorReason) {
         PickingInfoDto pickingInfoDto = PickingInfoDto.builder()
                 .user("USR-01QWERTY")
                 .timestamp(LocalDate.now())
                 .stockUnitCode(stockUnitDto.getCode())
                 .batchNumber(stockUnitDto.getBatchNumber())
                 .expirationDate(stockUnitDto.getExpirationDate())
-                .quantity(stockUnitDto.getQuantity())// quantita pickata?
+                .quantity(pickedQty)
                 .build();
 
         pickingInfoService.create(pickingInfoDto);
