@@ -55,5 +55,9 @@ public class PickListService {
     }
 
 
-
+    public PickListDto getPickListByCode(String pickListCode) throws ResourceNotFoundException {
+        return pickListRepository.findByCode(pickListCode)
+                .map(PickListMapper::toDto)
+                .orElseThrow(() -> new ResourceNotFoundException("PickList", pickListCode));
+    }
 }

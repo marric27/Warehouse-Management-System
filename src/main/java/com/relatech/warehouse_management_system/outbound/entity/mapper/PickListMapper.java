@@ -23,6 +23,7 @@ public class PickListMapper {
             dto.getPickListItemList().forEach(itemDto -> {
                 PickListItem item = PickListItem.builder()
                         .id(itemDto.getId())
+                        .code(itemDto.getCode())
                         .productCode(itemDto.getProductCode())
                         .state(itemDto.getState())
                         .qty(itemDto.getQuantity())
@@ -64,7 +65,9 @@ public class PickListMapper {
 
         return PickListItemDto.builder()
                 .id(item.getId())
+                .code(item.getCode())
                 .productCode(item.getProductCode())
+                .state(item.getState())
                 .quantity(item.getQty())
                 .pickingSequence(item.getPickingSequence())
                 .slotCode(item.getSlotCode())

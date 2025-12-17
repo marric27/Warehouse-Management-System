@@ -139,4 +139,11 @@ public class SlotServiceImpl implements SlotService {
                 .map(slotMapper::toDto);
     }
 
+    @Override
+    public SlotDto getSlotByCode(String slotCode) throws ResourceNotFoundException {
+        return slotRepository.findByCode(slotCode)
+                .map(slotMapper::toDto)
+                .orElseThrow(() -> new ResourceNotFoundException("Slot", slotCode));
+    }
+
 }

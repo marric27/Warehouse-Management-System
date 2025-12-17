@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.outbound.entity;
 
+import com.github.f4b6a3.ulid.UlidCreator;
 import com.relatech.warehouse_management_system.common.util.PickListItemState;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,6 +17,17 @@ public class PickListItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    String code;
+
+    @PrePersist
+    public void prePersist() {
+        if (code == null) {
+            String ulid = UlidCreator.getUlid().toString();
+            this.code = "PKLI-" + ulid.substring(0, 15).toUpperCase();
+        }
+    }
 
     @Column(nullable = false)
     private String productCode;

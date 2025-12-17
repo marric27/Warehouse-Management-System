@@ -14,6 +14,7 @@ import com.relatech.warehouse_management_system.customer.entity.CustomerDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
+import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.outbound.dto.SalesOrderLineDto;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import org.junit.jupiter.api.Test;
@@ -71,16 +72,16 @@ public class TestComplete {
     }
 
     private <T> T performGet(String url, Class<T> returnType) throws Exception {
-    String response = mockMvc.perform(
-                    get(url)
-                            .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(status().is2xxSuccessful())
-            .andReturn()
-            .getResponse()
-            .getContentAsString();
-    return objectMapper.readValue(response, returnType);
-}
+        String response = mockMvc.perform(
+                        get(url)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().is2xxSuccessful())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        return objectMapper.readValue(response, returnType);
+    }
 
     // =================================================================================
     //  STEP METHODS
@@ -130,6 +131,7 @@ public class TestComplete {
     }
 
     private final Faker faker = new Faker();
+
     private CustomerDto createCustomer(int index) throws Exception {
         CustomerDto customer = new CustomerDto(
                 null,
@@ -161,9 +163,29 @@ public class TestComplete {
         return performPost(
                 "/picklists/release",
                 orderIds,
-                new TypeReference<List<PickListDto>>() {}
+                new TypeReference<List<PickListDto>>() {
+                }
         );
     }
+
+    private PickListItemDto getNextPickingItem(List<Long> pickListIds) throws Exception {
+        String response = mockMvc.perform(
+                        post("/picking/next-item")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(pickListIds))
+                )
+                .andExpect(status().is2xxSuccessful())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        if (response == null || response.isBlank()) {
+            return null;
+        }
+
+        return objectMapper.readValue(response, PickListItemDto.class);
+    }
+
 
     // =================================================================================
     //  MAIN TEST
@@ -265,6 +287,22 @@ public class TestComplete {
             }
             System.out.println("----------------------------------");
         }
+
+        // ===== 8) GET NEXT PICKING ITEM =====
+        List<Long> pickListIds = new ArrayList<>();
+        for (int i = 0; i < picklists.size(); i++) {
+            pickListIds.add((long) (i + 1));
+        }
+
+        System.out.println("\n===== NEXT PICK ITEM =====");
+        for (int i = 0; i < 5; i++) {
+            PickListItemDto item = getNextPickingItem(pickListIds);
+            if (item == null) break;
+
+            System.out.println("NEXT → " + item);
+        }
+
+
     }
 
 }

@@ -1,16 +1,21 @@
 package com.relatech.warehouse_management_system.picking.controller;
 
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.util.ErrorReason;
+import com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.controller.CheckGoodsInController;
+import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
+import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.picking.service.PickingService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/picking")
@@ -30,6 +35,23 @@ public class PickingController {
         }
         log.info("Next item found {}", nextItem);
         return ResponseEntity.ok(nextItem);
+    }
+
+    @PostMapping("/confirm")
+    public void confirmPicking(@RequestBody Request request) throws ResourceNotFoundException {
+        pickingService.confirmPicking(request);
+    }
+
+    /**
+     * Wrapper request DTO: contains
+     */
+    @Getter
+    @Setter
+    public static class Request {
+        private String pickListCode;
+        private String pickListItemCode;
+        private Map<String, Integer> stockUnitQuantities; // stockunit code, quantity
+        private ErrorReason errorReason;
     }
 
 
