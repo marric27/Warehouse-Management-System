@@ -10,7 +10,6 @@ import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListItemService;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListService;
 import com.relatech.warehouse_management_system.picking.controller.PickingController;
-import com.relatech.warehouse_management_system.picking.entity.PickingInfo;
 import com.relatech.warehouse_management_system.picking.entity.PickingInfoDto;
 import com.relatech.warehouse_management_system.picking.entity.service.PickingInfoService;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
@@ -125,9 +124,7 @@ public class PickingService {
                 StockUnitDto suUpdated = stockUnitService.updateQuantity(stockUnitCode, stockUnitDto.getQuantity()-pickedQty);
                 log.info("Updated StockUnit: {}", suUpdated);
             }
-
         }
-
     }
 
     private void createPickingInfo(StockUnitDto stockUnitDto, Integer pickedQty, ErrorReason errorReason) {
@@ -142,9 +139,5 @@ public class PickingService {
 
         pickingInfoService.create(pickingInfoDto);
         log.info("created pickinginfo {}", pickingInfoDto);
-    }
-
-    private void updateStatuses() {
-
     }
 }
