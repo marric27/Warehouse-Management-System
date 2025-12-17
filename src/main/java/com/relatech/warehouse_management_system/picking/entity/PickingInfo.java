@@ -1,15 +1,10 @@
 package com.relatech.warehouse_management_system.picking.entity;
 
-import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
-import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "picking_info")
@@ -24,7 +19,7 @@ public class PickingInfo {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDate timestamp;
+    private LocalDateTime timestamp;
 
     @Column(nullable = false)
     private String user;

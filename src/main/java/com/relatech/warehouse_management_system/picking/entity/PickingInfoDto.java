@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -21,7 +22,7 @@ public class PickingInfoDto {
     private Long id;
 
     @Schema(description = "Timestamp of picking.", example = "2025-01-15")
-    private LocalDate timestamp;
+    private LocalDateTime timestamp;
 
     @Schema(description = "User who picked from stockunit.", example = "USR-01FZ3M7Y8C")
     private String user;

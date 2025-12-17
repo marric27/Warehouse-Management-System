@@ -54,7 +54,7 @@ public class PickListService {
         return result.stream().map(PickListMapper::toItemDto).toList();
     }
 
-
+    @Transactional(readOnly = true)
     public PickListDto getPickListByCode(String pickListCode) throws ResourceNotFoundException {
         return pickListRepository.findByCode(pickListCode)
                 .map(PickListMapper::toDto)

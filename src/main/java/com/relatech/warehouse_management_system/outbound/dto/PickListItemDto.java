@@ -2,6 +2,7 @@ package com.relatech.warehouse_management_system.outbound.dto;
 
 import com.relatech.warehouse_management_system.common.util.PickListItemState;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Getter
@@ -26,6 +27,7 @@ public class PickListItemDto {
     private PickListItemState state;
 
     @Schema(description = "Quantity to be picked.")
+    @Min(value = 0, message = "Quantity must be greater than or equal to 0")
     private Integer quantity;
 
     @Schema(description = "Picking sequence number of slot where the product is stored.")

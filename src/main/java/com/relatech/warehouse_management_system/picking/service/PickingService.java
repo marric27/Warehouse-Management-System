@@ -7,6 +7,7 @@ import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
 import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
+import com.relatech.warehouse_management_system.outbound.entity.service.PickListItemService;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListService;
 import com.relatech.warehouse_management_system.picking.controller.PickingController;
 import com.relatech.warehouse_management_system.picking.entity.PickingInfo;
@@ -19,8 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +33,10 @@ import java.util.Map;
 public class PickingService {
 
     private final PickListService pickListService;
+    private final PickListItemService pickListItemService;
     private final SlotService slotService;
-    private final StockUnitService stockUnitService;
     private final PickingInfoService pickingInfoService;
+    private final StockUnitService stockUnitService;
 
 
     public PickListItemDto getNextPickListItem(List<Long> plIds) {
@@ -59,11 +62,10 @@ public class PickingService {
         log.info("Creazione Picking info per stock unit(qty): {}", request.getStockUnitQuantities());
         check(request);
 
-        log.info("Aggiorno tutti gli stati");
-        updateStatuses();
 
     }
 
+    @Transactional
     public void check(PickingController.Request request) throws ResourceNotFoundException {
         String pickListCode = request.getPickListCode();
         String pickListItemCode = request.getPickListItemCode();
@@ -79,6 +81,10 @@ public class PickingService {
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("PickListItem", pickListItemCode));
 
+        if (pickListItemDto.getState() != PickListItemState.OPEN) {
+            throw new IllegalStateException("Lo stato del PickListItem non è OPEN: " + pickListItemDto.getState());
+        }
+
         // controlla se esiste e si trova in pli
         SlotDto slotDto = slotService.getSlotByCode(pickListItemDto.getSlotCode());
 
@@ -93,26 +99,33 @@ public class PickingService {
                     .findFirst()
                     .orElseThrow(() -> new ResourceNotFoundException("StockUnit", stockUnitCode));
 
-            if (pickedQty < 0 || pickedQty > stockUnitDto.getQuantity()) {
+            if (pickedQty < 0 || pickedQty > pickListItemDto.getQuantity() || pickedQty > stockUnitDto.getQuantity()) {
                 throw new IllegalArgumentException("Quantità non valida per StockUnit " + stockUnitCode);
-            } else if (pickedQty > 0 && pickedQty < stockUnitDto.getQuantity()) {
-                log.info("Setto la error reason obbligatoriamente poiche pickedQty < stockunitQty");
-                if (request.getErrorReason() == null) reason = ErrorReason.MISSING_QTY;
-                else reason = request.getErrorReason();
-                // creo picking info
-                createPickingInfo(stockUnitDto, pickedQty, reason);
-                log.info("item qty -= qty picked");
-                log.info("item error reason to be set");
-            } else if (pickedQty.equals(stockUnitDto.getQuantity())) {
-                log.info("itemstate = picked");
-                //itemstate = picked;
-                // creo picking info
-                createPickingInfo(stockUnitDto, pickedQty, reason);
-            } else {
-                // pickedQty = 0 non creo picking info
+            }
+            else if(pickedQty == 0) {
                 log.info("pickedQty = 0 quindi non creo picking info");
                 return;
+            } else if (pickedQty < pickListItemDto.getQuantity()) {
+                log.info("Setto la error reason obbligatoriamente poiche pickedQty < pickListItemDtoqty");
+                if (request.getErrorReason() == null) reason = ErrorReason.MISSING_QTY;
+                else reason = request.getErrorReason();
+                createPickingInfo(stockUnitDto, pickedQty, reason);
+
+                Integer newQty = pickListItemDto.getQuantity()-pickedQty;
+                log.info("Update pickListItem {} qty to {}", pickListItemCode, newQty);
+                PickListItemDto updated = pickListItemService.updateQuantity(pickListItemCode, newQty);
+                log.info("Updated pickListItem:: {}", updated);
+                StockUnitDto suUpdated = stockUnitService.updateQuantity(stockUnitCode, stockUnitDto.getQuantity()-pickedQty);
+                log.info("Updated StockUnit:: {}", suUpdated);
+            } else {
+                createPickingInfo(stockUnitDto, pickedQty, reason);
+                log.info("Update pickListItem {} state to {}", pickListItemCode, PickListItemState.PICKED);
+                PickListItemDto updated = pickListItemService.updateState(pickListItemCode, PickListItemState.PICKED);
+                log.info("Updated pickListItem: {}", updated);
+                StockUnitDto suUpdated = stockUnitService.updateQuantity(stockUnitCode, stockUnitDto.getQuantity()-pickedQty);
+                log.info("Updated StockUnit: {}", suUpdated);
             }
+
         }
 
     }
@@ -120,7 +133,7 @@ public class PickingService {
     private void createPickingInfo(StockUnitDto stockUnitDto, Integer pickedQty, ErrorReason errorReason) {
         PickingInfoDto pickingInfoDto = PickingInfoDto.builder()
                 .user("USR-01QWERTY")
-                .timestamp(LocalDate.now())
+                .timestamp(LocalDateTime.now())
                 .stockUnitCode(stockUnitDto.getCode())
                 .batchNumber(stockUnitDto.getBatchNumber())
                 .expirationDate(stockUnitDto.getExpirationDate())
