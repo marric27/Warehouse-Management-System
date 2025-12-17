@@ -2,14 +2,12 @@ package com.relatech.warehouse_management_system.picking.controller;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.ErrorReason;
-import com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.controller.CheckGoodsInController;
-import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
-import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.picking.service.PickingService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +45,7 @@ public class PickingController {
      */
     @Getter
     @Setter
+    @ToString
     public static class Request {
         private String pickListCode;
         private String pickListItemCode;

@@ -10,6 +10,7 @@ import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListItemService;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListService;
 import com.relatech.warehouse_management_system.picking.controller.PickingController;
+import com.relatech.warehouse_management_system.picking.entity.PickingInfo;
 import com.relatech.warehouse_management_system.picking.entity.PickingInfoDto;
 import com.relatech.warehouse_management_system.picking.entity.service.PickingInfoService;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
@@ -24,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -37,97 +38,129 @@ public class PickingService {
     private final PickingInfoService pickingInfoService;
     private final StockUnitService stockUnitService;
 
-
     public PickListItemDto getNextPickListItem(List<Long> plIds) {
-        if (plIds == null || plIds.isEmpty()) {
-            return null;
-        }
-        Pageable limitOne = PageRequest.of(0, 1); // get first result
-        List<PickListItemDto> result = pickListService.findOpenItemsOrdered(plIds, PickListItemState.OPEN, limitOne);
+        if (plIds == null || plIds.isEmpty()) return null;
 
-        if (result.isEmpty()) {
-            log.info("Nessun PickListItem OPEN trovato");
-            return null;
-        }
-
-        return result.getFirst();
+        Pageable limitOne = PageRequest.of(0, 1);
+        return pickListService
+                .findOpenItemsOrdered(plIds, PickListItemState.OPEN, limitOne)
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 
-
     public void confirmPicking(PickingController.Request request) throws ResourceNotFoundException {
-
-        // controlli e creazione pickinginfo
-        log.info("Faccio tutti i controlli");
-        log.info("Creazione Picking info per stock unit(qty): {}", request.getStockUnitQuantities());
+        log.info("Confirm picking: {}", request);
         check(request);
-
-
     }
 
     @Transactional
     public void check(PickingController.Request request) throws ResourceNotFoundException {
-        String pickListCode = request.getPickListCode();
-        String pickListItemCode = request.getPickListItemCode();
-        Map<String, Integer> stockUnitQuantities = request.getStockUnitQuantities();
-        ErrorReason reason = null;
 
-        // controlla se pl esiste
+        PickListItemDto pickListItem = loadPickListItem(request.getPickListCode(), request.getPickListItemCode());
+        SlotDto slot = slotService.getSlotByCode(pickListItem.getSlotCode());
+        Map<String, StockUnitDto> stockUnitsByCode = mapStockUnitsByCode(slot.getStockUnits());
+
+        int totalPickedQty = validatePicking(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem.getQuantity());
+
+        if (totalPickedQty == 0) {
+            log.info("Nessuna quantità pickata");
+            return;
+        }
+
+        ErrorReason errorReason = resolveErrorReason(request.getErrorReason(), totalPickedQty, pickListItem.getQuantity());
+        executePicking(request.getStockUnitQuantities(), stockUnitsByCode, errorReason);
+        updatePickListItem(pickListItem, totalPickedQty);
+    }
+
+    /* =======================
+       METODI PRIVATI
+       ======================= */
+
+    private PickListItemDto loadPickListItem(String pickListCode, String pickListItemCode) throws ResourceNotFoundException {
+
         PickListDto pickList = pickListService.getPickListByCode(pickListCode);
-        // implicitamente controlla se pli si trova in pl
-        PickListItemDto pickListItemDto = pickList.getPickListItemList()
-                .stream()
-                .filter(item -> item.getCode().equals(pickListItemCode))
+
+        PickListItemDto item = pickList.getPickListItemList().stream()
+                .filter(i -> i.getCode().equals(pickListItemCode))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("PickListItem", pickListItemCode));
 
-        if (pickListItemDto.getState() != PickListItemState.OPEN) {
-            throw new IllegalStateException("Lo stato del PickListItem non è OPEN: " + pickListItemDto.getState());
+        if (item.getState() != PickListItemState.OPEN) {
+            throw new IllegalStateException("PickListItem non OPEN: " + item.getState());
+        }
+        return item;
+    }
+
+    private Map<String, StockUnitDto> mapStockUnitsByCode(List<StockUnitDto> stockUnits) {
+        return stockUnits.stream().collect(Collectors.toMap(StockUnitDto::getCode, su -> su));
+    }
+
+    private int validatePicking(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, int requiredQty) throws ResourceNotFoundException {
+
+        int totalPicked = 0;
+
+        for (Map.Entry<String, Integer> entry : requested.entrySet()) {
+
+            String code = entry.getKey();
+            Integer qty = entry.getValue();
+
+            if (qty == null || qty < 0) {
+                throw new IllegalArgumentException("Quantità non valida per StockUnit " + code);
+            }
+
+            StockUnitDto su = stockUnits.get(code);
+            if (su == null) {
+                throw new ResourceNotFoundException("StockUnit", code);
+            }
+
+            if (qty > su.getQuantity()) {
+                throw new IllegalArgumentException("Quantità richiesta > disponibile per " + code);
+            }
+
+            totalPicked += qty;
         }
 
-        // controlla se esiste e si trova in pli
-        SlotDto slotDto = slotService.getSlotByCode(pickListItemDto.getSlotCode());
+        if (totalPicked > requiredQty) {
+            throw new IllegalArgumentException("Quantità totale pickata (" + totalPicked + ") > richiesta (" + requiredQty + ")");
+        }
+        return totalPicked;
+    }
 
-        // stockunit in slot
-        for (Map.Entry<String, Integer> entry : stockUnitQuantities.entrySet()) {
+    private ErrorReason resolveErrorReason(ErrorReason requestReason, int pickedQty, int requiredQty) {
+        if (pickedQty < requiredQty && requestReason == null) {
+            return ErrorReason.MISSING_QTY;
+        }
+        return requestReason;
+    }
 
-            String stockUnitCode = entry.getKey();
-            Integer pickedQty = entry.getValue();
+    private void executePicking(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, ErrorReason errorReason)
+            throws ResourceNotFoundException {
 
-            StockUnitDto stockUnitDto = slotDto.getStockUnits().stream()
-                    .filter(su -> su.getCode().equals(stockUnitCode))
-                    .findFirst()
-                    .orElseThrow(() -> new ResourceNotFoundException("StockUnit", stockUnitCode));
+        for (Map.Entry<String, Integer> entry : requested.entrySet()) {
+            String code = entry.getKey();
+            Integer qty = entry.getValue();
 
-            if (pickedQty < 0 || pickedQty > pickListItemDto.getQuantity() || pickedQty > stockUnitDto.getQuantity()) {
-                throw new IllegalArgumentException("Quantità non valida per StockUnit " + stockUnitCode);
-            }
-            else if(pickedQty == 0) {
-                log.info("pickedQty = 0 quindi non creo picking info");
-                return;
-            } else if (pickedQty < pickListItemDto.getQuantity()) {
-                log.info("Setto la error reason obbligatoriamente poiche pickedQty < pickListItemDtoqty");
-                if (request.getErrorReason() == null) reason = ErrorReason.MISSING_QTY;
-                else reason = request.getErrorReason();
-                createPickingInfo(stockUnitDto, pickedQty, reason);
+            if (qty == 0) continue;
 
-                Integer newQty = pickListItemDto.getQuantity()-pickedQty;
-                log.info("Update pickListItem {} qty to {}", pickListItemCode, newQty);
-                PickListItemDto updated = pickListItemService.updateQuantity(pickListItemCode, newQty);
-                log.info("Updated pickListItem:: {}", updated);
-                StockUnitDto suUpdated = stockUnitService.updateQuantity(stockUnitCode, stockUnitDto.getQuantity()-pickedQty);
-                log.info("Updated StockUnit:: {}", suUpdated);
-            } else {
-                createPickingInfo(stockUnitDto, pickedQty, reason);
-                log.info("Update pickListItem {} state to {}", pickListItemCode, PickListItemState.PICKED);
-                PickListItemDto updated = pickListItemService.updateState(pickListItemCode, PickListItemState.PICKED);
-                log.info("Updated pickListItem: {}", updated);
-                StockUnitDto suUpdated = stockUnitService.updateQuantity(stockUnitCode, stockUnitDto.getQuantity()-pickedQty);
-                log.info("Updated StockUnit: {}", suUpdated);
-            }
+            StockUnitDto su = stockUnits.get(code);
+            createPickingInfo(su, qty, errorReason);
+            stockUnitService.updateQuantity(code, su.getQuantity() - qty);
+        }
+    }
+
+
+    private void updatePickListItem(PickListItemDto item, int totalPickedQty) throws ResourceNotFoundException {
+
+        if (totalPickedQty == item.getQuantity()) {
+            pickListItemService.updateState(item.getCode(), PickListItemState.PICKED);
+        } else {
+            pickListItemService.updateQuantity(item.getCode(), item.getQuantity() - totalPickedQty);
         }
     }
 
     private void createPickingInfo(StockUnitDto stockUnitDto, Integer pickedQty, ErrorReason errorReason) {
+
         PickingInfoDto pickingInfoDto = PickingInfoDto.builder()
                 .user("USR-01QWERTY")
                 .timestamp(LocalDateTime.now())
@@ -137,7 +170,7 @@ public class PickingService {
                 .quantity(pickedQty)
                 .build();
 
-        pickingInfoService.create(pickingInfoDto);
-        log.info("created pickinginfo {}", pickingInfoDto);
+        PickingInfoDto created = pickingInfoService.create(pickingInfoDto);
+        log.info("Created picking info: {}", created);
     }
 }
