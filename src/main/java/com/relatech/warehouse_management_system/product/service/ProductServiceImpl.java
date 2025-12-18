@@ -86,4 +86,12 @@ public class ProductServiceImpl implements ProductService {
                 .stream()
                 .map(ProductMapper::toDto).toList();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateProductExists(String productCode) throws ResourceNotFoundException {
+        if (!productRepository.existsByCode(productCode)) {
+            throw new ResourceNotFoundException("Product", productCode);
+        }
+    }
 }

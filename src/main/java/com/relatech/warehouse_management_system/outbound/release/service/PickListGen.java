@@ -88,43 +88,4 @@ public class PickListGen {
 
         return result;
     }
-
-
-    @Transactional
-    public PickListDto generatePickList(Long orderId) throws ResourceNotFoundException {
-
-        OrderDto orderDto = orderService.getOrderById(orderId);
-
-        PickListDto pickListDTO = PickListDto.builder()
-                .customerCode(orderDto.getCustomerCode())
-                .build();
-
-        for (SalesOrderLineDto line : orderDto.getSalesOrderLineList()) {
-
-            String productCode = String.valueOf(line.getProductCode());
-            String slotCode = slotService.getSlotContainingProduct(line.getProductCode(), line.getQuantity())
-                    .orElseThrow(() -> new RuntimeException("No slot found for product " + line.getProductCode() + " with required quantity " + line.getQuantity()))
-                    .getCode();
-
-            PickListItemDto itemDTO = PickListItemDto.builder()
-                    .productCode(productCode)
-                    .quantity(line.getQuantity())
-                    .slotCode(slotCode)
-                    .salesOrderCode(orderDto.getCode())
-                    .salesOrderLineNumber(line.getSalesOrderLineNumber())
-                    .build();
-
-            pickListDTO.getPickListItemList().add(itemDTO);
-        }
-
-        PickList pickListEntity = PickListMapper.toEntity(pickListDTO);
-
-        log.info("Generated PickListEntity with {} items for order {}",
-                pickListEntity.getPickListItemList().size(),
-                orderDto.getCode());
-
-        pickListService.create(pickListDTO);
-
-        return PickListMapper.toDto(pickListEntity);
-    }
 }

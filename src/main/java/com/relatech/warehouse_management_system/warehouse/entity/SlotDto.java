@@ -23,6 +23,7 @@ public class SlotDto {
     @Schema(description = "Unique code of the slot", example = "SLOT-001", accessMode = Schema.AccessMode.READ_ONLY)
     private String code;
 
+    @NotNull(message = "The picking sequence cannot be null.")
     @Schema(description = "Code of the slot indicating picking sequence", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Integer pickingSequence;
 

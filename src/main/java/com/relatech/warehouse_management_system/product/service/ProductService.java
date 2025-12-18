@@ -17,4 +17,6 @@ public interface ProductService {
     List<ProductDto> getAllProducts();
     Page<ProductDto> getAllProductsPaged(Pageable pageable);
     List<ProductDto> getAllProductByProductCategory(Category category);
+
+    void validateProductExists(String productCode) throws ResourceNotFoundException;
 }

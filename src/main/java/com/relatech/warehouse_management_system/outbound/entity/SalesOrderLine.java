@@ -22,7 +22,7 @@ public class SalesOrderLine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "sales_order_line_number", nullable = false) //TODO intero progressivo
+    @Column(name = "sales_order_line_number", nullable = false)
     private Integer salesOrderLineNumber;
 
     @Column(name = "product_code", nullable = false)

@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.goodsIn.receiving.service;
 
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
@@ -7,6 +8,7 @@ import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemSe
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
 import com.relatech.warehouse_management_system.goodsIn.exception.*;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
+import com.relatech.warehouse_management_system.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,7 @@ public class ReceivingService {
     private final GrnService grnService;
     private final GrnItemService grnItemService;
     private final GrnItemStateService stateService;
+    private final ProductService productService;
 
     // CREATE GRN
     @Transactional(rollbackFor = {Exception.class})
@@ -37,13 +40,17 @@ public class ReceivingService {
 
     // CREATE ITEM AND ASSIGN TO GRN BY ID
     @Transactional(rollbackFor = {Exception.class})
-    public GrnItemDto createItem(Long grnId, GrnItemDto item) throws GrnNotFoundException, CannotAssignItemToGrnClosedException, InvalidQuantityException, QuantityMismatchException, OverReceivedQuantityException, GrnItemNotFoundException {
+    public GrnItemDto createItem(Long grnId, GrnItemDto item) throws GrnNotFoundException, CannotAssignItemToGrnClosedException, InvalidQuantityException, QuantityMismatchException, OverReceivedQuantityException, GrnItemNotFoundException, ResourceNotFoundException {
         if(grnService.getGRNById(grnId) == null) throw new GrnNotFoundException(grnId);
         if(stateService.checkGrnIfClosed(grnId))
             throw new CannotAssignItemToGrnClosedException(grnId);
+
+        productService.validateProductExists(item.getProductCode());
+
         stateService.validateItemQuantities(item);
 
         item.setGrnId(grnId);
+        item.setState(State.OPEN);
         GrnItemDto saved = grnItemService.createGrnItem(item);
 
         stateService.evaluateAndProgressItemState(saved);

@@ -16,6 +16,7 @@ import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.outbound.dto.SalesOrderLineDto;
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +45,9 @@ public class TestComplete {
     //  DEFAULT GENERIC POST METHOD
     // =================================================================================
     private <T> T performPost(String url, Object body, Class<T> returnType) throws Exception {
-        String response = mockMvc.perform(
-                        post(url)
+        String response = mockMvc.perform(post(url)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(body))
-                )
+                                .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse()
@@ -58,11 +57,9 @@ public class TestComplete {
     }
 
     private <T> T performPost(String url, Object body, TypeReference<T> typeRef) throws Exception {
-        String response = mockMvc.perform(
-                        post(url)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(body))
-                )
+        String response = mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse()
@@ -72,10 +69,7 @@ public class TestComplete {
     }
 
     private <T> T performGet(String url, Class<T> returnType) throws Exception {
-        String response = mockMvc.perform(
-                        get(url)
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
+        String response = mockMvc.perform(get(url).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse()
@@ -86,6 +80,15 @@ public class TestComplete {
     // =================================================================================
     //  STEP METHODS
     // =================================================================================
+    private ProductDto createProduct(String productCode) throws Exception {
+        ProductDto product = new ProductDto();
+        product.setCode(productCode);
+        product.setName("Product " + productCode);
+        product.setCategory(Category.STANDARD);
+
+        return performPost("/products", product, ProductDto.class);
+    }
+
 
     private SlotDto createSlot() throws Exception {
         SlotDto slot = new SlotDto(null, null, 1, Category.STANDARD, 100, null, null);
@@ -153,24 +156,19 @@ public class TestComplete {
                 .status(OrderState.OPEN)
                 .build();
 
-        OrderDto order =
-                new OrderDto(null, null, LocalDate.now(), customer.getCustomerCode(), OrderState.OPEN, List.of(line));
+        OrderDto order = new OrderDto(null, null, LocalDate.now(), customer.getCustomerCode(), OrderState.OPEN, List.of(line));
 
         return performPost("/sales-order/create-order/" + customer.getId(), order, OrderDto.class);
     }
 
     private List<PickListDto> generatePicklist(List<Long> orderIds) throws Exception {
-        return performPost(
-                "/picklists/release",
-                orderIds,
-                new TypeReference<List<PickListDto>>() {
+        return performPost("/picklists/release", orderIds, new TypeReference<List<PickListDto>>() {
                 }
         );
     }
 
     private PickListItemDto getNextPickingItem(List<Long> pickListIds) throws Exception {
-        String response = mockMvc.perform(
-                        post("/picking/next-item")
+        String response = mockMvc.perform(post("/picking/next-item")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(pickListIds))
                 )
@@ -179,7 +177,7 @@ public class TestComplete {
                 .getResponse()
                 .getContentAsString();
 
-        if (response == null || response.isBlank()) {
+        if (response.isBlank()) {
             return null;
         }
 
@@ -193,23 +191,31 @@ public class TestComplete {
 
     @Test
     void completeTest() throws Exception {
+        // ===== 0) CREATE PRODUCTS =====
+        List<String> products = new ArrayList<>();
+
+        for (int i = 1; i <= 10; i++) {
+            String productCode = "PRD-" + String.format("%03d", i);
+            products.add(productCode);
+            createProduct(productCode);
+        }
+
         // ===== 1) CREATE SLOTS =====
         List<SlotDto> slots = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            slots.add(createSlot());
+        for (int i = 0; i < 1; i++) {
+            slots.add(createSlot());// creo una slot per facilitare il test
         }
 
         // ===== 2) CREATE GRNs =====
         List<GrnDto> grns = new ArrayList<>();
-        List<String> products = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             GrnDto grn = createGrn();
 
             // Genera 2-3 prodotti diversi per ogni GRN
             for (int j = 0; j < 2 + faker.random().nextInt(5); j++) {
-                String productCode = "PRD-" + String.format("%03d", faker.number().numberBetween(1, 10));
-                products.add(productCode);
+                String productCode = products.get(faker.random().nextInt(products.size()));
                 createGrnItem(grn.getId(), productCode);
+
             }
 
             // Ricarica il GRN completo con i suoi items
@@ -223,8 +229,7 @@ public class TestComplete {
                 GrnItemDto updated = checkGoodsIn(item.getId(), item.getProductCode());
                 // PUTAWAY nel primo slot disponibile
                 for (CheckingInfoDto checkingInfo : updated.getCheckingInfoList()) {
-                    performPost(
-                            "/putaway/" + checkingInfo.getId() + "/assignToSlot/" + slots.get(faker.random().nextInt(slots.size())).getId(),
+                    performPost("/putaway/" + checkingInfo.getId() + "/assignToSlot/" + slots.get(0).getId(),
                             null,
                             GrnItemDto.class
                     );
@@ -301,7 +306,6 @@ public class TestComplete {
 
             System.out.println("NEXT → " + item);
         }
-
 
     }
 

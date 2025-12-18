@@ -7,8 +7,9 @@ import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemSe
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
 import com.relatech.warehouse_management_system.goodsIn.exception.*;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
-
 import com.relatech.warehouse_management_system.goodsIn.receiving.service.ReceivingService;
+import com.relatech.warehouse_management_system.product.service.ProductService;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,10 +29,14 @@ class ReceivingServiceTest {
     @Mock private GrnService grnService;
     @Mock private GrnItemService grnItemService;
     @Mock private GrnItemStateService stateService;
+    @Mock private ProductService productService;
 
     @InjectMocks
     private ReceivingService receivingService;
 
+    // -------------------------
+    // GRN Tests
+    // -------------------------
     @Test
     void createGRN_success() {
         GrnDto dto = new GrnDto();
@@ -81,6 +86,9 @@ class ReceivingServiceTest {
         assertEquals(1, result.getTotalElements());
     }
 
+    // -------------------------
+    // GRN Item Tests
+    // -------------------------
     @Test
     void listGrnItems_returnsList() {
         when(grnItemService.getAllGrnItems()).thenReturn(List.of(new GrnItemDto()));
@@ -102,36 +110,37 @@ class ReceivingServiceTest {
         assertEquals(1, result.getTotalElements());
     }
 
+    // -------------------------
+    // CREATE ITEM Tests
+    // -------------------------
     @Test
-    void createItem_throwsGrnNotFound() throws Exception {
+    void createItem_throwsGrnNotFound() throws GrnNotFoundException {
         when(grnService.getGRNById(10L)).thenReturn(null);
 
-        assertThrows(GrnNotFoundException.class, () -> {
-            receivingService.createItem(10L, new GrnItemDto());
-        });
+        assertThrows(GrnNotFoundException.class, () -> receivingService.createItem(10L, new GrnItemDto()));
     }
 
     @Test
-    void createItem_throwsGrnClosed() throws Exception {
+    void createItem_throwsGrnClosed() throws GrnNotFoundException {
         when(grnService.getGRNById(10L)).thenReturn(new GrnDto());
         when(stateService.checkGrnIfClosed(10L)).thenReturn(true);
 
-        assertThrows(CannotAssignItemToGrnClosedException.class, () -> {
-            receivingService.createItem(10L, new GrnItemDto());
-        });
+        assertThrows(CannotAssignItemToGrnClosedException.class, () -> receivingService.createItem(10L, new GrnItemDto()));
     }
 
     @Test
     void createItem_success() throws Exception {
         GrnItemDto item = new GrnItemDto();
+        item.setProductCode("P001"); // necessario per validateProductExists
         GrnItemDto savedItem = new GrnItemDto();
         savedItem.setId(1L);
 
         when(grnService.getGRNById(5L)).thenReturn(new GrnDto());
         when(stateService.checkGrnIfClosed(5L)).thenReturn(false);
         doNothing().when(stateService).validateItemQuantities(any());
-        when(grnItemService.createGrnItem(any())).thenReturn(savedItem);
         doNothing().when(stateService).evaluateAndProgressItemState(savedItem);
+        when(grnItemService.createGrnItem(any())).thenReturn(savedItem);
+        doNothing().when(productService).validateProductExists(anyString());
 
         GrnItemDto result = receivingService.createItem(5L, item);
 
@@ -139,6 +148,81 @@ class ReceivingServiceTest {
         assertEquals(5L, item.getGrnId());
     }
 
+    @Test
+    void createItem_invalidQuantity_throws() throws Exception {
+        GrnItemDto item = new GrnItemDto();
+        item.setProductCode("P002");
+
+        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
+        when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
+        doThrow(new QuantityMismatchException("mismatch")).when(stateService).validateItemQuantities(item);
+        doNothing().when(productService).validateProductExists(anyString());
+
+        assertThrows(QuantityMismatchException.class, () -> receivingService.createItem(1L, item));
+    }
+
+    @Test
+    void createItem_expectedQtyZero_throwsInvalidQuantity() throws Exception {
+        GrnItemDto item = new GrnItemDto();
+        item.setProductCode("P003");
+        item.setExpectedQty(0);
+        item.setReceivedQty(0);
+
+        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
+        when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
+        doThrow(new InvalidQuantityException("Expected qty must be > 0")).when(stateService).validateItemQuantities(item);
+        doNothing().when(productService).validateProductExists(anyString());
+
+        assertThrows(InvalidQuantityException.class, () -> receivingService.createItem(1L, item));
+    }
+
+    @Test
+    void createItem_receivedGreaterThanExpected_throwsOverReceived() throws Exception {
+        GrnItemDto item = new GrnItemDto();
+        item.setProductCode("P004");
+        item.setExpectedQty(10);
+        item.setReceivedQty(15);
+
+        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
+        when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
+        doThrow(new OverReceivedQuantityException("Over-received: expected=10 received=15")).when(stateService).validateItemQuantities(item);
+        doNothing().when(productService).validateProductExists(anyString());
+
+        assertThrows(OverReceivedQuantityException.class, () -> receivingService.createItem(1L, item));
+    }
+
+    @Test
+    void createItem_nullFields_throwsException() throws Exception {
+        GrnItemDto item = new GrnItemDto();
+        item.setProductCode("P005");
+
+        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
+        when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
+        doThrow(new NullPointerException("Quantities cannot be null")).when(stateService).validateItemQuantities(item);
+        doNothing().when(productService).validateProductExists(anyString());
+
+        assertThrows(NullPointerException.class, () -> receivingService.createItem(1L, item));
+    }
+
+    @Test
+    void createItem_malformedItem_throwsException() throws Exception {
+        GrnItemDto item = new GrnItemDto();
+        item.setProductCode("P006");
+        item.setExpectedQty(-5);
+        item.setReceivedQty(-1);
+        item.setCheckingInfoList(null);
+
+        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
+        when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
+        doThrow(new InvalidQuantityException("Quantities cannot be negative")).when(stateService).validateItemQuantities(item);
+        doNothing().when(productService).validateProductExists(anyString());
+
+        assertThrows(InvalidQuantityException.class, () -> receivingService.createItem(1L, item));
+    }
+
+    // -------------------------
+    // UPDATE ITEM Tests
+    // -------------------------
     @Test
     void updateItem_success() throws Exception {
         GrnItemDto existing = new GrnItemDto();
@@ -155,6 +239,8 @@ class ReceivingServiceTest {
 
         when(grnItemService.getGrnItemById(1L)).thenReturn(existing);
         when(grnItemService.updateGrnItem(anyLong(), any())).thenReturn(existing);
+        doNothing().when(stateService).validateItemQuantities(existing);
+        doNothing().when(stateService).evaluateAndProgressItemState(existing);
 
         GrnItemDto result = receivingService.updateItem(1L, update);
 
@@ -162,98 +248,5 @@ class ReceivingServiceTest {
         assertEquals(10, result.getReceivedQty());
         verify(stateService).validateItemQuantities(existing);
         verify(stateService).evaluateAndProgressItemState(existing);
-    }
-
-    @Test
-    void createItem_invalidQuantity_throws() throws Exception {
-        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
-        when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
-
-        GrnItemDto item = new GrnItemDto();
-
-        // simuliamo eccezione QuantityMismatch
-        doThrow(new QuantityMismatchException("mismatch"))
-                .when(stateService).validateItemQuantities(item);
-
-        assertThrows(QuantityMismatchException.class,
-                () -> receivingService.createItem(1L, item));
-    }
-
-    @Test
-    void createItem_expectedQtyZero_throwsInvalidQuantity() throws Exception {
-        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
-        when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
-
-        GrnItemDto item = new GrnItemDto();
-        item.setExpectedQty(0);
-        item.setReceivedQty(0);
-        item.setCompliantQty(0);
-        item.setNotCompliantQty(0);
-
-        doThrow(new InvalidQuantityException("Expected qty must be > 0"))
-                .when(stateService).validateItemQuantities(item);
-
-        assertThrows(InvalidQuantityException.class,
-                () -> receivingService.createItem(1L, item));
-    }
-
-    // -----------------------------------------------------
-    // Edge case: receivedQty > expectedQty
-    // -----------------------------------------------------
-    @Test
-    void createItem_receivedGreaterThanExpected_throwsOverReceived() throws Exception {
-        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
-        when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
-
-        GrnItemDto item = new GrnItemDto();
-        item.setExpectedQty(10);
-        item.setReceivedQty(15);
-        item.setCompliantQty(15);
-        item.setNotCompliantQty(0);
-
-        doThrow(new OverReceivedQuantityException("Over-received: expected=10 received=15"))
-                .when(stateService).validateItemQuantities(item);
-
-        assertThrows(OverReceivedQuantityException.class,
-                () -> receivingService.createItem(1L, item));
-    }
-
-    // -----------------------------------------------------
-    // Null fields: item senza receivedQty/compliantQty
-    // -----------------------------------------------------
-    @Test
-    void createItem_nullFields_throwsException() throws Exception {
-        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
-        when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
-
-        GrnItemDto item = new GrnItemDto();
-        // tutte quantità null → simulate validateItemQuantities che lancia NullPointerException
-        doThrow(new NullPointerException("Quantities cannot be null"))
-                .when(stateService).validateItemQuantities(item);
-
-        assertThrows(NullPointerException.class,
-                () -> receivingService.createItem(1L, item));
-    }
-
-    // -----------------------------------------------------
-    // Malformed object: liste null o valori negativi
-    // -----------------------------------------------------
-    @Test
-    void createItem_malformedItem_throwsException() throws Exception {
-        when(grnService.getGRNById(1L)).thenReturn(new GrnDto());
-        when(stateService.checkGrnIfClosed(1L)).thenReturn(false);
-
-        GrnItemDto item = new GrnItemDto();
-        item.setExpectedQty(-5);
-        item.setReceivedQty(-1);
-        item.setCompliantQty(-1);
-        item.setNotCompliantQty(-1);
-        item.setCheckingInfoList(null); // lista null
-
-        doThrow(new InvalidQuantityException("Quantities cannot be negative"))
-                .when(stateService).validateItemQuantities(item);
-
-        assertThrows(InvalidQuantityException.class,
-                () -> receivingService.createItem(1L, item));
     }
 }

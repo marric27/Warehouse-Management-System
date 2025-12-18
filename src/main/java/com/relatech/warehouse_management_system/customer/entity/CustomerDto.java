@@ -22,7 +22,6 @@ public class CustomerDto {
     @NotBlank(message = "Surname must not be blank")
     private String surname;
 
-
     @NotBlank(message = "Shipping address must not be blank")
     private String shippingAddress;
 

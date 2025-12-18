@@ -30,11 +30,9 @@ public class CheckingInfoDto {
     @Schema(description = "Expiration date of the batch", example = "2025-12-31")
     private LocalDate expirationDate;
 
-    @NotNull(message = "Quantity is required")
     @Schema(description = "Quantity of products in this batch", example = "150")
     private Integer quantity;
 
-    @NotNull(message = "State is required")
     @Schema(description = "State of the checking info", example = "OPEN")
     private State state;
 
