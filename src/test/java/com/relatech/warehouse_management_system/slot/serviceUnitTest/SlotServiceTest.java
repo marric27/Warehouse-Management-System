@@ -51,7 +51,6 @@ class SlotServiceTest {
     private Slot slot;
     private SlotDto slotDTO;
     private StockUnit stockUnit;
-    private StockUnitDto stockUnitDTO;
     private Product product;
 
     @BeforeEach
@@ -59,7 +58,7 @@ class SlotServiceTest {
         product = new Product(1L, "Test Product", null, Category.STANDARD);
 
         stockUnit = StockUnit.builder().id(1L).build();
-        stockUnitDTO = StockUnitDto.builder().id(1L).build();
+        StockUnitDto stockUnitDTO = StockUnitDto.builder().id(1L).build();
 
         slot = new Slot();
         slot.setId(1L);
@@ -293,8 +292,8 @@ class SlotServiceTest {
         SlotDto result = slotService.updateSlot(id, dto);
 
         assertEquals(1, slot.getStockUnits().size());
-        assertEquals(10L, slot.getStockUnits().get(0).getId());
-        assertSame(slot, slot.getStockUnits().get(0).getSlot());
+        assertEquals(10L, slot.getStockUnits().getFirst().getId());
+        assertSame(slot, slot.getStockUnits().getFirst().getSlot());
 
         // Ripeto update → NON deve raddoppiare
         slotService.updateSlot(id, dto);

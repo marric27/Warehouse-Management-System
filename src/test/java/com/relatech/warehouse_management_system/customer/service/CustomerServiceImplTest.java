@@ -116,7 +116,7 @@ class CustomerServiceImplTest {
     void whenSearchNullOrEmptyReturnsAll() {
         List<CustomerDto> allDtos = List.of(CustomerDto.builder().id(1L).build());
         when(repository.findAll()).thenReturn(List.of(new Customer()));
-        when(mapper.toDTO(any(Customer.class))).thenReturn(allDtos.get(0));
+        when(mapper.toDTO(any(Customer.class))).thenReturn(allDtos.getFirst());
 
         List<CustomerDto> resultNull = service.searchCustomers(null);
         List<CustomerDto> resultEmpty = service.searchCustomers("");
@@ -210,7 +210,7 @@ class CustomerServiceImplTest {
 
             List<CustomerDto> dtos = service.getAllCustomers();
             assertEquals(1, dtos.size());
-            assertEquals("Mario", dtos.get(0).getName());
+            assertEquals("Mario", dtos.getFirst().getName());
             verify(mapper).toDTO(c);
         }
 
@@ -234,7 +234,7 @@ class CustomerServiceImplTest {
 
             List<CustomerDto> result = service.searchCustomers("Mario");
             assertEquals(1, result.size());
-            assertEquals("Mario", result.get(0).getName());
+            assertEquals("Mario", result.getFirst().getName());
         }
     }
 
