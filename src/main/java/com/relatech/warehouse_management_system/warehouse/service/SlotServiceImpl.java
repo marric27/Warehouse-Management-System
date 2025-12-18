@@ -2,11 +2,11 @@ package com.relatech.warehouse_management_system.warehouse.service;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
+import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
+import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
 import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
 import com.relatech.warehouse_management_system.product.repository.ProductRepository;
-import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
-import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
 import com.relatech.warehouse_management_system.warehouse.entity.Slot;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotMapper;

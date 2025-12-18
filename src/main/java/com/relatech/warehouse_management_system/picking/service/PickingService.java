@@ -10,7 +10,6 @@ import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListItemService;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListService;
 import com.relatech.warehouse_management_system.picking.controller.PickingController;
-import com.relatech.warehouse_management_system.picking.entity.PickingInfo;
 import com.relatech.warehouse_management_system.picking.entity.PickingInfoDto;
 import com.relatech.warehouse_management_system.picking.entity.service.PickingInfoService;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
@@ -51,7 +50,6 @@ public class PickingService {
 
     @Transactional
     public void confirmPicking(PickingController.Request request) throws ResourceNotFoundException {
-        log.info("Confirm picking: {}", request);
         PickListItemDto pickListItem = loadPickListItem(request.getPickListCode(), request.getPickListItemCode());
         SlotDto slot = slotService.getSlotByCode(pickListItem.getSlotCode());
         Map<String, StockUnitDto> stockUnitsByCode = mapStockUnitsByCode(slot.getStockUnits());

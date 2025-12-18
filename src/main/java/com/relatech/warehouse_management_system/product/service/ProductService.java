@@ -1,8 +1,8 @@
 package com.relatech.warehouse_management_system.product.service;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.common.util.Category;
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

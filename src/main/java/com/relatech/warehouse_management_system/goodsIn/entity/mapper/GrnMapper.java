@@ -1,8 +1,8 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.mapper;
 
+import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.Grn;
-import com.relatech.warehouse_management_system.common.util.State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

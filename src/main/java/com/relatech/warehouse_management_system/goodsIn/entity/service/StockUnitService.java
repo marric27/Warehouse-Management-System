@@ -1,12 +1,12 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
-import java.util.List;
-
 import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface StockUnitService {
     StockUnitDto createStockUnit(StockUnitDto dto) throws DuplicateResourceException;

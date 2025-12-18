@@ -1,10 +1,13 @@
 package com.relatech.warehouse_management_system.goodsIn.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.common.util.Category;
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.time.LocalDate;

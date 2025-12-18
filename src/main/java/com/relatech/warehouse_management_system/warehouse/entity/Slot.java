@@ -1,11 +1,14 @@
 package com.relatech.warehouse_management_system.warehouse.entity;
 
 import com.github.f4b6a3.ulid.UlidCreator;
+import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.product.entity.Product;
-import com.relatech.warehouse_management_system.common.util.Category;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 

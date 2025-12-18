@@ -3,7 +3,8 @@ package com.relatech.warehouse_management_system.goodsIn.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.relatech.warehouse_management_system.common.util.State;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
