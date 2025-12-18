@@ -9,7 +9,8 @@ import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListItemService;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListService;
-import com.relatech.warehouse_management_system.picking.controller.PickingController;
+import com.relatech.warehouse_management_system.picking.dto.ConfirmPickingRequest;
+import com.relatech.warehouse_management_system.picking.dto.NextItemRequest;
 import com.relatech.warehouse_management_system.picking.entity.PickingInfoDto;
 import com.relatech.warehouse_management_system.picking.entity.service.PickingInfoService;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -37,19 +39,18 @@ public class PickingService {
     private final PickingInfoService pickingInfoService;
     private final StockUnitService stockUnitService;
 
-    public PickListItemDto getNextPickListItem(List<Long> plIds) {
-        if (plIds == null || plIds.isEmpty()) return null;
+    public PickListItemDto getNextPickListItem(NextItemRequest request) {
+        List<Long> plIds = request.getPickListIds();
 
         Pageable limitOne = PageRequest.of(0, 1);
-        return pickListService
-                .findOpenItemsOrdered(plIds, PickListItemState.OPEN, limitOne)
+        return pickListService.findItemsByStateOrdered(plIds, PickListItemState.OPEN, limitOne)
                 .stream()
                 .findFirst()
                 .orElse(null);
     }
 
-    @Transactional
-    public void confirmPicking(PickingController.Request request) throws ResourceNotFoundException {
+    @Transactional(rollbackFor = ResourceNotFoundException.class, propagation = Propagation.REQUIRED)
+    public void confirmPicking(ConfirmPickingRequest request) throws ResourceNotFoundException {
         PickListItemDto pickListItem = loadPickListItem(request.getPickListCode(), request.getPickListItemCode());
         SlotDto slot = slotService.getSlotByCode(pickListItem.getSlotCode());
         Map<String, StockUnitDto> stockUnitsByCode = mapStockUnitsByCode(slot.getStockUnits());
@@ -57,7 +58,7 @@ public class PickingService {
         int totalPickedQty = validatePicking(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem.getQuantity());
 
         if (totalPickedQty == 0) {
-            log.info("Nessuna quantità pickata");
+            log.info("No Qty picked");
             return;
         }
 
@@ -65,10 +66,6 @@ public class PickingService {
         executePicking(request.getStockUnitQuantities(), stockUnitsByCode, errorReason);
         updatePickListItem(pickListItem, totalPickedQty, errorReason);
     }
-
-    /* =======================
-       METODI PRIVATI
-       ======================= */
 
     private PickListItemDto loadPickListItem(String pickListCode, String pickListItemCode) throws ResourceNotFoundException {
 
@@ -80,7 +77,7 @@ public class PickingService {
                 .orElseThrow(() -> new ResourceNotFoundException("PickListItem", pickListItemCode));
 
         if (item.getState() != PickListItemState.OPEN) {
-            throw new IllegalStateException("PickListItem non OPEN: " + item.getState());
+            throw new IllegalStateException("PickListItem is not OPEN: " + item.getState());
         }
         return item;
     }
@@ -122,7 +119,7 @@ public class PickingService {
 
     private ErrorReason resolveErrorReason(ErrorReason requestReason, int pickedQty, int requiredQty) {
         if (pickedQty < requiredQty && requestReason == null) {
-            return ErrorReason.MISSING_QTY;
+            return ErrorReason.MISSING_QTY;// fare molto prima appena ho litem
         }
         return requestReason;
     }
@@ -134,7 +131,7 @@ public class PickingService {
             String code = entry.getKey();
             Integer qty = entry.getValue();
 
-            if (qty == 0) continue;
+            if (qty == 0) continue;// non picko nulla
 
             StockUnitDto su = stockUnits.get(code);
             createPickingInfo(su, qty, errorReason);

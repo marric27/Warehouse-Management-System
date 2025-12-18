@@ -9,7 +9,7 @@ import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListItemService;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListService;
-import com.relatech.warehouse_management_system.picking.controller.PickingController;
+import com.relatech.warehouse_management_system.picking.dto.ConfirmPickingRequest;
 import com.relatech.warehouse_management_system.picking.entity.PickingInfoDto;
 import com.relatech.warehouse_management_system.picking.entity.service.PickingInfoService;
 import com.relatech.warehouse_management_system.picking.service.PickingService;
@@ -56,7 +56,7 @@ class PickingServiceTest {
     @Test
     void testConfirmPicking_fullPick_success() throws ResourceNotFoundException {
         // Mock request con più stock unit
-        PickingController.Request request = new PickingController.Request();
+        ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-001");
         request.setPickListItemCode("PLI-001");
         Map<String, Integer> quantities = new HashMap<>();
@@ -115,7 +115,7 @@ class PickingServiceTest {
 
     @Test
     void testConfirmPicking_partialPick_setsErrorReason() throws ResourceNotFoundException {
-        PickingController.Request request = new PickingController.Request();
+        ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-002");
         request.setPickListItemCode("PLI-002");
 
@@ -179,7 +179,7 @@ class PickingServiceTest {
 
     @Test
     void testConfirmPicking_itemNotOpen_throwsException() throws ResourceNotFoundException {
-        PickingController.Request request = new PickingController.Request();
+        ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-003");
         request.setPickListItemCode("PLI-003");
         request.setStockUnitQuantities(Map.of("SU-001", 1));
@@ -198,7 +198,7 @@ class PickingServiceTest {
 
     @Test
     void testConfirmPicking_stockUnitNotFound_throwsException() throws ResourceNotFoundException {
-        PickingController.Request request = new PickingController.Request();
+        ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-004");
         request.setPickListItemCode("PLI-004");
         request.setStockUnitQuantities(Map.of("SU-404", 1));
@@ -222,7 +222,7 @@ class PickingServiceTest {
 
     @Test
     void testConfirmPicking_negativeQuantity_throwsException() throws ResourceNotFoundException {
-        PickingController.Request request = new PickingController.Request();
+        ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-005");
         request.setPickListItemCode("PLI-005");
         request.setStockUnitQuantities(Map.of("SU-005", -1));
@@ -250,7 +250,7 @@ class PickingServiceTest {
 
     @Test
     void testConfirmPicking_quantityGreaterThanAvailable_throwsException() throws ResourceNotFoundException {
-        PickingController.Request request = new PickingController.Request();
+        ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-006");
         request.setPickListItemCode("PLI-006");
         request.setStockUnitQuantities(Map.of("SU-006", 10));
@@ -278,7 +278,7 @@ class PickingServiceTest {
 
     @Test
     void testConfirmPicking_totalPickedGreaterThanRequired_throwsException() throws ResourceNotFoundException {
-        PickingController.Request request = new PickingController.Request();
+        ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-007");
         request.setPickListItemCode("PLI-007");
         request.setStockUnitQuantities(Map.of("SU-007", 6));
@@ -306,7 +306,7 @@ class PickingServiceTest {
 
     @Test
     void testConfirmPicking_zeroPickedQuantity_noSideEffects() throws ResourceNotFoundException {
-        PickingController.Request request = new PickingController.Request();
+        ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-008");
         request.setPickListItemCode("PLI-008");
         request.setStockUnitQuantities(Map.of("SU-008", 0));
@@ -336,7 +336,7 @@ class PickingServiceTest {
 
     @Test
     void testConfirmPicking_partialPick_withExplicitErrorReason() throws ResourceNotFoundException {
-        PickingController.Request request = new PickingController.Request();
+        ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-009");
         request.setPickListItemCode("PLI-009");
         request.setStockUnitQuantities(Map.of("SU-009", 2));
