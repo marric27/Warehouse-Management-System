@@ -49,14 +49,9 @@ public class PickingService {
                 .orElse(null);
     }
 
+    @Transactional
     public void confirmPicking(PickingController.Request request) throws ResourceNotFoundException {
         log.info("Confirm picking: {}", request);
-        check(request);
-    }
-
-    @Transactional
-    public void check(PickingController.Request request) throws ResourceNotFoundException {
-
         PickListItemDto pickListItem = loadPickListItem(request.getPickListCode(), request.getPickListItemCode());
         SlotDto slot = slotService.getSlotByCode(pickListItem.getSlotCode());
         Map<String, StockUnitDto> stockUnitsByCode = mapStockUnitsByCode(slot.getStockUnits());
