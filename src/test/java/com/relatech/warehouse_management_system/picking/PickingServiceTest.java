@@ -176,4 +176,195 @@ class PickingServiceTest {
         assertTrue(createdInfos.stream().anyMatch(info ->
                 info.getStockUnitCode().equals("SU-003") && info.getQuantity() == 1));
     }
+
+    @Test
+    void testConfirmPicking_itemNotOpen_throwsException() throws ResourceNotFoundException {
+        PickingController.Request request = new PickingController.Request();
+        request.setPickListCode("PL-003");
+        request.setPickListItemCode("PLI-003");
+        request.setStockUnitQuantities(Map.of("SU-001", 1));
+
+        PickListItemDto itemDto = new PickListItemDto();
+        itemDto.setCode("PLI-003");
+        itemDto.setState(PickListItemState.PICKED);
+
+        PickListDto pickListDto = new PickListDto();
+        pickListDto.setPickListItemList(List.of(itemDto));
+
+        when(pickListService.getPickListByCode("PL-003")).thenReturn(pickListDto);
+
+        assertThrows(IllegalStateException.class, () -> pickingService.confirmPicking(request));
+    }
+
+    @Test
+    void testConfirmPicking_stockUnitNotFound_throwsException() throws ResourceNotFoundException {
+        PickingController.Request request = new PickingController.Request();
+        request.setPickListCode("PL-004");
+        request.setPickListItemCode("PLI-004");
+        request.setStockUnitQuantities(Map.of("SU-404", 1));
+
+        PickListItemDto itemDto = new PickListItemDto();
+        itemDto.setCode("PLI-004");
+        itemDto.setSlotCode("SLOT-004");
+        itemDto.setQuantity(1);
+        itemDto.setState(PickListItemState.OPEN);
+
+        PickListDto pickListDto = new PickListDto();
+        pickListDto.setPickListItemList(List.of(itemDto));
+        when(pickListService.getPickListByCode("PL-004")).thenReturn(pickListDto);
+
+        SlotDto slotDto = new SlotDto();
+        slotDto.setStockUnits(List.of()); // vuoto
+        when(slotService.getSlotByCode("SLOT-004")).thenReturn(slotDto);
+
+        assertThrows(ResourceNotFoundException.class, () -> pickingService.confirmPicking(request));
+    }
+
+    @Test
+    void testConfirmPicking_negativeQuantity_throwsException() throws ResourceNotFoundException {
+        PickingController.Request request = new PickingController.Request();
+        request.setPickListCode("PL-005");
+        request.setPickListItemCode("PLI-005");
+        request.setStockUnitQuantities(Map.of("SU-005", -1));
+
+        PickListItemDto itemDto = new PickListItemDto();
+        itemDto.setCode("PLI-005");
+        itemDto.setSlotCode("SLOT-005");
+        itemDto.setQuantity(5);
+        itemDto.setState(PickListItemState.OPEN);
+
+        PickListDto pickListDto = new PickListDto();
+        pickListDto.setPickListItemList(List.of(itemDto));
+        when(pickListService.getPickListByCode("PL-005")).thenReturn(pickListDto);
+
+        StockUnitDto su = new StockUnitDto();
+        su.setCode("SU-005");
+        su.setQuantity(5);
+
+        SlotDto slotDto = new SlotDto();
+        slotDto.setStockUnits(List.of(su));
+        when(slotService.getSlotByCode("SLOT-005")).thenReturn(slotDto);
+
+        assertThrows(IllegalArgumentException.class, () -> pickingService.confirmPicking(request));
+    }
+
+    @Test
+    void testConfirmPicking_quantityGreaterThanAvailable_throwsException() throws ResourceNotFoundException {
+        PickingController.Request request = new PickingController.Request();
+        request.setPickListCode("PL-006");
+        request.setPickListItemCode("PLI-006");
+        request.setStockUnitQuantities(Map.of("SU-006", 10));
+
+        PickListItemDto itemDto = new PickListItemDto();
+        itemDto.setCode("PLI-006");
+        itemDto.setSlotCode("SLOT-006");
+        itemDto.setQuantity(10);
+        itemDto.setState(PickListItemState.OPEN);
+
+        PickListDto pickListDto = new PickListDto();
+        pickListDto.setPickListItemList(List.of(itemDto));
+        when(pickListService.getPickListByCode("PL-006")).thenReturn(pickListDto);
+
+        StockUnitDto su = new StockUnitDto();
+        su.setCode("SU-006");
+        su.setQuantity(3);
+
+        SlotDto slotDto = new SlotDto();
+        slotDto.setStockUnits(List.of(su));
+        when(slotService.getSlotByCode("SLOT-006")).thenReturn(slotDto);
+
+        assertThrows(IllegalArgumentException.class, () -> pickingService.confirmPicking(request));
+    }
+
+    @Test
+    void testConfirmPicking_totalPickedGreaterThanRequired_throwsException() throws ResourceNotFoundException {
+        PickingController.Request request = new PickingController.Request();
+        request.setPickListCode("PL-007");
+        request.setPickListItemCode("PLI-007");
+        request.setStockUnitQuantities(Map.of("SU-007", 6));
+
+        PickListItemDto itemDto = new PickListItemDto();
+        itemDto.setCode("PLI-007");
+        itemDto.setSlotCode("SLOT-007");
+        itemDto.setQuantity(5);
+        itemDto.setState(PickListItemState.OPEN);
+
+        PickListDto pickListDto = new PickListDto();
+        pickListDto.setPickListItemList(List.of(itemDto));
+        when(pickListService.getPickListByCode("PL-007")).thenReturn(pickListDto);
+
+        StockUnitDto su = new StockUnitDto();
+        su.setCode("SU-007");
+        su.setQuantity(10);
+
+        SlotDto slotDto = new SlotDto();
+        slotDto.setStockUnits(List.of(su));
+        when(slotService.getSlotByCode("SLOT-007")).thenReturn(slotDto);
+
+        assertThrows(IllegalArgumentException.class, () -> pickingService.confirmPicking(request));
+    }
+
+    @Test
+    void testConfirmPicking_zeroPickedQuantity_noSideEffects() throws ResourceNotFoundException {
+        PickingController.Request request = new PickingController.Request();
+        request.setPickListCode("PL-008");
+        request.setPickListItemCode("PLI-008");
+        request.setStockUnitQuantities(Map.of("SU-008", 0));
+
+        PickListItemDto itemDto = new PickListItemDto();
+        itemDto.setCode("PLI-008");
+        itemDto.setSlotCode("SLOT-008");
+        itemDto.setQuantity(5);
+        itemDto.setState(PickListItemState.OPEN);
+
+        PickListDto pickListDto = new PickListDto();
+        pickListDto.setPickListItemList(List.of(itemDto));
+        when(pickListService.getPickListByCode("PL-008")).thenReturn(pickListDto);
+
+        StockUnitDto su = new StockUnitDto();
+        su.setCode("SU-008");
+        su.setQuantity(5);
+
+        SlotDto slotDto = new SlotDto();
+        slotDto.setStockUnits(List.of(su));
+        when(slotService.getSlotByCode("SLOT-008")).thenReturn(slotDto);
+
+        pickingService.confirmPicking(request);
+
+        verifyNoInteractions(stockUnitService, pickListItemService, pickingInfoService);
+    }
+
+    @Test
+    void testConfirmPicking_partialPick_withExplicitErrorReason() throws ResourceNotFoundException {
+        PickingController.Request request = new PickingController.Request();
+        request.setPickListCode("PL-009");
+        request.setPickListItemCode("PLI-009");
+        request.setStockUnitQuantities(Map.of("SU-009", 2));
+        request.setErrorReason(ErrorReason.DAMAGED_GOODS);
+
+        PickListItemDto itemDto = new PickListItemDto();
+        itemDto.setCode("PLI-009");
+        itemDto.setSlotCode("SLOT-009");
+        itemDto.setQuantity(5);
+        itemDto.setState(PickListItemState.OPEN);
+
+        PickListDto pickListDto = new PickListDto();
+        pickListDto.setPickListItemList(List.of(itemDto));
+        when(pickListService.getPickListByCode("PL-009")).thenReturn(pickListDto);
+
+        StockUnitDto su = new StockUnitDto();
+        su.setCode("SU-009");
+        su.setQuantity(2);
+
+        SlotDto slotDto = new SlotDto();
+        slotDto.setStockUnits(List.of(su));
+        when(slotService.getSlotByCode("SLOT-009")).thenReturn(slotDto);
+
+        when(pickingInfoService.create(any())).thenAnswer(i -> i.getArgument(0));
+
+        pickingService.confirmPicking(request);
+
+        verify(pickListItemService).updateErrorReason("PLI-009", ErrorReason.DAMAGED_GOODS);
+    }
+
 }

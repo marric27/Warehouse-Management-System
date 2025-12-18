@@ -4,6 +4,7 @@ import com.relatech.warehouse_management_system.common.exception.ResourceNotFoun
 import com.relatech.warehouse_management_system.common.util.ErrorReason;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.picking.service.PickingService;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -47,8 +48,14 @@ public class PickingController {
     @Setter
     @ToString
     public static class Request {
+        @Schema(example = "PKL-01KCKXFNW3")
         private String pickListCode;
+        @Schema(example = "PKLI-22")
         private String pickListItemCode;
+        @Schema(
+                description = "Mappa stockUnitCode → quantità pickata",
+                example = "{ \"STK-01KCH3N988\": 3, \"STK-01KCH3MHZZ\": 2 }"
+        )
         private Map<String, Integer> stockUnitQuantities; // stockunit code, quantity
         private ErrorReason errorReason;
     }
