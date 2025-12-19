@@ -2,7 +2,6 @@ package com.relatech.warehouse_management_system.picking.dto;
 
 import com.relatech.warehouse_management_system.common.util.ErrorReason;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
