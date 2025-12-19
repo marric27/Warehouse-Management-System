@@ -7,12 +7,10 @@ import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
 import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
-import com.relatech.warehouse_management_system.outbound.entity.PickListItem;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListItemService;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListService;
 import com.relatech.warehouse_management_system.picking.dto.ConfirmPickingRequest;
 import com.relatech.warehouse_management_system.picking.dto.NextItemRequest;
-import com.relatech.warehouse_management_system.picking.entity.PickingInfo;
 import com.relatech.warehouse_management_system.picking.entity.PickingInfoDto;
 import com.relatech.warehouse_management_system.picking.entity.service.PickingInfoService;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
@@ -55,9 +53,8 @@ public class PickingService {
     public void confirmPicking(ConfirmPickingRequest request) throws Exception {
         PickListItemDto pickListItem = loadPickListItem(request.getPickListCode(), request.getPickListItemCode());
         int toPick = request.getStockUnitQuantities().values().stream().mapToInt(Integer::intValue).sum();
-        if(toPick > pickListItem.getQuantity()) throw new IllegalArgumentException("Quantità richiesta > disponibile");
+        if(toPick > pickListItem.getQuantity()) throw new IllegalArgumentException("Requested quantity > available qty");
 
-        // se topick >0 <tot devo avere la lista e error reason
         ErrorReason errorReason;
         if(toPick < pickListItem.getQuantity() && request.getErrorReason() != null) {
             log.info("Set error reason from request");
@@ -69,11 +66,9 @@ public class PickingService {
         }
 
         SlotDto slot = slotService.getSlotByCode(pickListItem.getSlotCode());
-        Map<String, StockUnitDto> stockUnitsByCode = mapStockUnitsByCode(slot.getStockUnits());
+        Map<String, StockUnitDto> stockUnitsByCode = slot.getStockUnits().stream().collect(Collectors.toMap(StockUnitDto::getCode, su -> su));
+        canPickFromSU(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem);
 
-        canPickFromSU(request.getStockUnitQuantities(), stockUnitsByCode);
-
-        // posso fare la picking
         executePicking(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem, errorReason);
         updatePickListItem(pickListItem, toPick, errorReason);
     }
@@ -93,11 +88,7 @@ public class PickingService {
         return item;
     }
 
-    private Map<String, StockUnitDto> mapStockUnitsByCode(List<StockUnitDto> stockUnits) {
-        return stockUnits.stream().collect(Collectors.toMap(StockUnitDto::getCode, su -> su));
-    }
-
-    private void canPickFromSU(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits) throws ResourceNotFoundException {
+    private void canPickFromSU(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, PickListItemDto pickListItem) throws ResourceNotFoundException {
         for (Map.Entry<String, Integer> entry : requested.entrySet()) {
             String code = entry.getKey();
             Integer qty = entry.getValue();
@@ -107,8 +98,20 @@ public class PickingService {
                 throw new ResourceNotFoundException("StockUnit", code);
             }
 
+            //verifica se prodotto da pcikare è presente nella su
+            if (!su.getProductCode().equals(pickListItem.getProductCode())) {
+                throw new IllegalArgumentException(
+                        String.format(
+                                "StockUnit %s contains product %s but PickListItem requires product %s",
+                                code,
+                                su.getProductCode(),
+                                pickListItem.getProductCode()
+                        )
+                );
+            }
+
             if (qty > su.getQuantity()) {
-                throw new IllegalArgumentException("Quantità richiesta > disponibile per " + code);
+                throw new IllegalArgumentException("Requested quantity > available qty for stock unit: " + code);
             }
         }
     }
@@ -119,10 +122,10 @@ public class PickingService {
             Integer qty = entry.getValue();
 
             StockUnitDto su = stockUnits.get(code);
-            createPickingInfo(su, qty, pickListItem, errorReason);
             int oldQty = su.getQuantity();
             su.setQuantity(oldQty - qty);
             stockUnitService.updateStockUnit(su.getId(), su);
+            createPickingInfo(su, qty, pickListItem, errorReason);
         }
     }
 
