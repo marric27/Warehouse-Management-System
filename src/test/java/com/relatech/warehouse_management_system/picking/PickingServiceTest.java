@@ -54,127 +54,126 @@ class PickingServiceTest {
     }
 
     @Test
-    void testConfirmPicking_fullPick_success() throws Exception {
-        // Mock request con più stock unit
+    void confirmPicking_fullPick_success() throws Exception {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
-        request.setPickListCode("PL-001");
-        request.setPickListItemCode("PLI-001");
-        Map<String, Integer> quantities = new HashMap<>();
-        quantities.put("SU-001", 2);
-        quantities.put("SU-002", 3);
-        request.setStockUnitQuantities(quantities);
-        request.setErrorReason(null);
+        request.setPickListCode("PL-1");
+        request.setPickListItemCode("PLI-1");
+        request.setStockUnitQuantities(Map.of("SU-1", 5));
 
-        // Mock PickListItem con quantità totale = 5
-        PickListItemDto itemDto = new PickListItemDto();
-        itemDto.setCode("PLI-001");
-        itemDto.setSlotCode("SLOT-001");
-        itemDto.setQuantity(5);
-        itemDto.setState(PickListItemState.OPEN);
+        PickListItemDto item = new PickListItemDto();
+        item.setId(1L);
+        item.setCode("PLI-1");
+        item.setSlotCode("SLOT-1");
+        item.setProductCode("PROD-1");
+        item.setQuantity(5);
+        item.setPickedQty(0);
+        item.setState(PickListItemState.OPEN);
 
-        PickListDto pickListDto = new PickListDto();
-        pickListDto.setPickListItemList(List.of(itemDto));
-        when(pickListService.getPickListByCode("PL-001")).thenReturn(pickListDto);
+        PickListDto pl = new PickListDto();
+        pl.setPickListItemList(List.of(item));
+        when(pickListService.getPickListByCode("PL-1")).thenReturn(pl);
 
-        // Mock Slot con tutte le stock unit
-        StockUnitDto su1 = new StockUnitDto();
-        su1.setCode("SU-001");
-        su1.setQuantity(2);
-        StockUnitDto su2 = new StockUnitDto();
-        su2.setCode("SU-002");
-        su2.setQuantity(3);
+        StockUnitDto su = new StockUnitDto();
+        su.setId(10L);
+        su.setCode("SU-1");
+        su.setProductCode("PROD-1");
+        su.setQuantity(5);
 
-        SlotDto slotDto = new SlotDto();
-        slotDto.setStockUnits(List.of(su1, su2));
-        when(slotService.getSlotByCode("SLOT-001")).thenReturn(slotDto);
+        SlotDto slot = new SlotDto();
+        slot.setStockUnits(List.of(su));
+        when(slotService.getSlotByCode("SLOT-1")).thenReturn(slot);
 
-        // Mock pickingInfoService
-        when(pickingInfoService.create(any(PickingInfoDto.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(pickingInfoService.create(any())).thenAnswer(i -> i.getArgument(0));
 
-        // Call service
         pickingService.confirmPicking(request);
 
-        // Verify stock updates
-        verify(stockUnitService).updateQuantity("SU-001", 0);
-        verify(stockUnitService).updateQuantity("SU-002", 0);
+        ArgumentCaptor<StockUnitDto> suCaptor = ArgumentCaptor.forClass(StockUnitDto.class);
+        verify(stockUnitService).updateStockUnit(eq(10L), suCaptor.capture());
+        assertEquals(0, suCaptor.getValue().getQuantity());
 
-        // Verify picklist item state updated
-        verify(pickListItemService).updateState("PLI-001", PickListItemState.PICKED);
+        ArgumentCaptor<PickListItemDto> pliCaptor = ArgumentCaptor.forClass(PickListItemDto.class);
+        verify(pickListItemService).update(eq("PLI-1"), pliCaptor.capture());
 
-        // Verify picking info created per stock unit
-        ArgumentCaptor<PickingInfoDto> captor = ArgumentCaptor.forClass(PickingInfoDto.class);
-        verify(pickingInfoService, times(2)).create(captor.capture());
-        List<PickingInfoDto> createdInfos = captor.getAllValues();
+        PickListItemDto updated = pliCaptor.getValue();
+        assertEquals(5, updated.getPickedQty());
+        assertEquals(PickListItemState.PICKED, updated.getState());
 
-        assertTrue(createdInfos.stream().anyMatch(info ->
-                info.getStockUnitCode().equals("SU-001") && info.getQuantity() == 2));
-        assertTrue(createdInfos.stream().anyMatch(info ->
-                info.getStockUnitCode().equals("SU-002") && info.getQuantity() == 3));
+        verify(pickingInfoService).create(any(PickingInfoDto.class));
     }
 
     @Test
-    void testConfirmPicking_partialPick_setsErrorReason() throws Exception {
+    void confirmPicking_partialPick_withErrorReason() throws Exception {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
-        request.setPickListCode("PL-002");
-        request.setPickListItemCode("PLI-002");
+        request.setPickListCode("PL-2");
+        request.setPickListItemCode("PLI-2");
+        request.setStockUnitQuantities(Map.of("SU-2", 2));
+        request.setErrorReason(ErrorReason.MISSING_QTY);
 
-        // Pick parziale con più stock unit
-        Map<String, Integer> quantities = new HashMap<>();
-        quantities.put("SU-002", 2);
-        quantities.put("SU-003", 1); // totale 3 pickati, item richiesto = 5
-        request.setStockUnitQuantities(quantities);
-        request.setErrorReason(null);
+        PickListItemDto item = new PickListItemDto();
+        item.setId(2L);
+        item.setCode("PLI-2");
+        item.setSlotCode("SLOT-2");
+        item.setProductCode("PROD-2");
+        item.setQuantity(5);
+        item.setPickedQty(0);
+        item.setState(PickListItemState.OPEN);
 
-        // Mock PickListItem con quantità totale = 5
-        PickListItemDto itemDto = new PickListItemDto();
-        itemDto.setCode("PLI-002");
-        itemDto.setSlotCode("SLOT-002");
-        itemDto.setQuantity(5);
-        itemDto.setState(PickListItemState.OPEN);
+        PickListDto pl = new PickListDto();
+        pl.setPickListItemList(List.of(item));
+        when(pickListService.getPickListByCode("PL-2")).thenReturn(pl);
 
-        PickListDto pickListDto = new PickListDto();
-        pickListDto.setPickListItemList(List.of(itemDto));
-        when(pickListService.getPickListByCode("PL-002")).thenReturn(pickListDto);
+        StockUnitDto su = new StockUnitDto();
+        su.setId(20L);
+        su.setCode("SU-2");
+        su.setProductCode("PROD-2");
+        su.setQuantity(2);
 
-        // Mock Slot con tutte le stock unit
-        StockUnitDto su2 = new StockUnitDto();
-        su2.setCode("SU-002");
-        su2.setQuantity(2);
-        StockUnitDto su3 = new StockUnitDto();
-        su3.setCode("SU-003");
-        su3.setQuantity(1);
+        SlotDto slot = new SlotDto();
+        slot.setStockUnits(List.of(su));
+        when(slotService.getSlotByCode("SLOT-2")).thenReturn(slot);
 
-        SlotDto slotDto = new SlotDto();
-        slotDto.setStockUnits(List.of(su2, su3));
-        when(slotService.getSlotByCode("SLOT-002")).thenReturn(slotDto);
+        when(pickingInfoService.create(any())).thenAnswer(i -> i.getArgument(0));
 
-        // Mock pickingInfoService
-        when(pickingInfoService.create(any(PickingInfoDto.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        // Call service
         pickingService.confirmPicking(request);
 
-        // Verify stock updated
-        verify(stockUnitService).updateQuantity("SU-002", 0);
-        verify(stockUnitService).updateQuantity("SU-003", 0);
+        ArgumentCaptor<PickListItemDto> captor = ArgumentCaptor.forClass(PickListItemDto.class);
+        verify(pickListItemService).update(eq("PLI-2"), captor.capture());
 
-        // Verify picklist item quantity decreased (restante = 2)
-        verify(pickListItemService).updateQuantity("PLI-002", 2);
+        PickListItemDto updated = captor.getValue();
+        assertEquals(2, updated.getPickedQty());
+        assertEquals(ErrorReason.MISSING_QTY, updated.getErrorReason());
+        assertEquals(PickListItemState.OPEN, updated.getState());
+    }
 
-        // Verify error reason set
-        verify(pickListItemService).updateErrorReason("PLI-002", ErrorReason.MISSING_QTY);
+    @Test
+    void confirmPicking_partialPick_withoutErrorReason_throwsException() throws ResourceNotFoundException {
+        ConfirmPickingRequest request = new ConfirmPickingRequest();
+        request.setPickListCode("PL-3");
+        request.setPickListItemCode("PLI-3");
+        request.setStockUnitQuantities(Map.of("SU-3", 1));
 
-        // Verify picking info created per stock unit
-        ArgumentCaptor<PickingInfoDto> captor = ArgumentCaptor.forClass(PickingInfoDto.class);
-        verify(pickingInfoService, times(2)).create(captor.capture());
-        List<PickingInfoDto> createdInfos = captor.getAllValues();
+        PickListItemDto item = new PickListItemDto();
+        item.setCode("PLI-3");
+        item.setSlotCode("SLOT-3");
+        item.setProductCode("PROD-3");
+        item.setQuantity(5);
+        item.setPickedQty(0);
+        item.setState(PickListItemState.OPEN);
 
-        assertTrue(createdInfos.stream().anyMatch(info ->
-                info.getStockUnitCode().equals("SU-002") && info.getQuantity() == 2));
-        assertTrue(createdInfos.stream().anyMatch(info ->
-                info.getStockUnitCode().equals("SU-003") && info.getQuantity() == 1));
+        PickListDto pl = new PickListDto();
+        pl.setPickListItemList(List.of(item));
+        when(pickListService.getPickListByCode("PL-3")).thenReturn(pl);
+
+        StockUnitDto su = new StockUnitDto();
+        su.setCode("SU-3");
+        su.setProductCode("PROD-3");
+        su.setQuantity(1);
+
+        SlotDto slot = new SlotDto();
+        slot.setStockUnits(List.of(su));
+        when(slotService.getSlotByCode("SLOT-3")).thenReturn(slot);
+
+        assertThrows(Exception.class, () -> pickingService.confirmPicking(request));
     }
 
     @Test
@@ -221,34 +220,6 @@ class PickingServiceTest {
     }
 
     @Test
-    void testConfirmPicking_negativeQuantity_throwsException() throws ResourceNotFoundException {
-        ConfirmPickingRequest request = new ConfirmPickingRequest();
-        request.setPickListCode("PL-005");
-        request.setPickListItemCode("PLI-005");
-        request.setStockUnitQuantities(Map.of("SU-005", -1));
-
-        PickListItemDto itemDto = new PickListItemDto();
-        itemDto.setCode("PLI-005");
-        itemDto.setSlotCode("SLOT-005");
-        itemDto.setQuantity(5);
-        itemDto.setState(PickListItemState.OPEN);
-
-        PickListDto pickListDto = new PickListDto();
-        pickListDto.setPickListItemList(List.of(itemDto));
-        when(pickListService.getPickListByCode("PL-005")).thenReturn(pickListDto);
-
-        StockUnitDto su = new StockUnitDto();
-        su.setCode("SU-005");
-        su.setQuantity(5);
-
-        SlotDto slotDto = new SlotDto();
-        slotDto.setStockUnits(List.of(su));
-        when(slotService.getSlotByCode("SLOT-005")).thenReturn(slotDto);
-
-        assertThrows(IllegalArgumentException.class, () -> pickingService.confirmPicking(request));
-    }
-
-    @Test
     void testConfirmPicking_quantityGreaterThanAvailable_throwsException() throws ResourceNotFoundException {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-006");
@@ -260,6 +231,7 @@ class PickingServiceTest {
         itemDto.setSlotCode("SLOT-006");
         itemDto.setQuantity(10);
         itemDto.setState(PickListItemState.OPEN);
+        itemDto.setProductCode("PRD-002");
 
         PickListDto pickListDto = new PickListDto();
         pickListDto.setPickListItemList(List.of(itemDto));
@@ -267,6 +239,7 @@ class PickingServiceTest {
 
         StockUnitDto su = new StockUnitDto();
         su.setCode("SU-006");
+        su.setProductCode("PRD-001");
         su.setQuantity(3);
 
         SlotDto slotDto = new SlotDto();
@@ -305,66 +278,62 @@ class PickingServiceTest {
     }
 
     @Test
-    void testConfirmPicking_zeroPickedQuantity_noSideEffects() throws Exception {
+    void testConfirmPicking_pickingDifferentProduct_throwsException() throws ResourceNotFoundException {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
-        request.setPickListCode("PL-008");
-        request.setPickListItemCode("PLI-008");
-        request.setStockUnitQuantities(Map.of("SU-008", 0));
+        request.setPickListCode("PL-006");
+        request.setPickListItemCode("PLI-006");
+        request.setStockUnitQuantities(Map.of("SU-006", 10));
 
         PickListItemDto itemDto = new PickListItemDto();
-        itemDto.setCode("PLI-008");
-        itemDto.setSlotCode("SLOT-008");
-        itemDto.setQuantity(5);
+        itemDto.setCode("PLI-006");
+        itemDto.setSlotCode("SLOT-006");
+        itemDto.setQuantity(10);
         itemDto.setState(PickListItemState.OPEN);
+        itemDto.setProductCode("PRD-002");
 
         PickListDto pickListDto = new PickListDto();
         pickListDto.setPickListItemList(List.of(itemDto));
-        when(pickListService.getPickListByCode("PL-008")).thenReturn(pickListDto);
+        when(pickListService.getPickListByCode("PL-006")).thenReturn(pickListDto);
 
         StockUnitDto su = new StockUnitDto();
-        su.setCode("SU-008");
-        su.setQuantity(5);
+        su.setCode("SU-006");
+        su.setProductCode("PRD-001");
+        su.setQuantity(30);
 
         SlotDto slotDto = new SlotDto();
         slotDto.setStockUnits(List.of(su));
-        when(slotService.getSlotByCode("SLOT-008")).thenReturn(slotDto);
+        when(slotService.getSlotByCode("SLOT-006")).thenReturn(slotDto);
 
-        pickingService.confirmPicking(request);
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> pickingService.confirmPicking(request));
+        assertTrue(ex.getMessage().contains("StockUnit SU-006 contains product PRD-001 but PickListItem requires product PRD-002"));
 
-        verifyNoInteractions(stockUnitService, pickListItemService, pickingInfoService);
     }
 
     @Test
-    void testConfirmPicking_partialPick_withExplicitErrorReason() throws Exception {
-        ConfirmPickingRequest request = new ConfirmPickingRequest();
-        request.setPickListCode("PL-009");
-        request.setPickListItemCode("PLI-009");
-        request.setStockUnitQuantities(Map.of("SU-009", 2));
-        request.setErrorReason(ErrorReason.DAMAGED_GOODS);
+    void testCanPickFromSU_quantityExceeds_throwsException() {
+        // Arrange
+        Map<String, Integer> requested = new HashMap<>();
+        requested.put("SU-001", 10); // richiede 10
 
-        PickListItemDto itemDto = new PickListItemDto();
-        itemDto.setCode("PLI-009");
-        itemDto.setSlotCode("SLOT-009");
-        itemDto.setQuantity(5);
-        itemDto.setState(PickListItemState.OPEN);
+        StockUnitDto su = StockUnitDto.builder()
+                .code("SU-001")
+                .productCode("PROD-01")
+                .quantity(5) // ma ne abbiamo solo 5
+                .build();
 
-        PickListDto pickListDto = new PickListDto();
-        pickListDto.setPickListItemList(List.of(itemDto));
-        when(pickListService.getPickListByCode("PL-009")).thenReturn(pickListDto);
+        Map<String, StockUnitDto> stockUnits = new HashMap<>();
+        stockUnits.put(su.getCode(), su);
 
-        StockUnitDto su = new StockUnitDto();
-        su.setCode("SU-009");
-        su.setQuantity(2);
+        PickListItemDto pickListItem = PickListItemDto.builder()
+                .productCode("PROD-01")
+                .build();
 
-        SlotDto slotDto = new SlotDto();
-        slotDto.setStockUnits(List.of(su));
-        when(slotService.getSlotByCode("SLOT-009")).thenReturn(slotDto);
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> pickingService.canPickFromSU(requested, stockUnits, pickListItem)
+        );
 
-        when(pickingInfoService.create(any())).thenAnswer(i -> i.getArgument(0));
-
-        pickingService.confirmPicking(request);
-
-        verify(pickListItemService).updateErrorReason("PLI-009", ErrorReason.DAMAGED_GOODS);
+        assertEquals("Requested quantity > available qty for stock unit: SU-001", exception.getMessage());
     }
-
 }

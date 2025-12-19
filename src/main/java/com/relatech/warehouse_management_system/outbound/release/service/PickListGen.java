@@ -40,12 +40,10 @@ public class PickListGen {
 
         Map<String, PickListDto> pickListMap = new HashMap<>();
 
-        // gen release number
         String ulid = UlidCreator.getUlid().toString();
         String releaseNumber = "RLS-" + ulid.substring(0, 10).toUpperCase();
 
         for (OrderDto orderDto : ordersOpen) {
-            // Se non esiste ancora una PickList per questo cliente, creala
             PickListDto pickListDTO = pickListMap.computeIfAbsent(orderDto.getCustomerCode(), customerCode ->
                     PickListDto.builder()
                             .customerCode(customerCode)
@@ -65,6 +63,7 @@ public class PickListGen {
                         .productCode(productCode)
                         .state(PickListItemState.OPEN)
                         .quantity(line.getQuantity())
+                        .pickedQty(0)
                         .pickingSequence(slot.getPickingSequence())
                         .slotCode(slot.getCode())
                         .salesOrderCode(orderDto.getCode())

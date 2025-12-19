@@ -16,6 +16,7 @@ import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.outbound.dto.SalesOrderLineDto;
+import com.relatech.warehouse_management_system.picking.dto.NextItemRequest;
 import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import org.junit.jupiter.api.Test;
@@ -46,8 +47,8 @@ public class TestComplete {
     // =================================================================================
     private <T> T performPost(String url, Object body, Class<T> returnType) throws Exception {
         String response = mockMvc.perform(post(url)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(body)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
                 .getResponse()
@@ -168,9 +169,11 @@ public class TestComplete {
     }
 
     private PickListItemDto getNextPickingItem(List<Long> pickListIds) throws Exception {
+        NextItemRequest request = new NextItemRequest();
+        request.setPickListIds(pickListIds);
         String response = mockMvc.perform(post("/picking/next-item")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(pickListIds))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
                 )
                 .andExpect(status().is2xxSuccessful())
                 .andReturn()
@@ -192,11 +195,8 @@ public class TestComplete {
     @Test
     void completeTest() throws Exception {
         // ===== 0) CREATE PRODUCTS =====
-        List<String> products = new ArrayList<>();
-
-        for (int i = 1; i <= 10; i++) {
-            String productCode = "PRD-" + String.format("%03d", i);
-            products.add(productCode);
+        /*List<String> products = List.of("PRD-001", "PRD-002", "PRD-003");
+        for (String productCode : products) {
             createProduct(productCode);
         }
 
@@ -291,14 +291,71 @@ public class TestComplete {
                         + ", Slot: " + item.getSlotCode() + ", Order: " + item.getSalesOrderCode());
             }
             System.out.println("----------------------------------");
+        }*/
+        // ===== 0) CREA PRODOTTI FISSI =====
+        List<String> products = List.of("PRD-001", "PRD-002", "PRD-003");
+        for (String productCode : products) {
+            createProduct(productCode);
         }
 
+        // ===== 1) CREA SLOT =====
+        List<SlotDto> slots = new ArrayList<>();
+        // Creiamo uno slot per ciascun prodotto
+        for (int i = 0; i < products.size(); i++) {
+            slots.add(createSlot());
+        }
+
+        // ===== 2) CREA GRN PER OGNI PRODOTTO =====
+        List<GrnDto> grns = new ArrayList<>();
+        for (String productCode : products) {
+            GrnDto grn = createGrn();
+            createGrnItem(grn.getId(), productCode);
+            grn = performGet("/receiving/grns/" + grn.getId(), GrnDto.class);
+            grns.add(grn);
+        }
+
+        // ===== 3) CHECK GOODS IN + PUTAWAY =====
+        for (int i = 0; i < grns.size(); i++) {
+            GrnDto grn = grns.get(i);
+            String productCode = products.get(i);
+            for (GrnItemDto item : grn.getItems()) {
+                GrnItemDto updated = checkGoodsIn(item.getId(), productCode);
+                // Assegniamo il prodotto allo slot corrispondente
+                for (CheckingInfoDto checkingInfo : updated.getCheckingInfoList()) {
+                    performPost("/putaway/" + checkingInfo.getId() + "/assignToSlot/" + slots.get(i).getId(),
+                            null,
+                            GrnItemDto.class
+                    );
+                }
+            }
+        }
+
+        // ===== 4) CREA CLIENTI =====
+        List<CustomerDto> customers = new ArrayList<>();
+        for (int i = 0; i < 2; i++) { // pochi clienti per semplicità
+            customers.add(createCustomer(i));
+        }
+
+        // ===== 5) CREA ORDINI =====
+        List<OrderDto> orders = new ArrayList<>();
+        for (CustomerDto customer : customers) {
+            for (String productCode : products) {
+                orders.add(createOrder(customer, productCode));
+            }
+        }
+
+        // ===== 6) GENERA PICKLIST =====
+        List<Long> orderIds = orders.stream().map(OrderDto::getId).toList();
+        List<PickListDto> picklists = generatePicklist(orderIds);
+
+        // ===== 7) GET NEXT PICKING ITEM =====
+        List<Long> pickListIds = picklists.stream().map(PickListDto::getId).toList();
+        for (int i = 0; i < 5; i++) {
+            PickListItemDto item = getNextPickingItem(pickListIds);
+            if (item == null) break;
+            System.out.println("NEXT → " + item);
+        }
         // ===== 8) GET NEXT PICKING ITEM =====
-        List<Long> pickListIds = new ArrayList<>();
-        for (int i = 0; i < picklists.size(); i++) {
-            pickListIds.add((long) (i + 1));
-        }
-
         System.out.println("\n===== NEXT PICK ITEM =====");
         for (int i = 0; i < 5; i++) {
             PickListItemDto item = getNextPickingItem(pickListIds);

@@ -69,10 +69,13 @@ public class PickingService {
         Map<String, StockUnitDto> stockUnitsByCode = slot.getStockUnits().stream().collect(Collectors.toMap(StockUnitDto::getCode, su -> su));
         canPickFromSU(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem);
 
-        executePicking(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem, errorReason);
+        executePicking(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem);
         updatePickListItem(pickListItem, toPick, errorReason);
     }
 
+    ////////////////////////////////////////////////
+    ////////////////// VALIDATION //////////////////
+    ////////////////////////////////////////////////
     private PickListItemDto loadPickListItem(String pickListCode, String pickListItemCode) throws ResourceNotFoundException {
 
         PickListDto pickList = pickListService.getPickListByCode(pickListCode);
@@ -88,7 +91,7 @@ public class PickingService {
         return item;
     }
 
-    private void canPickFromSU(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, PickListItemDto pickListItem) throws ResourceNotFoundException {
+    public void canPickFromSU(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, PickListItemDto pickListItem) throws ResourceNotFoundException {
         for (Map.Entry<String, Integer> entry : requested.entrySet()) {
             String code = entry.getKey();
             Integer qty = entry.getValue();
@@ -98,7 +101,6 @@ public class PickingService {
                 throw new ResourceNotFoundException("StockUnit", code);
             }
 
-            //verifica se prodotto da pcikare è presente nella su
             if (!su.getProductCode().equals(pickListItem.getProductCode())) {
                 throw new IllegalArgumentException(
                         String.format(
@@ -116,7 +118,10 @@ public class PickingService {
         }
     }
 
-    private void executePicking(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, PickListItemDto pickListItem, ErrorReason errorReason) throws ResourceNotFoundException {
+    /////////////////////////////////////////////////////
+    ////////////////// PICK AND UPDATE //////////////////
+    /////////////////////////////////////////////////////
+    private void executePicking(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, PickListItemDto pickListItem) throws ResourceNotFoundException {
         for (Map.Entry<String, Integer> entry : requested.entrySet()) {
             String code = entry.getKey();
             Integer qty = entry.getValue();
@@ -125,7 +130,7 @@ public class PickingService {
             int oldQty = su.getQuantity();
             su.setQuantity(oldQty - qty);
             stockUnitService.updateStockUnit(su.getId(), su);
-            createPickingInfo(su, qty, pickListItem, errorReason);
+            createPickingInfo(su, qty, pickListItem);
         }
     }
 
@@ -142,7 +147,7 @@ public class PickingService {
         }
     }
 
-    private void createPickingInfo(StockUnitDto stockUnitDto, Integer pickedQty, PickListItemDto pickListItem, ErrorReason errorReason) {
+    private void createPickingInfo(StockUnitDto stockUnitDto, Integer pickedQty, PickListItemDto pickListItem) {
 
         PickingInfoDto pickingInfoDto = PickingInfoDto.builder()
                 .user("USR-01QWERTY")
