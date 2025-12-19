@@ -14,6 +14,9 @@ public interface StockUnitService {
     List<StockUnitDto> getAllStockUnits();
     Page<StockUnitDto> getAllStockUnitsPaged(Pageable pageable);
     StockUnitDto updateStockUnit(Long id, StockUnitDto dto) throws ResourceNotFoundException;
+
+    StockUnitDto getStockUnitByCode(String slotCode) throws ResourceNotFoundException;
+
     void deleteStockUnit(Long id) throws ResourceNotFoundException;
     StockUnitDto assignProductToStockUnit(Long stockUnitId, Long slotId) throws ResourceNotFoundException;
     StockUnitDto removeProductFromStockUnit(Long stockUnitId) throws ResourceNotFoundException;

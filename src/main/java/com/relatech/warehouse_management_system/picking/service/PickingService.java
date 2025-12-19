@@ -15,8 +15,6 @@ import com.relatech.warehouse_management_system.picking.dto.ConfirmPickingReques
 import com.relatech.warehouse_management_system.picking.dto.NextItemRequest;
 import com.relatech.warehouse_management_system.picking.entity.PickingInfoDto;
 import com.relatech.warehouse_management_system.picking.entity.service.PickingInfoService;
-import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
-import com.relatech.warehouse_management_system.warehouse.service.SlotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -26,9 +24,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -37,7 +35,6 @@ public class PickingService {
 
     private final PickListService pickListService;
     private final PickListItemService pickListItemService;
-    private final SlotService slotService;
     private final PickingInfoService pickingInfoService;
     private final StockUnitService stockUnitService;
 
@@ -54,6 +51,10 @@ public class PickingService {
     @Transactional(rollbackFor = {ResourceNotFoundException.class, QuantityMismatchException.class}, propagation = Propagation.REQUIRED)
     public void confirmPicking(ConfirmPickingRequest request) throws Exception {
         PickListItemDto pickListItem = loadPickListItem(request.getPickListCode(), request.getPickListItemCode());
+        Map<String, Integer> stockUnitQuantities = request.getStockUnitQuantities();
+        if (stockUnitQuantities == null || stockUnitQuantities.isEmpty()) {
+            throw new QuantityMismatchException("No stock units provided for picking");
+        }
         int toPick = request.getStockUnitQuantities().values().stream().mapToInt(Integer::intValue).sum();
         if(toPick > pickListItem.getQuantity()) throw new QuantityMismatchException("Requested quantity > available qty");
 
@@ -67,8 +68,12 @@ public class PickingService {
             throw new Exception("Error reason cant be omitted when qty to pick is lower than ");
         }
 
-        SlotDto slot = slotService.getSlotByCode(pickListItem.getSlotCode());
-        Map<String, StockUnitDto> stockUnitsByCode = slot.getStockUnits().stream().collect(Collectors.toMap(StockUnitDto::getCode, su -> su));
+        Map<String, StockUnitDto> stockUnitsByCode = new HashMap<>();
+        for (String code : request.getStockUnitQuantities().keySet()) {
+            StockUnitDto su = stockUnitService.getStockUnitByCode(code);
+            stockUnitsByCode.put(su.getCode(), su);
+        }
+
         canPickFromSU(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem);
 
         executePicking(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem);
@@ -93,15 +98,12 @@ public class PickingService {
         return item;
     }
 
-    public void canPickFromSU(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, PickListItemDto pickListItem) throws ResourceNotFoundException, QuantityMismatchException, MatchingDifferentCategoryException {
+    public void canPickFromSU(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, PickListItemDto pickListItem) throws QuantityMismatchException, MatchingDifferentCategoryException {
         for (Map.Entry<String, Integer> entry : requested.entrySet()) {
             String code = entry.getKey();
             Integer qty = entry.getValue();
 
             StockUnitDto su = stockUnits.get(code);
-            if (su == null) {
-                throw new ResourceNotFoundException("StockUnit", code);
-            }
 
             if (!su.getProductCode().equals(pickListItem.getProductCode())) {
                 throw new MatchingDifferentCategoryException(
@@ -140,13 +142,9 @@ public class PickingService {
 
         int pickedQty = item.getPickedQty() + totalPickedQty;
         item.setPickedQty(pickedQty);
-        if (pickedQty == item.getQuantity()) {
-            item.setState(PickListItemState.PICKED);
-            pickListItemService.update(item.getCode(), item);
-        } else {
-            item.setErrorReason(errorReason);
-            pickListItemService.update(item.getCode(), item);
-        }
+        item.setState(PickListItemState.PICKED);
+        item.setErrorReason(errorReason);
+        pickListItemService.update(item.getCode(), item);
     }
 
     private void createPickingInfo(StockUnitDto stockUnitDto, Integer pickedQty, PickListItemDto pickListItem) {

@@ -26,8 +26,6 @@ public class ConfirmPickingRequest {
             description = "Mappa stockUnitCode → quantità pickata",
             example = "{ \"STK-01KCH3N988\": 3, \"STK-01KCH3MHZZ\": 2 }"
     )
-    @NotNull
-    @NotEmpty
     private Map<String, @Positive Integer> stockUnitQuantities;
 
     private ErrorReason errorReason;

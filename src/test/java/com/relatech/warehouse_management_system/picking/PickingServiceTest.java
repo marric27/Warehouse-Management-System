@@ -49,7 +49,6 @@ class PickingServiceTest {
         pickingService = new PickingService(
                 pickListService,
                 pickListItemService,
-                slotService,
                 pickingInfoService,
                 stockUnitService
         );

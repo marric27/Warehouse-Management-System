@@ -68,6 +68,15 @@ public class StockUnitServiceImpl implements StockUnitService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public StockUnitDto getStockUnitByCode(String code) throws ResourceNotFoundException {
+        StockUnit stockUnit = stockUnitRepository.findByCode(code)
+                .orElseThrow(() -> new ResourceNotFoundException("StockUnit", code));
+        return stockUnitMapper.toDTO(stockUnit);
+    }
+
+
+    @Override
     @Transactional(rollbackFor = {ResourceNotFoundException.class, RuntimeException.class})
     public void deleteStockUnit(Long id) throws ResourceNotFoundException {
         StockUnit stockUnit = stockUnitRepository.findById(id)
