@@ -7,10 +7,12 @@ import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
 import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
+import com.relatech.warehouse_management_system.outbound.entity.PickListItem;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListItemService;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListService;
 import com.relatech.warehouse_management_system.picking.dto.ConfirmPickingRequest;
 import com.relatech.warehouse_management_system.picking.dto.NextItemRequest;
+import com.relatech.warehouse_management_system.picking.entity.PickingInfo;
 import com.relatech.warehouse_management_system.picking.entity.PickingInfoDto;
 import com.relatech.warehouse_management_system.picking.entity.service.PickingInfoService;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
@@ -50,21 +52,30 @@ public class PickingService {
     }
 
     @Transactional(rollbackFor = ResourceNotFoundException.class, propagation = Propagation.REQUIRED)
-    public void confirmPicking(ConfirmPickingRequest request) throws ResourceNotFoundException {
+    public void confirmPicking(ConfirmPickingRequest request) throws Exception {
         PickListItemDto pickListItem = loadPickListItem(request.getPickListCode(), request.getPickListItemCode());
+        int toPick = request.getStockUnitQuantities().values().stream().mapToInt(Integer::intValue).sum();
+        if(toPick > pickListItem.getQuantity()) throw new IllegalArgumentException("Quantità richiesta > disponibile");
+
+        // se topick >0 <tot devo avere la lista e error reason
+        ErrorReason errorReason;
+        if(toPick < pickListItem.getQuantity() && request.getErrorReason() != null) {
+            log.info("Set error reason from request");
+            errorReason = request.getErrorReason();
+        } else if(toPick == pickListItem.getQuantity()) {
+            errorReason = null;
+        } else {
+            throw new Exception("Error reason cant be omitted when qty to pick is lower than ");
+        }
+
         SlotDto slot = slotService.getSlotByCode(pickListItem.getSlotCode());
         Map<String, StockUnitDto> stockUnitsByCode = mapStockUnitsByCode(slot.getStockUnits());
 
-        int totalPickedQty = validatePicking(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem.getQuantity());
+        canPickFromSU(request.getStockUnitQuantities(), stockUnitsByCode);
 
-        if (totalPickedQty == 0) {
-            log.info("No Qty picked");
-            return;
-        }
-
-        ErrorReason errorReason = resolveErrorReason(request.getErrorReason(), totalPickedQty, pickListItem.getQuantity());
-        executePicking(request.getStockUnitQuantities(), stockUnitsByCode, errorReason);
-        updatePickListItem(pickListItem, totalPickedQty, errorReason);
+        // posso fare la picking
+        executePicking(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem, errorReason);
+        updatePickListItem(pickListItem, toPick, errorReason);
     }
 
     private PickListItemDto loadPickListItem(String pickListCode, String pickListItemCode) throws ResourceNotFoundException {
@@ -86,18 +97,10 @@ public class PickingService {
         return stockUnits.stream().collect(Collectors.toMap(StockUnitDto::getCode, su -> su));
     }
 
-    private int validatePicking(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, int requiredQty) throws ResourceNotFoundException {
-
-        int totalPicked = 0;
-
+    private void canPickFromSU(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits) throws ResourceNotFoundException {
         for (Map.Entry<String, Integer> entry : requested.entrySet()) {
-
             String code = entry.getKey();
             Integer qty = entry.getValue();
-
-            if (qty == null || qty < 0) {
-                throw new IllegalArgumentException("Quantità non valida per StockUnit " + code);
-            }
 
             StockUnitDto su = stockUnits.get(code);
             if (su == null) {
@@ -107,49 +110,36 @@ public class PickingService {
             if (qty > su.getQuantity()) {
                 throw new IllegalArgumentException("Quantità richiesta > disponibile per " + code);
             }
-
-            totalPicked += qty;
         }
-
-        if (totalPicked > requiredQty) {
-            throw new IllegalArgumentException("Quantità totale pickata (" + totalPicked + ") > richiesta (" + requiredQty + ")");
-        }
-        return totalPicked;
     }
 
-    private ErrorReason resolveErrorReason(ErrorReason requestReason, int pickedQty, int requiredQty) {
-        if (pickedQty < requiredQty && requestReason == null) {
-            return ErrorReason.MISSING_QTY;// fare molto prima appena ho litem
-        }
-        return requestReason;
-    }
-
-    private void executePicking(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, ErrorReason errorReason)
-            throws ResourceNotFoundException {
-
+    private void executePicking(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, PickListItemDto pickListItem, ErrorReason errorReason) throws ResourceNotFoundException {
         for (Map.Entry<String, Integer> entry : requested.entrySet()) {
             String code = entry.getKey();
             Integer qty = entry.getValue();
 
-            if (qty == 0) continue;// non picko nulla
-
             StockUnitDto su = stockUnits.get(code);
-            createPickingInfo(su, qty, errorReason);
-            stockUnitService.updateQuantity(code, su.getQuantity() - qty);
+            createPickingInfo(su, qty, pickListItem, errorReason);
+            int oldQty = su.getQuantity();
+            su.setQuantity(oldQty - qty);
+            stockUnitService.updateStockUnit(su.getId(), su);
         }
     }
 
     private void updatePickListItem(PickListItemDto item, int totalPickedQty, ErrorReason errorReason) throws ResourceNotFoundException {
 
-        if (totalPickedQty == item.getQuantity()) {
-            pickListItemService.updateState(item.getCode(), PickListItemState.PICKED);
+        int pickedQty = item.getPickedQty() + totalPickedQty;
+        item.setPickedQty(pickedQty);
+        if (pickedQty == item.getQuantity()) {
+            item.setState(PickListItemState.PICKED);
+            pickListItemService.update(item.getCode(), item);
         } else {
-            pickListItemService.updateQuantity(item.getCode(), item.getQuantity() - totalPickedQty);
-            pickListItemService.updateErrorReason(item.getCode(), errorReason);
+            item.setErrorReason(errorReason);
+            pickListItemService.update(item.getCode(), item);
         }
     }
 
-    private void createPickingInfo(StockUnitDto stockUnitDto, Integer pickedQty, ErrorReason errorReason) {
+    private void createPickingInfo(StockUnitDto stockUnitDto, Integer pickedQty, PickListItemDto pickListItem, ErrorReason errorReason) {
 
         PickingInfoDto pickingInfoDto = PickingInfoDto.builder()
                 .user("USR-01QWERTY")
@@ -158,6 +148,7 @@ public class PickingService {
                 .batchNumber(stockUnitDto.getBatchNumber())
                 .expirationDate(stockUnitDto.getExpirationDate())
                 .quantity(pickedQty)
+                .pickListItemId(pickListItem.getId())
                 .build();
 
         PickingInfoDto created = pickingInfoService.create(pickingInfoDto);

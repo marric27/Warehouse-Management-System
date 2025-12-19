@@ -41,6 +41,9 @@ public class PickListItem {
     private int qty;
 
     @Column(nullable = false)
+    private int pickedQty;
+
+    @Column(nullable = false)
     private Integer pickingSequence;
 
     @Enumerated(EnumType.STRING)

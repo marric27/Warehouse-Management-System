@@ -95,15 +95,4 @@ public class StockUnitServiceImpl implements StockUnitService {
         stockUnit.setProduct(null);
         return stockUnitMapper.toDTO(stockUnitRepository.save(stockUnit));
     }
-
-    @Override
-    @Transactional(rollbackFor = {ResourceNotFoundException.class})
-    public StockUnitDto updateQuantity(String stockUnitCode, int i) throws ResourceNotFoundException {
-        StockUnit existing = stockUnitRepository.findByCode(stockUnitCode)
-                .orElseThrow(() -> new ResourceNotFoundException("StockUnit", stockUnitCode));
-
-        existing.setQuantity(i);
-        StockUnit saved = stockUnitRepository.save(existing);
-        return stockUnitMapper.toDTO(saved);
-    }
 }

@@ -1,5 +1,7 @@
 package com.relatech.warehouse_management_system.picking.entity;
 
+import com.relatech.warehouse_management_system.outbound.entity.PickListItem;
+
 public class PickingInfoMapper {
 
     public static PickingInfoDto toDto(PickingInfo entity) {
@@ -15,6 +17,7 @@ public class PickingInfoMapper {
                 .batchNumber(entity.getBatchNumber())
                 .expirationDate(entity.getExpirationDate())
                 .quantity(entity.getQuantity())
+                .pickListItemId(entity.getPickListItem().getId())
                 .build();
     }
 
@@ -31,6 +34,7 @@ public class PickingInfoMapper {
                 .batchNumber(dto.getBatchNumber())
                 .expirationDate(dto.getExpirationDate())
                 .quantity(dto.getQuantity())
+                .pickListItem(PickListItem.builder().id(dto.getPickListItemId()).build())
                 .build();
     }
 }

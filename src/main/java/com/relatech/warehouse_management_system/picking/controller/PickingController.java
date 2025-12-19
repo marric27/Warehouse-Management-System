@@ -1,6 +1,5 @@
 package com.relatech.warehouse_management_system.picking.controller;
 
-import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.picking.dto.ConfirmPickingRequest;
 import com.relatech.warehouse_management_system.picking.dto.NextItemRequest;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/picking")
@@ -37,7 +34,7 @@ public class PickingController {
     }
 
     @PostMapping("/confirm")
-    public void confirmPicking(@Valid @RequestBody ConfirmPickingRequest request) throws ResourceNotFoundException {
+    public void confirmPicking(@Valid @RequestBody ConfirmPickingRequest request) throws Exception {
         log.info("Confirm picking: {}", request);
         pickingService.confirmPicking(request);
         log.info("Picking confirmed");

@@ -31,6 +31,10 @@ public class PickListItemDto {
     @Min(value = 0, message = "Quantity must be greater than or equal to 0")
     private Integer quantity;
 
+    @Schema(description = "Quantity picked.")
+    @Min(value = 0, message = "Quantity must be greater than or equal to 0")
+    private Integer pickedQty;
+
     @Schema(description = "Picking sequence number of slot where the product is stored.")
     private Integer pickingSequence;
 

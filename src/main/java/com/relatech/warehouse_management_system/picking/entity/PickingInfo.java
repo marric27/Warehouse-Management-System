@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.picking.entity;
 
+import com.relatech.warehouse_management_system.outbound.entity.PickListItem;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,4 +36,8 @@ public class PickingInfo {
 
     @Column(nullable = false)
     private Integer quantity;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "pick_list_item_id", nullable = false)
+    private PickListItem pickListItem;
 }

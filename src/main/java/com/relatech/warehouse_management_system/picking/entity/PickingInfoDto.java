@@ -43,4 +43,7 @@ public class PickingInfoDto {
     @NotNull(message = "Quantity is required")
     @Positive(message = "Quantity must be a positive integer")
     private Integer quantity;
+
+    @Schema(description = "Id of picking list item", example = "")
+    private Long pickListItemId;
 }

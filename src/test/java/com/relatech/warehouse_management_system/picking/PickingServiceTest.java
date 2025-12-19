@@ -54,7 +54,7 @@ class PickingServiceTest {
     }
 
     @Test
-    void testConfirmPicking_fullPick_success() throws ResourceNotFoundException {
+    void testConfirmPicking_fullPick_success() throws Exception {
         // Mock request con più stock unit
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-001");
@@ -114,7 +114,7 @@ class PickingServiceTest {
     }
 
     @Test
-    void testConfirmPicking_partialPick_setsErrorReason() throws ResourceNotFoundException {
+    void testConfirmPicking_partialPick_setsErrorReason() throws Exception {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-002");
         request.setPickListItemCode("PLI-002");
@@ -305,7 +305,7 @@ class PickingServiceTest {
     }
 
     @Test
-    void testConfirmPicking_zeroPickedQuantity_noSideEffects() throws ResourceNotFoundException {
+    void testConfirmPicking_zeroPickedQuantity_noSideEffects() throws Exception {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-008");
         request.setPickListItemCode("PLI-008");
@@ -335,7 +335,7 @@ class PickingServiceTest {
     }
 
     @Test
-    void testConfirmPicking_partialPick_withExplicitErrorReason() throws ResourceNotFoundException {
+    void testConfirmPicking_partialPick_withExplicitErrorReason() throws Exception {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-009");
         request.setPickListItemCode("PLI-009");
