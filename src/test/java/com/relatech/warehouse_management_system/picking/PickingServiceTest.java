@@ -1,10 +1,12 @@
 package com.relatech.warehouse_management_system.picking;
 
+import com.relatech.warehouse_management_system.common.exception.MatchingDifferentCategoryException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.ErrorReason;
 import com.relatech.warehouse_management_system.common.util.PickListItemState;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
+import com.relatech.warehouse_management_system.goodsIn.exception.QuantityMismatchException;
 import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListItemService;
@@ -231,7 +233,7 @@ class PickingServiceTest {
         itemDto.setSlotCode("SLOT-006");
         itemDto.setQuantity(10);
         itemDto.setState(PickListItemState.OPEN);
-        itemDto.setProductCode("PRD-002");
+        itemDto.setProductCode("PRD-001");
 
         PickListDto pickListDto = new PickListDto();
         pickListDto.setPickListItemList(List.of(itemDto));
@@ -246,7 +248,7 @@ class PickingServiceTest {
         slotDto.setStockUnits(List.of(su));
         when(slotService.getSlotByCode("SLOT-006")).thenReturn(slotDto);
 
-        assertThrows(IllegalArgumentException.class, () -> pickingService.confirmPicking(request));
+        assertThrows(QuantityMismatchException.class, () -> pickingService.confirmPicking(request));
     }
 
     @Test
@@ -274,7 +276,7 @@ class PickingServiceTest {
         slotDto.setStockUnits(List.of(su));
         when(slotService.getSlotByCode("SLOT-007")).thenReturn(slotDto);
 
-        assertThrows(IllegalArgumentException.class, () -> pickingService.confirmPicking(request));
+        assertThrows(QuantityMismatchException.class, () -> pickingService.confirmPicking(request));
     }
 
     @Test
@@ -304,7 +306,7 @@ class PickingServiceTest {
         slotDto.setStockUnits(List.of(su));
         when(slotService.getSlotByCode("SLOT-006")).thenReturn(slotDto);
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> pickingService.confirmPicking(request));
+        MatchingDifferentCategoryException ex = assertThrows(MatchingDifferentCategoryException.class, () -> pickingService.confirmPicking(request));
         assertTrue(ex.getMessage().contains("StockUnit SU-006 contains product PRD-001 but PickListItem requires product PRD-002"));
 
     }
@@ -329,8 +331,8 @@ class PickingServiceTest {
                 .build();
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+        QuantityMismatchException exception = assertThrows(
+                QuantityMismatchException.class,
                 () -> pickingService.canPickFromSU(requested, stockUnits, pickListItem)
         );
 

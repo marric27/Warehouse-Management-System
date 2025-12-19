@@ -24,7 +24,7 @@ public class LogisticServiceImpl implements LogisticService {
     private SlotMapper slotMapper;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ResourceNotFoundException.class)
     public SlotDto assignProductToSlot(Long slotId, Long productId) throws ResourceNotFoundException {
         Slot slot = slotRepository.findById(slotId)
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", slotId));
@@ -36,7 +36,7 @@ public class LogisticServiceImpl implements LogisticService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ResourceNotFoundException.class)
     public SlotDto removeProductFromSlot(Long id) throws ResourceNotFoundException {
         Slot slot = slotRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", id));

@@ -1,10 +1,12 @@
 package com.relatech.warehouse_management_system.picking.service;
 
+import com.relatech.warehouse_management_system.common.exception.MatchingDifferentCategoryException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.ErrorReason;
 import com.relatech.warehouse_management_system.common.util.PickListItemState;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
+import com.relatech.warehouse_management_system.goodsIn.exception.QuantityMismatchException;
 import com.relatech.warehouse_management_system.outbound.dto.PickListDto;
 import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListItemService;
@@ -49,11 +51,11 @@ public class PickingService {
                 .orElse(null);
     }
 
-    @Transactional(rollbackFor = ResourceNotFoundException.class, propagation = Propagation.REQUIRED)
+    @Transactional(rollbackFor = {ResourceNotFoundException.class, QuantityMismatchException.class}, propagation = Propagation.REQUIRED)
     public void confirmPicking(ConfirmPickingRequest request) throws Exception {
         PickListItemDto pickListItem = loadPickListItem(request.getPickListCode(), request.getPickListItemCode());
         int toPick = request.getStockUnitQuantities().values().stream().mapToInt(Integer::intValue).sum();
-        if(toPick > pickListItem.getQuantity()) throw new IllegalArgumentException("Requested quantity > available qty");
+        if(toPick > pickListItem.getQuantity()) throw new QuantityMismatchException("Requested quantity > available qty");
 
         ErrorReason errorReason;
         if(toPick < pickListItem.getQuantity() && request.getErrorReason() != null) {
@@ -91,7 +93,7 @@ public class PickingService {
         return item;
     }
 
-    public void canPickFromSU(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, PickListItemDto pickListItem) throws ResourceNotFoundException {
+    public void canPickFromSU(Map<String, Integer> requested, Map<String, StockUnitDto> stockUnits, PickListItemDto pickListItem) throws ResourceNotFoundException, QuantityMismatchException, MatchingDifferentCategoryException {
         for (Map.Entry<String, Integer> entry : requested.entrySet()) {
             String code = entry.getKey();
             Integer qty = entry.getValue();
@@ -102,7 +104,7 @@ public class PickingService {
             }
 
             if (!su.getProductCode().equals(pickListItem.getProductCode())) {
-                throw new IllegalArgumentException(
+                throw new MatchingDifferentCategoryException(
                         String.format(
                                 "StockUnit %s contains product %s but PickListItem requires product %s",
                                 code,
@@ -113,7 +115,7 @@ public class PickingService {
             }
 
             if (qty > su.getQuantity()) {
-                throw new IllegalArgumentException("Requested quantity > available qty for stock unit: " + code);
+                throw new QuantityMismatchException("Requested quantity > available qty for stock unit: " + code);
             }
         }
     }

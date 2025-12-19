@@ -72,18 +72,6 @@ public class GlobalExceptionHandler {
                         req.getRequestURI()));
     }
 
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ApiError> handleUnauthorized(UnauthorizedException ex, HttpServletRequest req) {
-        log.error("UnauthorizedException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(buildError(HttpStatus.UNAUTHORIZED, ex, req));
-    }
-
-    @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ApiError> handleForbidden(ForbiddenException ex, HttpServletRequest req) {
-        log.error("ForbiddenException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(buildError(HttpStatus.FORBIDDEN, ex, req));
-    }
-
     @ExceptionHandler(InternalServerException.class)
     public ResponseEntity<ApiError> handleInternal(InternalServerException ex, HttpServletRequest req) {
         log.error("InternalServerException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
@@ -163,6 +151,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OverReceivedQuantityException.class)
     public ResponseEntity<ApiError> handleOverReceivedQuantityException(OverReceivedQuantityException ex, HttpServletRequest req) {
         log.error("OverReceivedQuantityException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildError(HttpStatus.CONFLICT, ex, req));
+    }
+
+    @ExceptionHandler(MatchingDifferentCategoryException.class)
+    public ResponseEntity<ApiError> MatchingDifferentCategoryException(MatchingDifferentCategoryException ex, HttpServletRequest req) {
+        log.error("MatchingDifferentCategoryException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildError(HttpStatus.CONFLICT, ex, req));
     }

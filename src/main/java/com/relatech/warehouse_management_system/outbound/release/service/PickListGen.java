@@ -33,7 +33,7 @@ public class PickListGen {
     private final PickListService pickListService;
     private final SlotService slotService;
 
-    @Transactional
+    @Transactional(rollbackFor = ResourceNotFoundException.class)
     public List<PickListDto> generatePickLists(List<Long> orderIds) throws ResourceNotFoundException {
 
         List<OrderDto> ordersOpen = orderService.getOrdersByStateInIds(OrderState.OPEN, orderIds);

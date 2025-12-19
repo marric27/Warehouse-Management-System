@@ -69,7 +69,7 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {ResourceNotFoundException.class, UpdateEntityException.class})
     public SlotDto updateSlot(Long id, SlotDto slotDTO) throws ResourceNotFoundException, UpdateEntityException {
         Slot existingSlot = slotRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", id));
@@ -115,7 +115,7 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ResourceNotFoundException.class)
     public void deleteSlot(Long id) throws ResourceNotFoundException {
         Slot slot = slotRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", id));

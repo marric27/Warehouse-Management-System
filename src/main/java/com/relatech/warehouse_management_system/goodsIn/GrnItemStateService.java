@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.goodsIn;
 
+import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
@@ -43,7 +44,7 @@ public class GrnItemStateService {
     }
 
     // PROGRESSIONE AUTOMATICA DI STATO
-    @Transactional
+    @Transactional(rollbackFor = {GrnItemNotFoundException.class, GrnNotFoundException.class})
     public void evaluateAndProgressItemState(GrnItemDto item) throws GrnItemNotFoundException, GrnNotFoundException {
 
         List<CheckingInfoDto> checks = item.getCheckingInfoList();
@@ -75,9 +76,8 @@ public class GrnItemStateService {
     }
 
     // SE TUTTI GLI ITEMS SONO PUTAWAY → CHIUDERE GRN
-    @Transactional
-    public void evaluateAndProgressGrnState(Long grnId)
-            throws GrnNotFoundException {
+    @Transactional(rollbackFor = GrnNotFoundException.class)
+    public void evaluateAndProgressGrnState(Long grnId) throws GrnNotFoundException {
 
         GrnDto grn = grnService.getGRNById(grnId);
 
