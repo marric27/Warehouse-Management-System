@@ -16,7 +16,6 @@ import com.relatech.warehouse_management_system.picking.entity.PickingInfoDto;
 import com.relatech.warehouse_management_system.picking.entity.service.PickingInfoService;
 import com.relatech.warehouse_management_system.picking.service.PickingService;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
-import com.relatech.warehouse_management_system.warehouse.service.SlotService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
