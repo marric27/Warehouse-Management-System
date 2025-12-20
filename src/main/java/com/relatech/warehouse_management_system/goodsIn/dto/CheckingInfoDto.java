@@ -37,7 +37,7 @@ public class CheckingInfoDto {
     @Schema(description = "Quantity of products in this batch", example = "150")
     private Integer quantity;
 
-    @Schema(description = "State of the checking info", example = "OPEN")
+    @Schema(description = "State of the checking info", example = "OPEN", accessMode = Schema.AccessMode.READ_ONLY)
     private State state;
 
     @Schema(description = "Soft reference to the associated StockUnit ID", accessMode = Schema.AccessMode.READ_ONLY)

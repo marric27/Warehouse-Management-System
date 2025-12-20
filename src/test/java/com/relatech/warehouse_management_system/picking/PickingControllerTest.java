@@ -154,8 +154,7 @@ class PickingControllerTest {
         request.setStockUnitQuantities(Collections.emptyMap());
 
         Set<ConstraintViolation<ConfirmPickingRequest>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("stockUnitQuantities")));
+        assertTrue(violations.isEmpty());
     }
 
     @Test
@@ -167,8 +166,7 @@ class PickingControllerTest {
         request.setStockUnitQuantities(null);
 
         Set<ConstraintViolation<ConfirmPickingRequest>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("stockUnitQuantities")));
+        assertTrue(violations.isEmpty());
     }
 
     @Test

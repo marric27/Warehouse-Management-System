@@ -27,7 +27,7 @@ public class SlotDto {
     private String code;
 
     @NotNull(message = "The picking sequence cannot be null.")
-    @Schema(description = "Code of the slot indicating picking sequence", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "Code of the slot indicating picking sequence", example = "1")
     private Integer pickingSequence;
 
     @Schema(description = "Category allowed in this slot", example = "CONTROLLED_DRUG")

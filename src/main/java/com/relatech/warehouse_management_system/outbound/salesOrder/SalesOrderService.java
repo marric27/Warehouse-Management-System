@@ -1,6 +1,7 @@
 package com.relatech.warehouse_management_system.outbound.salesOrder;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.util.OrderState;
 import com.relatech.warehouse_management_system.customer.entity.CustomerDto;
 import com.relatech.warehouse_management_system.customer.service.CustomerService;
 import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
@@ -37,6 +38,8 @@ public class SalesOrderService {
             productService.validateProductExists(code);
 
         orderDto.setCustomerCode(customerDTO.getCustomerCode());
+        orderDto.setState(OrderState.OPEN);
+        orderDto.getSalesOrderLineList().forEach(line -> {line.setStatus(OrderState.OPEN);});
         return orderService.createOrder(orderDto);
     }
 

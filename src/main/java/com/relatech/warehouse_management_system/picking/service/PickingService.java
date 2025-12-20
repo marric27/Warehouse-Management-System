@@ -53,7 +53,7 @@ public class PickingService {
         PickListItemDto pickListItem = loadPickListItem(request.getPickListCode(), request.getPickListItemCode());
         Map<String, Integer> stockUnitQuantities = request.getStockUnitQuantities();
         if (stockUnitQuantities == null || stockUnitQuantities.isEmpty()) {
-            throw new QuantityMismatchException("No stock units provided for picking");
+            throw new Exception("No stock units provided for picking");
         }
         int toPick = request.getStockUnitQuantities().values().stream().mapToInt(Integer::intValue).sum();
         if(toPick > pickListItem.getQuantity()) throw new QuantityMismatchException("Requested quantity > available qty");

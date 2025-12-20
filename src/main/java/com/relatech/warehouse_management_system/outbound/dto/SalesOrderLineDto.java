@@ -25,7 +25,7 @@ public class SalesOrderLineDto {
     @Schema(description = "Quantity of product ordered", example = "10")
     private int quantity;
 
-    @Schema(description = "Status of this order line", example = "OPEN")
+    @Schema(description = "Status of this order line", example = "OPEN", accessMode = Schema.AccessMode.READ_ONLY)
     private OrderState status;
 
     @Schema(description = "ID of the parent order", example = "1")

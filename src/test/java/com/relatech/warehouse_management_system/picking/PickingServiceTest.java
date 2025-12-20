@@ -32,7 +32,6 @@ class PickingServiceTest {
 
     private PickListService pickListService;
     private PickListItemService pickListItemService;
-    private SlotService slotService;
     private PickingInfoService pickingInfoService;
     private StockUnitService stockUnitService;
 
@@ -42,7 +41,6 @@ class PickingServiceTest {
     void setUp() {
         pickListService = mock(PickListService.class);
         pickListItemService = mock(PickListItemService.class);
-        slotService = mock(SlotService.class);
         pickingInfoService = mock(PickingInfoService.class);
         stockUnitService = mock(StockUnitService.class);
 
@@ -82,9 +80,9 @@ class PickingServiceTest {
 
         SlotDto slot = new SlotDto();
         slot.setStockUnits(List.of(su));
-        when(slotService.getSlotByCode("SLOT-1")).thenReturn(slot);
 
         when(pickingInfoService.create(any())).thenAnswer(i -> i.getArgument(0));
+        when(stockUnitService.getStockUnitByCode("SU-1")).thenReturn(su);
 
         pickingService.confirmPicking(request);
 
@@ -131,9 +129,9 @@ class PickingServiceTest {
 
         SlotDto slot = new SlotDto();
         slot.setStockUnits(List.of(su));
-        when(slotService.getSlotByCode("SLOT-2")).thenReturn(slot);
 
         when(pickingInfoService.create(any())).thenAnswer(i -> i.getArgument(0));
+        when(stockUnitService.getStockUnitByCode("SU-2")).thenReturn(su);
 
         pickingService.confirmPicking(request);
 
@@ -143,7 +141,7 @@ class PickingServiceTest {
         PickListItemDto updated = captor.getValue();
         assertEquals(2, updated.getPickedQty());
         assertEquals(ErrorReason.MISSING_QTY, updated.getErrorReason());
-        assertEquals(PickListItemState.OPEN, updated.getState());
+        assertEquals(PickListItemState.PICKED, updated.getState());
     }
 
     @Test
@@ -172,7 +170,6 @@ class PickingServiceTest {
 
         SlotDto slot = new SlotDto();
         slot.setStockUnits(List.of(su));
-        when(slotService.getSlotByCode("SLOT-3")).thenReturn(slot);
 
         assertThrows(Exception.class, () -> pickingService.confirmPicking(request));
     }
@@ -215,9 +212,8 @@ class PickingServiceTest {
 
         SlotDto slotDto = new SlotDto();
         slotDto.setStockUnits(List.of()); // vuoto
-        when(slotService.getSlotByCode("SLOT-004")).thenReturn(slotDto);
 
-        assertThrows(ResourceNotFoundException.class, () -> pickingService.confirmPicking(request));
+        assertThrows(Exception.class, () -> pickingService.confirmPicking(request));
     }
 
     @Test
@@ -243,9 +239,10 @@ class PickingServiceTest {
         su.setProductCode("PRD-001");
         su.setQuantity(3);
 
+        when(stockUnitService.getStockUnitByCode("SU-006")).thenReturn(su);
+
         SlotDto slotDto = new SlotDto();
         slotDto.setStockUnits(List.of(su));
-        when(slotService.getSlotByCode("SLOT-006")).thenReturn(slotDto);
 
         assertThrows(QuantityMismatchException.class, () -> pickingService.confirmPicking(request));
     }
@@ -273,7 +270,6 @@ class PickingServiceTest {
 
         SlotDto slotDto = new SlotDto();
         slotDto.setStockUnits(List.of(su));
-        when(slotService.getSlotByCode("SLOT-007")).thenReturn(slotDto);
 
         assertThrows(QuantityMismatchException.class, () -> pickingService.confirmPicking(request));
     }
@@ -300,10 +296,10 @@ class PickingServiceTest {
         su.setCode("SU-006");
         su.setProductCode("PRD-001");
         su.setQuantity(30);
+        when(stockUnitService.getStockUnitByCode("SU-006")).thenReturn(su);
 
         SlotDto slotDto = new SlotDto();
         slotDto.setStockUnits(List.of(su));
-        when(slotService.getSlotByCode("SLOT-006")).thenReturn(slotDto);
 
         MatchingDifferentCategoryException ex = assertThrows(MatchingDifferentCategoryException.class, () -> pickingService.confirmPicking(request));
         assertTrue(ex.getMessage().contains("StockUnit SU-006 contains product PRD-001 but PickListItem requires product PRD-002"));

@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
 
 import static org.hamcrest.Matchers.*;
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -62,15 +63,19 @@ public class ReceivingIntegrationTest {
     @Test
     void testCreateItemAndUpdateItem() throws Exception {
         ProductDto product = new ProductDto();
-        product.setCode("P001");
         product.setName("Test Product");
         product.setCategory(Category.STANDARD);
         String productBody = mapper.writeValueAsString(product);
-        mockMvc.perform(post("/products")
+        String prodResp = mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productBody)
                 )
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        ProductDto createdProd = mapper.readValue(prodResp, ProductDto.class);
 
         // --- Step 1: Create GRN ---
         GrnDto dto = new GrnDto();
@@ -92,7 +97,7 @@ public class ReceivingIntegrationTest {
 
         // --- Step 2: Create Item ---
         GrnItemDto item = new GrnItemDto();
-        item.setProductCode("P001");
+        item.setProductCode(createdProd.getCode());
         item.setExpectedQty(10);
         item.setReceivedQty(10);
         item.setCompliantQty(10);

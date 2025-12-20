@@ -58,17 +58,8 @@ class PickListGenTest {
                 .pickingSequence(10)
                 .build();
 
-        when(orderService.getOrdersByStateInIds(eq(OrderState.OPEN), anyList()))
-                .thenReturn(List.of(order));
-
-        when(slotService.getSlotContainingProduct("PROD-01", 5))
-                .thenReturn(Optional.of(slot));
-
-        doNothing().when(orderService)
-                .updateOrderState(1L, OrderState.PICKING);
-
-        doNothing().when(pickListService)
-                .create(any(PickListDto.class));
+        when(orderService.getOrdersByStateInIds(eq(OrderState.OPEN), anyList())).thenReturn(List.of(order));
+        when(slotService.getSlotContainingProduct("PROD-01", 5)).thenReturn(Optional.of(slot));
 
         // Act
         List<PickListDto> result = pickListGen.generatePickLists(List.of(1L));
@@ -108,11 +99,9 @@ class PickListGenTest {
                 .salesOrderLineList(List.of(line))
                 .build();
 
-        when(orderService.getOrdersByStateInIds(eq(OrderState.OPEN), anyList()))
-                .thenReturn(List.of(order));
+        when(orderService.getOrdersByStateInIds(eq(OrderState.OPEN), anyList())).thenReturn(List.of(order));
 
-        when(slotService.getSlotContainingProduct("PROD-01", 5))
-                .thenReturn(Optional.empty());
+        when(slotService.getSlotContainingProduct("PROD-01", 5)).thenReturn(Optional.empty());
 
         // Act & Assert
         RuntimeException ex = assertThrows(
