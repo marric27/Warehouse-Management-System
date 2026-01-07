@@ -98,4 +98,8 @@ public class ReceivingService {
     public Page<GrnItemDto> listGrnItemsPaged(Pageable pageable) {
         return grnItemService.getAllGrnItemsPaged(pageable);
     }
+
+    public GrnItemDto getGrnItemById(Long itemId) throws GrnItemNotFoundException {
+        return grnItemService.getGrnItemById(itemId);
+    }
 }

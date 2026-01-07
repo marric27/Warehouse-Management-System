@@ -105,6 +105,14 @@ public class ReceivingController {
         return ResponseEntity.ok(updated);
     }
 
+    @GetMapping("/items/{itemId}")
+    @Operation(summary = "Get GRN Item by ID")
+    public ResponseEntity<GrnItemDto> getGrnItemById(@PathVariable Long itemId) throws Exception {
+        log.info("Fetching GRN Item {}", itemId);
+        GrnItemDto item = receivingService.getGrnItemById(itemId);
+        return ResponseEntity.ok(item);
+    }
+
     // ---------------------------
     // STATE MANUAL CHANGE
     // ---------------------------
