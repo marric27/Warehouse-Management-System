@@ -25,7 +25,8 @@ public class Product {
     @PrePersist
     public void prePersist() {
         if (code == null) {
-            code = UlidCreator.getUlid().toString();
+            String ulid = UlidCreator.getUlid().toString();
+            this.code = "PRD-" + ulid.substring(0, 10).toUpperCase();
         }
     }
 

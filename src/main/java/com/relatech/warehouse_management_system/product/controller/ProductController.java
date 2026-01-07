@@ -2,9 +2,9 @@ package com.relatech.warehouse_management_system.product.controller;
 
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.product.service.ProductService;
-import com.relatech.warehouse_management_system.common.util.Category;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -42,7 +42,7 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<ProductDto>> getAllProducts() {
         log.info("Received GET request for all products");
         List<ProductDto> products = productService.getAllProducts();
@@ -50,7 +50,7 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @GetMapping("/paged")
+    @GetMapping
     @Operation(summary = "List Stock Units paginated")
     public ResponseEntity<Page<ProductDto>> listStockUnitsPaged(Pageable pageable) {
         return ResponseEntity.ok(productService.getAllProductsPaged(pageable));

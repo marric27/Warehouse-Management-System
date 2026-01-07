@@ -1,12 +1,15 @@
 package com.relatech.warehouse_management_system.warehouse.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.product.dto.ProductDto;
-import com.relatech.warehouse_management_system.common.util.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -23,7 +26,8 @@ public class SlotDto {
     @Schema(description = "Unique code of the slot", example = "SLOT-001", accessMode = Schema.AccessMode.READ_ONLY)
     private String code;
 
-    @Schema(description = "Code of the slot indicating picking sequence", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
+    @NotNull(message = "The picking sequence cannot be null.")
+    @Schema(description = "Code of the slot indicating picking sequence", example = "1")
     private Integer pickingSequence;
 
     @Schema(description = "Category allowed in this slot", example = "CONTROLLED_DRUG")

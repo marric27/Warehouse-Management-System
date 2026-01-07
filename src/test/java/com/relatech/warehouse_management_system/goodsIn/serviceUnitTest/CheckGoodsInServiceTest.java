@@ -10,6 +10,7 @@ import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemSe
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
 import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignCIToGrnItemInClosedOrPutawayStateException;
 
+import com.relatech.warehouse_management_system.product.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -38,6 +39,9 @@ class CheckGoodsInServiceTest {
 
     @Mock
     private GrnItemStateService stateService;
+
+    @Mock
+    private ProductService productService;
 
     @InjectMocks
     private CheckGoodsInService service;
@@ -83,6 +87,7 @@ class CheckGoodsInServiceTest {
 
         doNothing().when(grnItemService).addCheckingInfo(grnItemId, 200L);
         doNothing().when(stateService).evaluateAndProgressItemState(item);
+        doNothing().when(productService).validateProductExists(Mockito.<String>any());
 
         // ------ CALL SERVICE ------
         GrnItemDto result = service.createCheckingInfoAndStockUnit(grnItemId, ci, su);

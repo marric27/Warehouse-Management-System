@@ -18,4 +18,6 @@ public interface SlotService {
     void deleteSlot(Long slotId) throws ResourceNotFoundException;
 
     Optional<SlotDto> getSlotContainingProduct(String productCode, int requiredQuantity) throws ResourceNotFoundException;
+
+    SlotDto getSlotByCode(String slotCode) throws ResourceNotFoundException;
 }

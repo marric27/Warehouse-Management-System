@@ -35,26 +35,11 @@ public class PickListController {
      * @throws ResourceNotFoundException se qualche ordine non viene trovato
      */
     @PostMapping("/release")
-    public ResponseEntity<List<PickListDto>> releaseOrders(@RequestBody List<Long> orderIds)
-            throws ResourceNotFoundException {
+    @Operation(summary = "Generate picklist", description = "Generates a picklist DTO based on the order IDs")
+    public ResponseEntity<List<PickListDto>> releaseOrders(@RequestBody List<Long> orderIds) throws ResourceNotFoundException {
 
         List<PickListDto> pickLists = pickListGen.generatePickLists(orderIds);
         return ResponseEntity.ok(pickLists);
-    }
-
-    @PostMapping("/generate/{orderId}")
-    @Operation(summary = "Generate picklist", description = "Generates a picklist DTO based on the order ID")
-    public ResponseEntity<PickListDto> generatePickList(@PathVariable Long orderId) {
-        try {
-            PickListDto pickListDto = pickListGen.generatePickList(orderId);
-            return ResponseEntity.ok(pickListDto);
-        } catch (ResourceNotFoundException e) {
-            log.error("Order not found: {}", orderId, e);
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            log.error("Error generating picklist for order {}", orderId, e);
-            return ResponseEntity.status(500).build();
-        }
     }
 
     @GetMapping("/release")

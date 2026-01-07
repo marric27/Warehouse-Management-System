@@ -1,9 +1,11 @@
 package com.relatech.warehouse_management_system.goodsIn.serviceIntegrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,8 +38,7 @@ public class ReceivingIntegrationTest {
         String body = mapper.writeValueAsString(dto);
 
         // CREATE
-        String response = mockMvc.perform(
-                        post("/receiving/grns")
+        String response = mockMvc.perform(post("/receiving/grns")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(body)
                 )
@@ -50,8 +51,7 @@ public class ReceivingIntegrationTest {
         GrnDto created = mapper.readValue(response, GrnDto.class);
 
         // FETCH
-        mockMvc.perform(
-                        get("/receiving/grns/" + created.getId())
+        mockMvc.perform(get("/receiving/grns/" + created.getId())
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(created.getId().intValue())))
@@ -61,6 +61,20 @@ public class ReceivingIntegrationTest {
 
     @Test
     void testCreateItemAndUpdateItem() throws Exception {
+        ProductDto product = new ProductDto();
+        product.setName("Test Product");
+        product.setCategory(Category.STANDARD);
+        String productBody = mapper.writeValueAsString(product);
+        String prodResp = mockMvc.perform(post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productBody)
+                )
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        ProductDto createdProd = mapper.readValue(prodResp, ProductDto.class);
 
         // --- Step 1: Create GRN ---
         GrnDto dto = new GrnDto();
@@ -69,8 +83,7 @@ public class ReceivingIntegrationTest {
 
         String grnBody = mapper.writeValueAsString(dto);
 
-        String resp = mockMvc.perform(
-                        post("/receiving/grns")
+        String resp = mockMvc.perform(post("/receiving/grns")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(grnBody)
                 )
@@ -83,7 +96,7 @@ public class ReceivingIntegrationTest {
 
         // --- Step 2: Create Item ---
         GrnItemDto item = new GrnItemDto();
-        item.setProductCode("P001");
+        item.setProductCode(createdProd.getCode());
         item.setExpectedQty(10);
         item.setReceivedQty(10);
         item.setCompliantQty(10);

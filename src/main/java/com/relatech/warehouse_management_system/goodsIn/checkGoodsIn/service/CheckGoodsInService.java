@@ -1,16 +1,18 @@
 package com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.service;
 
 import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
+import com.relatech.warehouse_management_system.common.util.State;
+import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.CheckingInfoService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
-import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignCIToGrnItemInClosedOrPutawayStateException;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
+import com.relatech.warehouse_management_system.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,6 +32,7 @@ public class CheckGoodsInService {
     private final CheckingInfoService checkingInfoService;
     private final GrnItemService grnItemService;
     private final GrnItemStateService stateService;
+    private final ProductService productService;
 
     @Transactional(rollbackFor = {CannotAssignCIToGrnItemInClosedOrPutawayStateException.class, DuplicateResourceException.class, GrnItemNotFoundException.class, GrnNotFoundException.class})
     public GrnItemDto createCheckingInfoAndStockUnit(Long grnItemId, CheckingInfoDto ci, StockUnitDto su) throws Exception {
@@ -37,12 +40,16 @@ public class CheckGoodsInService {
         if(stateService.checkGrnItemIfCheckedOrPutaway(grnItemId))
             throw new CannotAssignCIToGrnItemInClosedOrPutawayStateException(grnItemId);
 
+        productService.validateProductExists(su.getProductCode());
+
         // Create StockUnit
         StockUnitDto stockUnit = stockUnitService.createStockUnit(su);
 
         // Create CheckingInfo
         ci.setStockUnitId(stockUnit.getId());
         ci.setGrnItemId(grnItemId);
+        ci.setState(State.OPEN);
+        ci.setQuantity(su.getQuantity());
         CheckingInfoDto savedCI = checkingInfoService.create(ci);
 
         // assign to item

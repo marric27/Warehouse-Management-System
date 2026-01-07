@@ -85,7 +85,6 @@ class ProductIntegrationTest {
 
         mockMvc.perform(get("/products"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].code").value("P001"))
                 .andExpect(jsonPath("$[0].name").value("Paracetamolo"));
     }
 
@@ -95,30 +94,7 @@ class ProductIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productDTO)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.code").value("P001"))
                 .andExpect(jsonPath("$.name").value("Paracetamolo"));
-    }
-
-    @Test
-    void whenPostDuplicateMovie_thenReturnConflict() throws Exception {
-        productService.createProduct(productDTO);
-
-        ProductDto duplicate = new ProductDto(null, "P001", "Brufen", Category.FLAMMABLE);
-
-        mockMvc.perform(post("/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(duplicate)))
-                .andExpect(status().isConflict());
-    }
-
-    @Test
-    void givenNewProductWithoutCode_whenPost_thenReturnBadRequest() throws Exception {
-        ProductDto prodWithoutCode = new ProductDto(null, null, "Brufen", Category.FLAMMABLE);
-
-        mockMvc.perform(post("/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(prodWithoutCode)))
-                .andExpect(status().isBadRequest());
     }
 
     @Test

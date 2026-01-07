@@ -4,11 +4,11 @@ import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
-import com.relatech.warehouse_management_system.goodsIn.exception.InvalidStateTransitionException;
 import com.relatech.warehouse_management_system.goodsIn.receiving.service.ReceivingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -51,14 +50,14 @@ public class ReceivingController {
         return ResponseEntity.ok(receivingService.getGRN(id));
     }
 
-    @GetMapping("/grns")
+    @GetMapping("/grns-all")
     @Operation(summary = "List all GRNs")
     public ResponseEntity<List<GrnDto>> listGRNs() {
         log.info("Listing all GRNs");
         return ResponseEntity.ok(receivingService.listGrn());
     }
 
-    @GetMapping("/grns-paged")
+    @GetMapping("/grns")
     @Operation(summary = "List all GRNs")
     public ResponseEntity<Page<GrnDto>> listGRNsPaged(Pageable pageable) {
         log.info("Listing all GRNs Paged");
@@ -114,8 +113,7 @@ public class ReceivingController {
     @Operation(summary = "Manually change GRN state")
     public ResponseEntity<GrnDto> changeGrnState(
             @PathVariable Long id,
-            @PathVariable State state)
-            throws GrnNotFoundException, InvalidStateTransitionException {
+            @PathVariable State state) {
 
         log.info("Changing state of GRN {} to {}", id, state);
         throw new UnsupportedOperationException("Not implemented in ReceivingService");

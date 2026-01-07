@@ -1,6 +1,7 @@
 package com.relatech.warehouse_management_system.common.exception;
 
 import com.relatech.warehouse_management_system.goodsIn.exception.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -8,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 import java.time.LocalDateTime;
 
@@ -71,18 +70,6 @@ public class GlobalExceptionHandler {
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
                         firstError,
                         req.getRequestURI()));
-    }
-
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ApiError> handleUnauthorized(UnauthorizedException ex, HttpServletRequest req) {
-        log.error("UnauthorizedException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(buildError(HttpStatus.UNAUTHORIZED, ex, req));
-    }
-
-    @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ApiError> handleForbidden(ForbiddenException ex, HttpServletRequest req) {
-        log.error("ForbiddenException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(buildError(HttpStatus.FORBIDDEN, ex, req));
     }
 
     @ExceptionHandler(InternalServerException.class)
@@ -164,6 +151,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OverReceivedQuantityException.class)
     public ResponseEntity<ApiError> handleOverReceivedQuantityException(OverReceivedQuantityException ex, HttpServletRequest req) {
         log.error("OverReceivedQuantityException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildError(HttpStatus.CONFLICT, ex, req));
+    }
+
+    @ExceptionHandler(MatchingDifferentCategoryException.class)
+    public ResponseEntity<ApiError> MatchingDifferentCategoryException(MatchingDifferentCategoryException ex, HttpServletRequest req) {
+        log.error("MatchingDifferentCategoryException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildError(HttpStatus.CONFLICT, ex, req));
     }

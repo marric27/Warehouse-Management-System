@@ -49,11 +49,15 @@ public class PickListService {
     }
 
     @Transactional(readOnly = true)
-    public List<PickListItemDto> findOpenItemsOrdered(List<Long> plIds, PickListItemState state, Pageable pageable) {
+    public List<PickListItemDto> findItemsByStateOrdered(List<Long> plIds, PickListItemState state, Pageable pageable) {
         List<PickListItem> result = pickListItemRepository.findOpenItemsOrdered(plIds, state, pageable);
         return result.stream().map(PickListMapper::toItemDto).toList();
     }
 
-
-
+    @Transactional(readOnly = true)
+    public PickListDto getPickListByCode(String pickListCode) throws ResourceNotFoundException {
+        return pickListRepository.findByCode(pickListCode)
+                .map(PickListMapper::toDto)
+                .orElseThrow(() -> new ResourceNotFoundException("PickList", pickListCode));
+    }
 }

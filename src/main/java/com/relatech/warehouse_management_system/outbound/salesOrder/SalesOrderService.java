@@ -1,16 +1,13 @@
 package com.relatech.warehouse_management_system.outbound.salesOrder;
 
-// obiettivo: creazione ordini per customers
-// creazione customer
-// creazione ordine per customer
-// creazione salesorderline insieme al order o anche aggiunta dopo? per ora creo tutto insieme
-
-
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
+import com.relatech.warehouse_management_system.common.util.OrderState;
 import com.relatech.warehouse_management_system.customer.entity.CustomerDto;
-import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
 import com.relatech.warehouse_management_system.customer.service.CustomerService;
+import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
+import com.relatech.warehouse_management_system.outbound.dto.SalesOrderLineDto;
 import com.relatech.warehouse_management_system.outbound.entity.service.OrderService;
+import com.relatech.warehouse_management_system.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,11 +23,23 @@ import java.util.List;
 public class SalesOrderService {
     private final CustomerService customerService;
     private final OrderService orderService;
+    private final ProductService productService;
 
     @Transactional(rollbackFor = ResourceNotFoundException.class)
     public OrderDto createOrderAndAssign(Long customerId, OrderDto orderDto) throws ResourceNotFoundException {
         CustomerDto customerDTO = customerService.getCustomerById(customerId);
+
+        List<String> productCodes = orderDto.getSalesOrderLineList().stream()
+                .map(SalesOrderLineDto::getProductCode)
+                .distinct()
+                .toList();
+
+        for (String code : productCodes)
+            productService.validateProductExists(code);
+
         orderDto.setCustomerCode(customerDTO.getCustomerCode());
+        orderDto.setState(OrderState.OPEN);
+        orderDto.getSalesOrderLineList().forEach(line -> {line.setStatus(OrderState.OPEN);});
         return orderService.createOrder(orderDto);
     }
 

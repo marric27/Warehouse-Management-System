@@ -83,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = ResourceNotFoundException.class)
     public OrderDto updateOrderState(Long id, OrderState newState) throws ResourceNotFoundException {
         Order existing = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order", id));
         existing.setState(newState);

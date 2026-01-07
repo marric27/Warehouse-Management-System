@@ -31,28 +31,22 @@ public class OrderDto {
     @Schema(description = "Soft reference to the customer associated with the order", example = "CUST-00123", accessMode = Schema.AccessMode.READ_ONLY)
     private String customerCode;
 
-    @Schema(description = "Order status", example = "OPEN")
+    @Schema(description = "Order status", example = "OPEN", accessMode = Schema.AccessMode.READ_ONLY)
     private OrderState state;
 
     @Schema(description = "List of sales order lines associated with this order", example = """
             [
               {
-                "id": 1,
                 "productCode": "PRD-001",
-                "quantity": 10,
-                "status": "OPEN"
+                "quantity": 10
               },
               {
-                "id": 2,
                 "productCode": "PRD-002",
-                "quantity": 5,
-                "status": "OPEN"
+                "quantity": 5
               },
               {
-                "id": 3,
                 "productCode": "PRD-003",
-                "quantity": 20,
-                "status": "OPEN"
+                "quantity": 20
               }
             ]""")
     private List<SalesOrderLineDto> salesOrderLineList;

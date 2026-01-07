@@ -1,20 +1,20 @@
 package com.relatech.warehouse_management_system.goodsIn.entity.service;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.product.entity.Product;
-import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
+import com.relatech.warehouse_management_system.product.entity.Product;
+import com.relatech.warehouse_management_system.product.repository.ProductRepository;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -66,6 +66,15 @@ public class StockUnitServiceImpl implements StockUnitService {
         StockUnit saved = stockUnitRepository.save(existing);
         return stockUnitMapper.toDTO(saved);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public StockUnitDto getStockUnitByCode(String code) throws ResourceNotFoundException {
+        StockUnit stockUnit = stockUnitRepository.findByCode(code)
+                .orElseThrow(() -> new ResourceNotFoundException("StockUnit", code));
+        return stockUnitMapper.toDTO(stockUnit);
+    }
+
 
     @Override
     @Transactional(rollbackFor = {ResourceNotFoundException.class, RuntimeException.class})

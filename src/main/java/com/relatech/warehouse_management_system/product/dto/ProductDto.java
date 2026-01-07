@@ -4,7 +4,10 @@ import com.relatech.warehouse_management_system.common.util.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
@@ -15,8 +18,7 @@ public class ProductDto {
     @Schema (accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
-    @Schema(description = "Unique product code", example = "PRD-001")
-    @NotBlank(message = "The code cannot be empty or null.")
+    @Schema(description = "Unique product code", example = "PRD-001", accessMode = Schema.AccessMode.READ_ONLY)
     private String code;
 
     @Schema(description = "Name of the product", example = "Aspirin 500mg")

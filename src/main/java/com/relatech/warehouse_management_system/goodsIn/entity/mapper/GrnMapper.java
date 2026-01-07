@@ -2,7 +2,6 @@ package com.relatech.warehouse_management_system.goodsIn.entity.mapper;
 
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.Grn;
-import com.relatech.warehouse_management_system.common.util.State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -40,7 +39,7 @@ public class GrnMapper {
                 .code(dto.getCode())
                 .supplier(dto.getSupplier())
                 .receivingDate(dto.getReceivingDate())
-                .state(State.OPEN) // Default state on creation
+                .state(dto.getState())
                 .items(grnItemMapper.toEntity(dto.getItems()))
                 .build();
     }
