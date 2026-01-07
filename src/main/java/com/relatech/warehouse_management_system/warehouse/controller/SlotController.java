@@ -27,7 +27,7 @@ public class SlotController {
     
     private final SlotService slotService;
 
-    @GetMapping
+    @GetMapping("/all")
     @Operation(summary = "List all slots", description = "Returns all warehouse slots")
     @ApiResponse(responseCode = "200", description = "Slots retrieved")
     public ResponseEntity<List<SlotDto>> listSlots() {
@@ -35,9 +35,9 @@ public class SlotController {
         return ResponseEntity.ok(slotService.getAllSlots());
     }
 
-    @GetMapping("/paged")
+    @GetMapping
     @Operation(summary = "List Slots paginated")
-    public ResponseEntity<Page<SlotDto>> listStockUnitsPaged(Pageable pageable) {
+    public ResponseEntity<Page<SlotDto>> listSlotPaginated(Pageable pageable) {
         return ResponseEntity.ok(slotService.getAllSlotsPaged(pageable));
     }
 

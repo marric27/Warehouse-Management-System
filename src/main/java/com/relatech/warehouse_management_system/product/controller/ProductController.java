@@ -42,7 +42,7 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<ProductDto>> getAllProducts() {
         log.info("Received GET request for all products");
         List<ProductDto> products = productService.getAllProducts();
@@ -50,7 +50,7 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @GetMapping("/paged")
+    @GetMapping
     @Operation(summary = "List Stock Units paginated")
     public ResponseEntity<Page<ProductDto>> listStockUnitsPaged(Pageable pageable) {
         return ResponseEntity.ok(productService.getAllProductsPaged(pageable));

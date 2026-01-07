@@ -50,14 +50,14 @@ public class ReceivingController {
         return ResponseEntity.ok(receivingService.getGRN(id));
     }
 
-    @GetMapping("/grns")
+    @GetMapping("/grns-all")
     @Operation(summary = "List all GRNs")
     public ResponseEntity<List<GrnDto>> listGRNs() {
         log.info("Listing all GRNs");
         return ResponseEntity.ok(receivingService.listGrn());
     }
 
-    @GetMapping("/grns-paged")
+    @GetMapping("/grns")
     @Operation(summary = "List all GRNs")
     public ResponseEntity<Page<GrnDto>> listGRNsPaged(Pageable pageable) {
         log.info("Listing all GRNs Paged");
