@@ -110,14 +110,6 @@ public class TestComplete {
     }
 
     private GrnItemDto checkGoodsIn(Long itemId, String productCode) throws Exception {
-
-        CheckingInfoDto checking = CheckingInfoDto.builder()
-                .batchNumber("BN-2025A")
-                .expirationDate(LocalDate.now().plusDays(10))
-                .quantity(50)
-                .state(State.OPEN)
-                .build();
-
         StockUnitDto stock = StockUnitDto.builder()
                 .batchNumber("BN-2025A")
                 .expirationDate(LocalDate.now().plusDays(10))
@@ -126,12 +118,7 @@ public class TestComplete {
                 .category(Category.STANDARD)
                 .build();
 
-        CheckGoodsInController.CreateCheckingInfoRequest req = new CheckGoodsInController.CreateCheckingInfoRequest();
-
-        req.setCheckingInfo(checking);
-        req.setStockUnit(stock);
-
-        return performPost("/check-goods-in/" + itemId + "/checking-info", req, GrnItemDto.class);
+        return performPost("/check-goods-in/" + itemId + "/checking-info", stock, GrnItemDto.class);
     }
 
     private final Faker faker = new Faker();

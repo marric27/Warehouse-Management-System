@@ -6,9 +6,7 @@ import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,26 +35,14 @@ public class CheckGoodsInController {
     @PostMapping("/{grnItemId}/checking-info")
     public ResponseEntity<GrnItemDto> createCheckingInfo(
             @PathVariable Long grnItemId,
-            @RequestBody CreateCheckingInfoRequest request) throws Exception {
+            @RequestBody StockUnitDto request) throws Exception {
         log.info("POST /{}/checking-info - creating checking-info and stockUnit for grnItem {}", grnItemId, grnItemId);
         GrnItemDto result = checkGoodsInService.createCheckingInfoAndStockUnit(
                 grnItemId,
-                request.getCheckingInfo(),
-                request.getStockUnit()
+                request
         );
 
         return ResponseEntity.ok(result);
-    }
-
-
-    /**
-     * Wrapper request DTO: contains both CheckingInfoDto and StockUnitDto
-     */
-    @Getter
-    @Setter
-    public static class CreateCheckingInfoRequest {
-        private CheckingInfoDto checkingInfo;
-        private StockUnitDto stockUnit;
     }
 
     @GetMapping("/checking-infos")

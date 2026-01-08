@@ -62,7 +62,7 @@ class SlotIntegrationTest {
     void givenSlotExists_whenGetAllSlots_thenReturnList() throws Exception {
         slotService.createSlot(slotDTO);
 
-        mockMvc.perform(get("/slots"))
+        mockMvc.perform(get("/slots/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].capacity").value(100));
     }

@@ -83,7 +83,7 @@ class ProductIntegrationTest {
                         .content(objectMapper.writeValueAsString(productDTO)))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/products"))
+        mockMvc.perform(get("/products/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Paracetamolo"));
     }

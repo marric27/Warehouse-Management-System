@@ -15,6 +15,7 @@ import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundExc
 import com.relatech.warehouse_management_system.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class CheckGoodsInService {
     private final ProductService productService;
 
     @Transactional(rollbackFor = {CannotAssignCIToGrnItemInClosedOrPutawayStateException.class, DuplicateResourceException.class, GrnItemNotFoundException.class, GrnNotFoundException.class})
-    public GrnItemDto createCheckingInfoAndStockUnit(Long grnItemId, CheckingInfoDto ci, StockUnitDto su) throws Exception {
+    public GrnItemDto createCheckingInfoAndStockUnit(Long grnItemId, StockUnitDto su) throws Exception {
 
         if(stateService.checkGrnItemIfCheckedOrPutaway(grnItemId))
             throw new CannotAssignCIToGrnItemInClosedOrPutawayStateException(grnItemId);
@@ -46,10 +47,13 @@ public class CheckGoodsInService {
         StockUnitDto stockUnit = stockUnitService.createStockUnit(su);
 
         // Create CheckingInfo
+        CheckingInfoDto ci = new CheckingInfoDto();
         ci.setStockUnitId(stockUnit.getId());
         ci.setGrnItemId(grnItemId);
         ci.setState(State.OPEN);
         ci.setQuantity(su.getQuantity());
+        ci.setBatchNumber(su.getBatchNumber());
+        ci.setExpirationDate(su.getExpirationDate());
         CheckingInfoDto savedCI = checkingInfoService.create(ci);
 
         // assign to item

@@ -86,7 +86,7 @@ class ProductControllerTest {
     void givenProductsExist_whenGetAll_thenReturnList() throws Exception {
         when(productService.getAllProducts()).thenReturn(List.of(productDTO));
 
-        mockMvc.perform(get("/products"))
+        mockMvc.perform(get("/products/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].code").value("P001"));
