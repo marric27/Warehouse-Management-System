@@ -40,6 +40,8 @@ public class PutawayService {
 
         if (!slot.getAllowedCategory().equals(su.getCategory()))
             throw new IllegalArgumentException("Category mismatch");
+        if (su.getQuantity() >= slot.getCapacity())
+            throw new IllegalArgumentException("Slot is full"); // TODO aggiungere colonna available capacity in slot
 
         slot.getStockUnits().add(su);
         su.setSlotId(slot.getId());

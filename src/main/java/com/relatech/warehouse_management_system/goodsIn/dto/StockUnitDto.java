@@ -32,8 +32,8 @@ public class StockUnitDto {
     @FutureOrPresent(message = "Expiration date cannot be in the past")
     private LocalDate expirationDate;
 
-    @Schema(description = "Product code related to this stock unit", example = "PRD-00123")
-    @NotBlank(message = "Product code is required")
+    @Schema(description = "Product code related to this stock unit", example = "PRD-001")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String productCode;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -46,7 +46,7 @@ public class StockUnitDto {
     private Integer quantity;
 
     @Schema(description = "Category classification of the product")
-    @NotNull(message = "Category is required")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Category category;
 
     @Schema(description = "Associated product details", accessMode = Schema.AccessMode.READ_ONLY)

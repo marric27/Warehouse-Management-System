@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -39,6 +40,7 @@ public class SalesOrderService {
 
         orderDto.setCustomerCode(customerDTO.getCustomerCode());
         orderDto.setState(OrderState.OPEN);
+        orderDto.setDate(LocalDate.now());
         orderDto.getSalesOrderLineList().forEach(line -> {line.setStatus(OrderState.OPEN);});
         return orderService.createOrder(orderDto);
     }

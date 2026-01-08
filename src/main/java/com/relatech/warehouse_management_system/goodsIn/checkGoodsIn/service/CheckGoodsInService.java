@@ -1,6 +1,7 @@
 package com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.service;
 
 import com.relatech.warehouse_management_system.common.exception.DuplicateResourceException;
+import com.relatech.warehouse_management_system.common.exception.QuantityNotAvailableException;
 import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
@@ -13,6 +14,7 @@ import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignCI
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
 import com.relatech.warehouse_management_system.product.service.ProductService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,7 +43,12 @@ public class CheckGoodsInService {
         if(stateService.checkGrnItemIfCheckedOrPutaway(grnItemId))
             throw new CannotAssignCIToGrnItemInClosedOrPutawayStateException(grnItemId);
 
-        productService.validateProductExists(su.getProductCode());
+        GrnItemDto grnItem = grnItemService.getGrnItemById(grnItemId);
+        if(su.getQuantity() > grnItem.getReceivedQty()) {
+            throw new QuantityNotAvailableException(su.getQuantity(), grnItem.getReceivedQty());
+        }
+        su.setProductCode(grnItem.getProductCode());
+        su.setCategory(productService.getProductByCode(grnItem.getProductCode()).getCategory());
 
         // Create StockUnit
         StockUnitDto stockUnit = stockUnitService.createStockUnit(su);

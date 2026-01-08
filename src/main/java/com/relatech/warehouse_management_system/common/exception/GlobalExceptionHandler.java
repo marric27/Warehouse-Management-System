@@ -17,24 +17,28 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 
     private ApiError buildError(HttpStatus status, Exception ex, HttpServletRequest req) {
-        return new ApiError(LocalDateTime.now(), status.value(), status.getReasonPhrase(), ex.getMessage(), req.getRequestURI());
+        return new ApiError(LocalDateTime.now(), status.value(), status.getReasonPhrase(), ex.getMessage(),
+                req.getRequestURI());
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiError> handleNotFound(ResourceNotFoundException ex, HttpServletRequest req) {
-        log.error("ResourceNotFoundException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        log.error("ResourceNotFoundException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(),
+                ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildError(HttpStatus.NOT_FOUND, ex, req));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiError> handleDuplicate(DataIntegrityViolationException ex, HttpServletRequest req) {
-        log.error("DataIntegrityViolationException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        log.error("DataIntegrityViolationException at {} {} -> {}", req.getMethod(), req.getRequestURI(),
+                ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(buildError(HttpStatus.CONFLICT, ex, req));
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ApiError> handleDuplicate(DuplicateResourceException ex, HttpServletRequest req) {
-        log.error("DuplicateResourceException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+        log.error("DuplicateResourceException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(),
+                ex);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(buildError(HttpStatus.CONFLICT, ex, req));
     }
 
@@ -47,7 +51,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ApiError> handleValidation(ValidationException ex, HttpServletRequest req) {
         log.error("ValidationException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(buildError(HttpStatus.UNPROCESSABLE_ENTITY, ex, req));
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(buildError(HttpStatus.UNPROCESSABLE_ENTITY, ex, req));
     }
 
     @ExceptionHandler(BadRequestException.class)
@@ -62,7 +67,8 @@ public class GlobalExceptionHandler {
                 ? "Validation error"
                 : ex.getBindingResult().getFieldErrors().getFirst().getDefaultMessage();
 
-        log.error("MethodArgumentNotValidException at {} {} -> {}", req.getMethod(), req.getRequestURI(), firstError, ex);
+        log.error("MethodArgumentNotValidException at {} {} -> {}", req.getMethod(), req.getRequestURI(), firstError,
+                ex);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiError(LocalDateTime.now(),
@@ -75,7 +81,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InternalServerException.class)
     public ResponseEntity<ApiError> handleInternal(InternalServerException ex, HttpServletRequest req) {
         log.error("InternalServerException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex, req));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex, req));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -86,15 +93,19 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(CannotAssignItemToGrnClosedException.class)
-    public ResponseEntity<ApiError> handleCannotAssignItemToGrnClosedException(CannotAssignItemToGrnClosedException ex, HttpServletRequest req) {
-        log.error("CannotAssignItemToGrnClosedException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+    public ResponseEntity<ApiError> handleCannotAssignItemToGrnClosedException(CannotAssignItemToGrnClosedException ex,
+            HttpServletRequest req) {
+        log.error("CannotAssignItemToGrnClosedException at {} {} -> {}", req.getMethod(), req.getRequestURI(),
+                ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildError(HttpStatus.CONFLICT, ex, req));
     }
 
     @ExceptionHandler(CannotAssignCIToGrnItemInClosedOrPutawayStateException.class)
-    public ResponseEntity<ApiError> handleCannotAssignCIToGrnItemInClosedOrPutawayStateException(CannotAssignCIToGrnItemInClosedOrPutawayStateException ex, HttpServletRequest req) {
-        log.error("CannotAssignCIToGrnItemInClosedOrPutawayStateException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+    public ResponseEntity<ApiError> handleCannotAssignCIToGrnItemInClosedOrPutawayStateException(
+            CannotAssignCIToGrnItemInClosedOrPutawayStateException ex, HttpServletRequest req) {
+        log.error("CannotAssignCIToGrnItemInClosedOrPutawayStateException at {} {} -> {}", req.getMethod(),
+                req.getRequestURI(), ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildError(HttpStatus.CONFLICT, ex, req));
     }
@@ -114,7 +125,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(GrnItemNotFoundException.class)
-    public ResponseEntity<ApiError> handleGrnItemNotFoundException(GrnItemNotFoundException ex, HttpServletRequest req) {
+    public ResponseEntity<ApiError> handleGrnItemNotFoundException(GrnItemNotFoundException ex,
+            HttpServletRequest req) {
         log.error("GrnItemNotFoundException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(buildError(HttpStatus.NOT_FOUND, ex, req));
@@ -128,36 +140,54 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidQuantityException.class)
-    public ResponseEntity<ApiError> handleInvalidQuantityException(InvalidQuantityException ex, HttpServletRequest req) {
+    public ResponseEntity<ApiError> handleInvalidQuantityException(InvalidQuantityException ex,
+            HttpServletRequest req) {
         log.error("InvalidQuantityException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildError(HttpStatus.CONFLICT, ex, req));
     }
 
     @ExceptionHandler(InvalidStateTransitionException.class)
-    public ResponseEntity<ApiError> handleInvalidStateTransitionException(InvalidStateTransitionException ex, HttpServletRequest req) {
-        log.error("InvalidStateTransitionException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+    public ResponseEntity<ApiError> handleInvalidStateTransitionException(InvalidStateTransitionException ex,
+            HttpServletRequest req) {
+        log.error("InvalidStateTransitionException at {} {} -> {}", req.getMethod(), req.getRequestURI(),
+                ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildError(HttpStatus.CONFLICT, ex, req));
     }
 
     @ExceptionHandler(QuantityMismatchException.class)
-    public ResponseEntity<ApiError> handleQuantityMismatchException(QuantityMismatchException ex, HttpServletRequest req) {
-        log.error("QuantityMismatchException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+    public ResponseEntity<ApiError> handleQuantityMismatchException(QuantityMismatchException ex,
+            HttpServletRequest req) {
+        log.error("QuantityMismatchException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(),
+                ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildError(HttpStatus.CONFLICT, ex, req));
+    }
+
+    @ExceptionHandler(QuantityNotAvailableException.class)
+    public ResponseEntity<ApiError> handleQuantityNotAvailableException(QuantityNotAvailableException ex,
+            HttpServletRequest req) {
+        log.error("QuantityNotAvailableException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(),
+                ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildError(HttpStatus.CONFLICT, ex, req));
     }
 
     @ExceptionHandler(OverReceivedQuantityException.class)
-    public ResponseEntity<ApiError> handleOverReceivedQuantityException(OverReceivedQuantityException ex, HttpServletRequest req) {
-        log.error("OverReceivedQuantityException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+    public ResponseEntity<ApiError> handleOverReceivedQuantityException(OverReceivedQuantityException ex,
+            HttpServletRequest req) {
+        log.error("OverReceivedQuantityException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(),
+                ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildError(HttpStatus.CONFLICT, ex, req));
     }
 
     @ExceptionHandler(MatchingDifferentCategoryException.class)
-    public ResponseEntity<ApiError> MatchingDifferentCategoryException(MatchingDifferentCategoryException ex, HttpServletRequest req) {
-        log.error("MatchingDifferentCategoryException at {} {} -> {}", req.getMethod(), req.getRequestURI(), ex.getMessage(), ex);
+    public ResponseEntity<ApiError> MatchingDifferentCategoryException(MatchingDifferentCategoryException ex,
+            HttpServletRequest req) {
+        log.error("MatchingDifferentCategoryException at {} {} -> {}", req.getMethod(), req.getRequestURI(),
+                ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(buildError(HttpStatus.CONFLICT, ex, req));
     }

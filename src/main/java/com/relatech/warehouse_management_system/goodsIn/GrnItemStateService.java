@@ -48,13 +48,13 @@ public class GrnItemStateService {
     public void evaluateAndProgressItemState(GrnItemDto item) throws GrnItemNotFoundException, GrnNotFoundException {
 
         List<CheckingInfoDto> checks = item.getCheckingInfoList();
-        int expected = item.getExpectedQty();
+        int received = item.getReceivedQty();
         int assigned = checks == null ? 0 : checks.stream().mapToInt(CheckingInfoDto::getQuantity).sum();
 
         State current = item.getState() == null ? State.OPEN : item.getState();
 
         // OPEN → CHECKED
-        if (assigned >= expected && current == State.OPEN) {
+        if (assigned >= received && current == State.OPEN) {
             log.info("AUTO: Item {} -> CHECKED (qty complete)", item.getId());
             item.setState(State.CHECKED);
             grnItemService.updateGrnItem(item.getId(), item);

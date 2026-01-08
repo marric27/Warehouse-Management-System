@@ -26,6 +26,7 @@ public class OrderDto {
     )    private String code;
 
     @Schema(description = "Date when the order was created or registered", example = "2025-01-15")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDate date;
 
     @Schema(description = "Soft reference to the customer associated with the order", example = "CUST-00123", accessMode = Schema.AccessMode.READ_ONLY)
