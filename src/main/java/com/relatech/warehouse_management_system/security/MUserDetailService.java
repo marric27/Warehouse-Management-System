@@ -18,11 +18,11 @@
 //
 //public class MUserDetailService implements UserDetailsService {
 //
-//    @Autowired
-//    private UserRepository userRepository;
-//
-//    @Autowired
-//    private RoleRepository roleRepository;
+////    @Autowired
+////    private UserRepository userRepository;
+////
+////    @Autowired
+////    private RoleRepository roleRepository;
 //
 //    @Override
 //    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
