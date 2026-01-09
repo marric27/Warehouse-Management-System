@@ -49,4 +49,10 @@ public class SalesOrderController {
         return ResponseEntity.ok(orders);
     }
 
+    @GetMapping("/orders/{id}")
+    public ResponseEntity<OrderDto> getOrderById(@PathVariable Long id) throws ResourceNotFoundException {
+        log.info("Request received: get orders by id ={}", id);
+        return ResponseEntity.ok(salesOrderService.getOrderById(id));
+    }
+
 }

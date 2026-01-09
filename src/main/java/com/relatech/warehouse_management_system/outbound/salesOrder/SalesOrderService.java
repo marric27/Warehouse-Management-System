@@ -55,7 +55,8 @@ public class SalesOrderService {
         return orderService.getAllOrdersPaged(pageable);
     }
 
-
-
-
+    @Transactional(readOnly = true)
+    public OrderDto getOrderById(Long id) throws ResourceNotFoundException {
+        return orderService.getOrderById(id);
+    }
 }
