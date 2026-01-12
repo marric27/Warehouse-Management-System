@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
-import static com.relatech.warehouse_management_system.security.SecurityConstants.JWT_EXPIRATION;
 
 @Component
 public class JwtGenerator {
@@ -21,7 +20,7 @@ public class JwtGenerator {
 
     public String generateToken(Authentication authentication) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
+        Date expiryDate = new Date(now.getTime() + SecurityConstants.JWT_EXPIRATION);
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
