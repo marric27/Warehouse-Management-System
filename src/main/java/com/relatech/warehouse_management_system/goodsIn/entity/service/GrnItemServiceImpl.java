@@ -108,9 +108,9 @@ public class GrnItemServiceImpl implements GrnItemService {
 
     @Transactional(rollbackFor = {GrnItemNotFoundException.class})
     @Override
-    public void addCheckingInfo(Long grnItemId, Long checkingInfoId) throws Exception {
-        GrnItem item = grnItemRepository.findById(grnItemId)
-                .orElseThrow(() -> new GrnItemNotFoundException(grnItemId));
+    public void addCheckingInfo(String grnItemCode, Long checkingInfoId) throws Exception {
+        GrnItem item = grnItemRepository.findByCode(grnItemCode)
+                .orElseThrow(() -> new GrnItemNotFoundException(grnItemCode));
 
         CheckingInfo info = checkingInfoRepository.findById(checkingInfoId)
                 .orElseThrow(() -> new Exception("CheckingInfo not found"));

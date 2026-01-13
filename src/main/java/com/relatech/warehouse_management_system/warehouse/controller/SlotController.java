@@ -50,6 +50,15 @@ public class SlotController {
         return ResponseEntity.ok(slotService.getSlotById(id));
     }
 
+    @GetMapping("/code/{code}")
+    @Operation(summary = "Get slot by code")
+    @ApiResponse(responseCode = "200", description = "Slot found")
+    @ApiResponse(responseCode = "404", description = "Slot not found")
+    public ResponseEntity<SlotDto> getSlot(@PathVariable String code) throws ResourceNotFoundException {
+        log.info("GET /slots/{} - fetching slot", code);
+        return ResponseEntity.ok(slotService.getSlotByCode(code));
+    }
+
     @PostMapping
     @Operation(summary = "Create slot")
     @ApiResponse(responseCode = "201", description = "Slot created")

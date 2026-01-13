@@ -55,4 +55,10 @@ public class SalesOrderController {
         return ResponseEntity.ok(salesOrderService.getOrderById(id));
     }
 
+    @GetMapping("/orders/code/{code}")
+    public ResponseEntity<OrderDto> getOrderByCode(@PathVariable String code) throws ResourceNotFoundException {
+        log.info("Request received: get orders by code ={}", code);
+        return ResponseEntity.ok(salesOrderService.getOrderByCode(code));
+    }
+
 }

@@ -59,4 +59,9 @@ public class SalesOrderService {
     public OrderDto getOrderById(Long id) throws ResourceNotFoundException {
         return orderService.getOrderById(id);
     }
+
+    @Transactional(readOnly = true)
+    public OrderDto getOrderByCode(String code) throws ResourceNotFoundException {
+        return orderService.getOrderByCode(code);
+    }
 }

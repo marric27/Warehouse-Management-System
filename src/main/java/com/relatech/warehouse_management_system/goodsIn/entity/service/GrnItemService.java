@@ -17,5 +17,5 @@ public interface GrnItemService {
     GrnItemDto getGrnItemByCode(String code) throws GrnItemNotFoundException;
     GrnItemDto updateGrnItem(Long id, GrnItemDto grnItemDto) throws GrnItemNotFoundException;
     void deleteGrnItem(Long id) throws GrnItemNotFoundException;
-    void addCheckingInfo(Long grnItemId, Long checkingInfoId) throws Exception;
+    void addCheckingInfo(String grnItemCode, Long checkingInfoId) throws Exception;
 }

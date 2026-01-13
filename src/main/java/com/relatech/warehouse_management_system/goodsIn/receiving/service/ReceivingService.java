@@ -30,7 +30,7 @@ public class ReceivingService {
     private final ProductService productService;
 
     // CREATE GRN
-    @Transactional(rollbackFor = {Exception.class})
+    @Transactional(rollbackFor = { Exception.class })
     public GrnDto createGRN(GrnDto dto) {
         dto.setState(State.OPEN);
         if (dto.getReceivingDate() == null)
@@ -39,17 +39,21 @@ public class ReceivingService {
     }
 
     // CREATE ITEM AND ASSIGN TO GRN BY ID
-    @Transactional(rollbackFor = {Exception.class})
-    public GrnItemDto createItem(Long grnId, GrnItemDto item) throws GrnNotFoundException, CannotAssignItemToGrnClosedException, InvalidQuantityException, QuantityMismatchException, OverReceivedQuantityException, GrnItemNotFoundException, ResourceNotFoundException {
-        if(grnService.getGRNById(grnId) == null) throw new GrnNotFoundException(grnId);
-        if(stateService.checkGrnIfClosed(grnId))
-            throw new CannotAssignItemToGrnClosedException(grnId);
+    @Transactional(rollbackFor = { Exception.class })
+    public GrnItemDto createItem(String grnCode, GrnItemDto item) throws GrnNotFoundException,
+            CannotAssignItemToGrnClosedException, InvalidQuantityException, QuantityMismatchException,
+            OverReceivedQuantityException, GrnItemNotFoundException, ResourceNotFoundException {
+        GrnDto grn = grnService.getGRNByCode(grnCode);
+        if (grnService.getGRNByCode(grnCode) == null)
+            throw new GrnNotFoundException(grnCode);
+        if (stateService.checkGrnIfClosed(grn.getId()))
+            throw new CannotAssignItemToGrnClosedException(grnCode);
 
         productService.validateProductExists(item.getProductCode());
 
         stateService.validateItemQuantities(item);
 
-        item.setGrnId(grnId);
+        item.setGrnId(grn.getId());
         item.setState(State.OPEN);
         GrnItemDto saved = grnItemService.createGrnItem(item);
 
@@ -58,15 +62,19 @@ public class ReceivingService {
     }
 
     // UPDATE ITEM
-    @Transactional(rollbackFor = {Exception.class})
+    @Transactional(rollbackFor = { Exception.class })
     public GrnItemDto updateItem(Long itemId, GrnItemDto dto) throws Exception {
 
         GrnItemDto item = grnItemService.getGrnItemById(itemId);
 
-        if (dto.getExpectedQty() > 0) item.setExpectedQty(dto.getExpectedQty());
-        if (dto.getReceivedQty() >= 0) item.setReceivedQty(dto.getReceivedQty());
-        if (dto.getCompliantQty() >= 0) item.setCompliantQty(dto.getCompliantQty());
-        if (dto.getNotCompliantQty() >= 0) item.setNotCompliantQty(dto.getNotCompliantQty());
+        if (dto.getExpectedQty() > 0)
+            item.setExpectedQty(dto.getExpectedQty());
+        if (dto.getReceivedQty() >= 0)
+            item.setReceivedQty(dto.getReceivedQty());
+        if (dto.getCompliantQty() >= 0)
+            item.setCompliantQty(dto.getCompliantQty());
+        if (dto.getNotCompliantQty() >= 0)
+            item.setNotCompliantQty(dto.getNotCompliantQty());
 
         stateService.validateItemQuantities(item);
 
@@ -101,5 +109,13 @@ public class ReceivingService {
 
     public GrnItemDto getGrnItemById(Long itemId) throws GrnItemNotFoundException {
         return grnItemService.getGrnItemById(itemId);
+    }
+
+    public GrnDto getGRNByCode(String code) throws GrnNotFoundException {
+        return grnService.getGRNByCode(code);
+    }
+
+    public GrnItemDto getGrnItemByCode(String code) throws GrnItemNotFoundException {
+        return grnItemService.getGrnItemByCode(code);
     }
 }

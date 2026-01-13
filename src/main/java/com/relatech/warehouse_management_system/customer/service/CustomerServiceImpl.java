@@ -82,8 +82,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @Transactional(rollbackFor = {ResourceNotFoundException.class, CustomerWithActiveOrdersException.class},
-            propagation = Propagation.REQUIRES_NEW)
+    @Transactional(rollbackFor = { ResourceNotFoundException.class,
+            CustomerWithActiveOrdersException.class }, propagation = Propagation.REQUIRES_NEW)
     public void deleteCustomer(Long id) throws ResourceNotFoundException, CustomerWithActiveOrdersException {
         log.info("Deleting customer with ID: {}", id);
         if (hasActiveOrders(id)) {
@@ -103,5 +103,12 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.searchByTerm(term)
                 .stream()
                 .map(customerMapper::toDTO).toList();
+    }
+
+    @Override
+    public CustomerDto getCustomerByCode(String code) throws ResourceNotFoundException {
+        Customer customer = customerRepository.findByCustomerCode(code)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer", code));
+        return customerMapper.toDTO(customer);
     }
 }

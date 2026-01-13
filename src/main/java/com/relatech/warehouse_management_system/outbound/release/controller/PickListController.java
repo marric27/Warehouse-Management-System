@@ -59,4 +59,10 @@ public class PickListController {
         PickListDto pickLists = pickListService.getPickListById(id);
         return ResponseEntity.ok(pickLists);
     }
+
+    @GetMapping("/code/{code}")
+    public ResponseEntity<PickListDto> getPicklistByCode(@PathVariable String code) throws ResourceNotFoundException {
+        PickListDto pickLists = pickListService.getPickListByCode(code);
+        return ResponseEntity.ok(pickLists);
+    }
 }

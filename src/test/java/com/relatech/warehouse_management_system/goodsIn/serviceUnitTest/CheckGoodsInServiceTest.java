@@ -51,11 +51,11 @@ class CheckGoodsInServiceTest {
     @Test
     void createCheckingInfoAndStockUnit_itemInCheckedOrPutaway_throws() throws Exception {
 
-        when(stateService.checkGrnItemIfCheckedOrPutaway(5L)).thenReturn(true);
+        when(stateService.checkGrnItemIfCheckedOrPutaway("5L")).thenReturn(true);
 
         assertThrows(
                 CannotAssignCIToGrnItemInClosedOrPutawayStateException.class,
-                () -> service.createCheckingInfoAndStockUnit(5L, new StockUnitDto())
+                () -> service.createCheckingInfoAndStockUnit("5L", new StockUnitDto())
         );
     }
 
@@ -79,7 +79,7 @@ class CheckGoodsInServiceTest {
         GrnItemDto grnItem = new GrnItemDto();
         grnItem.setId(grnItemId);
 
-        when(stateService.checkGrnItemIfCheckedOrPutaway(grnItemId))
+        when(stateService.checkGrnItemIfCheckedOrPutaway(grnItem.getCode()))
                 .thenReturn(false);
 
         when(stockUnitService.createStockUnit(inputSu))
@@ -93,7 +93,7 @@ class CheckGoodsInServiceTest {
 
         // when
         GrnItemDto result =
-                service.createCheckingInfoAndStockUnit(grnItemId, inputSu);
+                service.createCheckingInfoAndStockUnit(grnItem.getCode(), inputSu);
 
         // then
         assertNotNull(result);
@@ -110,7 +110,7 @@ class CheckGoodsInServiceTest {
                         ci.getBatchNumber().equals("BATCH-1")
         ));
 
-        verify(grnItemService).addCheckingInfo(grnItemId, 200L);
+        verify(grnItemService).addCheckingInfo(grnItem.getCode(), 200L);
         verify(stateService).evaluateAndProgressItemState(grnItem);
     }
 

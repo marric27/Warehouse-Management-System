@@ -117,7 +117,7 @@ class ReceivingServiceTest {
     void createItem_throwsGrnNotFound() throws GrnNotFoundException {
         when(grnService.getGRNById(10L)).thenReturn(null);
 
-        assertThrows(GrnNotFoundException.class, () -> receivingService.createItem(10L, new GrnItemDto()));
+        assertThrows(GrnNotFoundException.class, () -> receivingService.createItem("10", new GrnItemDto()));
     }
 
     @Test
@@ -125,7 +125,7 @@ class ReceivingServiceTest {
         when(grnService.getGRNById(10L)).thenReturn(new GrnDto());
         when(stateService.checkGrnIfClosed(10L)).thenReturn(true);
 
-        assertThrows(CannotAssignItemToGrnClosedException.class, () -> receivingService.createItem(10L, new GrnItemDto()));
+        assertThrows(CannotAssignItemToGrnClosedException.class, () -> receivingService.createItem("10", new GrnItemDto()));
     }
 
     @Test
@@ -142,7 +142,7 @@ class ReceivingServiceTest {
         when(grnItemService.createGrnItem(any())).thenReturn(savedItem);
         doNothing().when(productService).validateProductExists(anyString());
 
-        GrnItemDto result = receivingService.createItem(5L, item);
+        GrnItemDto result = receivingService.createItem("5", item);
 
         assertEquals(1L, result.getId());
         assertEquals(5L, item.getGrnId());
@@ -158,7 +158,7 @@ class ReceivingServiceTest {
         doThrow(new QuantityMismatchException("mismatch")).when(stateService).validateItemQuantities(item);
         doNothing().when(productService).validateProductExists(anyString());
 
-        assertThrows(QuantityMismatchException.class, () -> receivingService.createItem(1L, item));
+        assertThrows(QuantityMismatchException.class, () -> receivingService.createItem("1", item));
     }
 
     @Test
@@ -173,7 +173,7 @@ class ReceivingServiceTest {
         doThrow(new InvalidQuantityException("Expected qty must be > 0")).when(stateService).validateItemQuantities(item);
         doNothing().when(productService).validateProductExists(anyString());
 
-        assertThrows(InvalidQuantityException.class, () -> receivingService.createItem(1L, item));
+        assertThrows(InvalidQuantityException.class, () -> receivingService.createItem("1", item));
     }
 
     @Test
@@ -188,7 +188,7 @@ class ReceivingServiceTest {
         doThrow(new OverReceivedQuantityException("Over-received: expected=10 received=15")).when(stateService).validateItemQuantities(item);
         doNothing().when(productService).validateProductExists(anyString());
 
-        assertThrows(OverReceivedQuantityException.class, () -> receivingService.createItem(1L, item));
+        assertThrows(OverReceivedQuantityException.class, () -> receivingService.createItem("1", item));
     }
 
     @Test
@@ -201,7 +201,7 @@ class ReceivingServiceTest {
         doThrow(new NullPointerException("Quantities cannot be null")).when(stateService).validateItemQuantities(item);
         doNothing().when(productService).validateProductExists(anyString());
 
-        assertThrows(NullPointerException.class, () -> receivingService.createItem(1L, item));
+        assertThrows(NullPointerException.class, () -> receivingService.createItem("1", item));
     }
 
     @Test
@@ -217,7 +217,7 @@ class ReceivingServiceTest {
         doThrow(new InvalidQuantityException("Quantities cannot be negative")).when(stateService).validateItemQuantities(item);
         doNothing().when(productService).validateProductExists(anyString());
 
-        assertThrows(InvalidQuantityException.class, () -> receivingService.createItem(1L, item));
+        assertThrows(InvalidQuantityException.class, () -> receivingService.createItem("1", item));
     }
 
     // -------------------------
