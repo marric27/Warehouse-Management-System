@@ -61,7 +61,7 @@ public class PickingService {
             throw new Exception("No stock units provided for picking");
         }
         int toPick = stockUnitQuantities.values().stream().mapToInt(Integer::intValue).sum();
-        if(toPick > pickListItem.getQuantity()) throw new QuantityMismatchException("Requested quantity > available qty");
+        if(toPick > pickListItem.getQuantity()-pickListItem.getPickedQty()) throw new QuantityMismatchException("Errore: Stai richiedendo quantità maggiore di quanto specificata nel pick list item");
 
         ErrorReason errorReason;
         if(toPick < pickListItem.getQuantity() && request.getErrorReason() != null) {
@@ -147,7 +147,8 @@ public class PickingService {
 
         int pickedQty = item.getPickedQty() + totalPickedQty;
         item.setPickedQty(pickedQty);
-        item.setState(PickListItemState.PICKED);
+        if(pickedQty == item.getQuantity())
+            item.setState(PickListItemState.PICKED);
         item.setErrorReason(errorReason);
         pickListItemService.update(item.getCode(), item);
     }

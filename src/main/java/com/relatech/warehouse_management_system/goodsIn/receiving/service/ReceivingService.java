@@ -54,7 +54,6 @@ public class ReceivingService {
         stateService.validateItemQuantities(item);
 
         item.setGrnId(grn.getId());
-        item.setState(State.OPEN);
         GrnItemDto saved = grnItemService.createGrnItem(item);
 
         stateService.evaluateAndProgressItemState(saved);

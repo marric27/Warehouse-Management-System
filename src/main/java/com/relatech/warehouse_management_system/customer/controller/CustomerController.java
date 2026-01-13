@@ -56,6 +56,13 @@ public class CustomerController {
         return ResponseEntity.ok(customersPage);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<CustomerDto>> getAllCustomers() {
+        log.info("Request to fetch all customers");
+        List<CustomerDto> customers = customerService.getAllCustomers();
+        return ResponseEntity.ok(customers);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<CustomerDto> updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerDto dto) throws ResourceNotFoundException {
         log.info("Request to update customer with ID: {}", id);
