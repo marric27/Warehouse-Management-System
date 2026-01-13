@@ -13,6 +13,7 @@ import com.relatech.warehouse_management_system.outbound.entity.service.PickList
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListService;
 import com.relatech.warehouse_management_system.picking.dto.ConfirmPickingRequest;
 import com.relatech.warehouse_management_system.picking.dto.NextItemRequest;
+import com.relatech.warehouse_management_system.picking.dto.StockUnitQuantityDto;
 import com.relatech.warehouse_management_system.picking.entity.PickingInfoDto;
 import com.relatech.warehouse_management_system.picking.entity.service.PickingInfoService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -51,11 +53,14 @@ public class PickingService {
     @Transactional(rollbackFor = {ResourceNotFoundException.class, QuantityMismatchException.class}, propagation = Propagation.REQUIRED)
     public void confirmPicking(ConfirmPickingRequest request) throws Exception {
         PickListItemDto pickListItem = loadPickListItem(request.getPickListCode(), request.getPickListItemCode());
-        Map<String, Integer> stockUnitQuantities = request.getStockUnitQuantities();
+        Map<String, Integer> stockUnitQuantities = request.getStockUnitQuantities().stream().collect(Collectors.toMap(
+                            StockUnitQuantityDto::suId,
+                            StockUnitQuantityDto::quantity
+                    ));
         if (stockUnitQuantities == null || stockUnitQuantities.isEmpty()) {
             throw new Exception("No stock units provided for picking");
         }
-        int toPick = request.getStockUnitQuantities().values().stream().mapToInt(Integer::intValue).sum();
+        int toPick = stockUnitQuantities.values().stream().mapToInt(Integer::intValue).sum();
         if(toPick > pickListItem.getQuantity()) throw new QuantityMismatchException("Requested quantity > available qty");
 
         ErrorReason errorReason;
@@ -69,14 +74,14 @@ public class PickingService {
         }
 
         Map<String, StockUnitDto> stockUnitsByCode = new HashMap<>();
-        for (String code : request.getStockUnitQuantities().keySet()) {
+        for (String code : stockUnitQuantities.keySet()) {
             StockUnitDto su = stockUnitService.getStockUnitByCode(code);
             stockUnitsByCode.put(su.getCode(), su);
         }
 
-        canPickFromSU(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem);
+        canPickFromSU(stockUnitQuantities, stockUnitsByCode, pickListItem);
 
-        executePicking(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem);
+        executePicking(stockUnitQuantities, stockUnitsByCode, pickListItem);
         updatePickListItem(pickListItem, toPick, errorReason);
     }
 

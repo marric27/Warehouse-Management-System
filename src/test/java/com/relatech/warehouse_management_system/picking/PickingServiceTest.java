@@ -12,6 +12,7 @@ import com.relatech.warehouse_management_system.outbound.dto.PickListItemDto;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListItemService;
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListService;
 import com.relatech.warehouse_management_system.picking.dto.ConfirmPickingRequest;
+import com.relatech.warehouse_management_system.picking.dto.StockUnitQuantityDto;
 import com.relatech.warehouse_management_system.picking.entity.PickingInfoDto;
 import com.relatech.warehouse_management_system.picking.entity.service.PickingInfoService;
 import com.relatech.warehouse_management_system.picking.service.PickingService;
@@ -56,7 +57,8 @@ class PickingServiceTest {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-1");
         request.setPickListItemCode("PLI-1");
-        request.setStockUnitQuantities(Map.of("SU-1", 5));
+        StockUnitQuantityDto stockUnitQuantityDto = new StockUnitQuantityDto("SU-1", 5);
+        request.setStockUnitQuantities(List.of(stockUnitQuantityDto));
 
         PickListItemDto item = new PickListItemDto();
         item.setId(1L);
@@ -104,7 +106,8 @@ class PickingServiceTest {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-2");
         request.setPickListItemCode("PLI-2");
-        request.setStockUnitQuantities(Map.of("SU-2", 2));
+        StockUnitQuantityDto stockUnitQuantityDto = new StockUnitQuantityDto("SU-2", 2);
+        request.setStockUnitQuantities(List.of(stockUnitQuantityDto));
         request.setErrorReason(ErrorReason.MISSING_QTY);
 
         PickListItemDto item = new PickListItemDto();
@@ -148,7 +151,8 @@ class PickingServiceTest {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-3");
         request.setPickListItemCode("PLI-3");
-        request.setStockUnitQuantities(Map.of("SU-3", 1));
+        StockUnitQuantityDto stockUnitQuantityDto = new StockUnitQuantityDto("SU-3", 5);
+        request.setStockUnitQuantities(List.of(stockUnitQuantityDto));
 
         PickListItemDto item = new PickListItemDto();
         item.setCode("PLI-3");
@@ -178,7 +182,8 @@ class PickingServiceTest {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-003");
         request.setPickListItemCode("PLI-003");
-        request.setStockUnitQuantities(Map.of("SU-001", 1));
+        StockUnitQuantityDto stockUnitQuantityDto = new StockUnitQuantityDto("SU-001", 1);
+        request.setStockUnitQuantities(List.of(stockUnitQuantityDto));
 
         PickListItemDto itemDto = new PickListItemDto();
         itemDto.setCode("PLI-003");
@@ -197,7 +202,8 @@ class PickingServiceTest {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-004");
         request.setPickListItemCode("PLI-004");
-        request.setStockUnitQuantities(Map.of("SU-404", 1));
+        StockUnitQuantityDto stockUnitQuantityDto = new StockUnitQuantityDto("SU-404", 5);
+        request.setStockUnitQuantities(List.of(stockUnitQuantityDto));
 
         PickListItemDto itemDto = new PickListItemDto();
         itemDto.setCode("PLI-004");
@@ -220,7 +226,8 @@ class PickingServiceTest {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-006");
         request.setPickListItemCode("PLI-006");
-        request.setStockUnitQuantities(Map.of("SU-006", 10));
+        StockUnitQuantityDto stockUnitQuantityDto = new StockUnitQuantityDto("SU-006", 10);
+        request.setStockUnitQuantities(List.of(stockUnitQuantityDto));
 
         PickListItemDto itemDto = new PickListItemDto();
         itemDto.setCode("PLI-006");
@@ -251,7 +258,8 @@ class PickingServiceTest {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-007");
         request.setPickListItemCode("PLI-007");
-        request.setStockUnitQuantities(Map.of("SU-007", 6));
+        StockUnitQuantityDto stockUnitQuantityDto = new StockUnitQuantityDto("SU-7", 6);
+        request.setStockUnitQuantities(List.of(stockUnitQuantityDto));
 
         PickListItemDto itemDto = new PickListItemDto();
         itemDto.setCode("PLI-007");
@@ -278,7 +286,8 @@ class PickingServiceTest {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-006");
         request.setPickListItemCode("PLI-006");
-        request.setStockUnitQuantities(Map.of("SU-006", 10));
+        StockUnitQuantityDto stockUnitQuantityDto = new StockUnitQuantityDto("SU-006", 10);
+        request.setStockUnitQuantities(List.of(stockUnitQuantityDto));
 
         PickListItemDto itemDto = new PickListItemDto();
         itemDto.setCode("PLI-006");

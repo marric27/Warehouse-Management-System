@@ -2,11 +2,13 @@ package com.relatech.warehouse_management_system.picking.dto;
 
 import com.relatech.warehouse_management_system.common.util.ErrorReason;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -26,7 +28,8 @@ public class ConfirmPickingRequest {
             description = "Mappa stockUnitCode → quantità pickata",
             example = "{ \"STK-01KCH3N988\": 3, \"STK-01KCH3MHZZ\": 2 }"
     )
-    private Map<String, @Positive Integer> stockUnitQuantities;
+    //private Map<String, @Positive Integer> stockUnitQuantities;
+    private List<@Valid StockUnitQuantityDto> stockUnitQuantities;
 
     private ErrorReason errorReason;
 
@@ -34,3 +37,5 @@ public class ConfirmPickingRequest {
     @NotBlank
     private String user;
 }
+
+
