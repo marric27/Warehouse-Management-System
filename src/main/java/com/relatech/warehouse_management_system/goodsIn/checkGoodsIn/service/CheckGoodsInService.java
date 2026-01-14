@@ -47,6 +47,9 @@ public class CheckGoodsInService {
         if(su.getQuantity() > grnItem.getReceivedQty()) {
             throw new QuantityNotAvailableException(su.getQuantity(), grnItem.getReceivedQty());
         }
+        int alreadyStockedQty = grnItem.getCheckingInfoList().stream().mapToInt(CheckingInfoDto::getQuantity).sum();
+        int toStockQty = grnItem.getReceivedQty() - alreadyStockedQty;
+        if(su.getQuantity() > toStockQty) throw new QuantityNotAvailableException(su.getQuantity(), toStockQty);
         su.setProductCode(grnItem.getProductCode());
         su.setCategory(productService.getProductByCode(grnItem.getProductCode()).getCategory());
 
