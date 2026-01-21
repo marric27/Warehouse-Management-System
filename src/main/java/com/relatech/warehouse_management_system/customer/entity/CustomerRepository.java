@@ -20,5 +20,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             "LOWER(c.billingAddress) LIKE LOWER(CONCAT('%', :term, '%')))")
     List<Customer> searchByTerm(@Param("term") String term);
 
-    Optional<Customer> findByCustomerCode(String customerCode);
+    Optional<Customer> findByCode(String customerCode);
 }

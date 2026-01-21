@@ -21,10 +21,11 @@ import java.util.List;
 public class SalesOrderController {
     private final SalesOrderService salesOrderService;
 
-    @PostMapping("/create-order/{customerId}")
-    public ResponseEntity<OrderDto> createOrderAndAssign(@PathVariable Long customerId, @RequestBody OrderDto orderDto) throws ResourceNotFoundException {
-        log.info("Creating Order for Customer {}", customerId);
-        OrderDto created = salesOrderService.createOrderAndAssign(customerId, orderDto);
+    @PostMapping("/create-order")
+    public ResponseEntity<OrderDto> createOrderAndAssign(@RequestBody OrderDto orderDto) throws ResourceNotFoundException {
+        String customerCode = orderDto.getCustomerCode();
+        log.info("Creating Order for Customer {}", customerCode);
+        OrderDto created = salesOrderService.createOrderAndAssign(orderDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 

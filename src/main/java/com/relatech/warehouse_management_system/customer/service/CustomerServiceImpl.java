@@ -107,7 +107,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerDto getCustomerByCode(String code) throws ResourceNotFoundException {
-        Customer customer = customerRepository.findByCustomerCode(code)
+        Customer customer = customerRepository.findByCode(code)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", code));
         return customerMapper.toDTO(customer);
     }

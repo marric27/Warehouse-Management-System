@@ -6,7 +6,6 @@ import com.github.javafaker.Faker;
 import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.common.util.OrderState;
 import com.relatech.warehouse_management_system.common.util.State;
-import com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.controller.CheckGoodsInController;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
@@ -144,7 +143,7 @@ public class TestComplete {
                 .status(OrderState.OPEN)
                 .build();
 
-        OrderDto order = new OrderDto(null, null, LocalDate.now(), customer.getCustomerCode(), OrderState.OPEN, List.of(line));
+        OrderDto order = new OrderDto(null, null, LocalDate.now(), customer.getCode(), OrderState.OPEN, List.of(line));
 
         return performPost("/sales-order/create-order/" + customer.getId(), order, OrderDto.class);
     }
