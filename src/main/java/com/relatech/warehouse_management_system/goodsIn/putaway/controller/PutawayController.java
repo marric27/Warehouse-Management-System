@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PutawayController {
     private final PutawayService putawayService;
 
-    @PostMapping("/{stockUnitId}/assignToSlot/{slotId}")
-    public ResponseEntity<SlotDto> assignStockUnitToSlot(@PathVariable Long stockUnitId, @PathVariable Long slotId) throws Exception {
-        log.info("POST /putaway/{}/assignToSlot/{} - Assigning stockunit to slot", stockUnitId, slotId);
-        SlotDto slotDTO = putawayService.assignStockUnitToSlot(stockUnitId, slotId);
-        log.info("StockUnit {} assigned to Slot {}", stockUnitId, slotId);
+    @PostMapping("/{stockUnitCode}/assignToSlot/{slotCode}")
+    public ResponseEntity<SlotDto> assignStockUnitToSlot(@PathVariable String stockUnitCode, @PathVariable String slotCode) throws Exception {
+        log.info("POST /putaway/{}/assignToSlot/{} - Assigning stockunit to slot", stockUnitCode, slotCode);
+        SlotDto slotDTO = putawayService.assignStockUnitToSlot(stockUnitCode, slotCode);
+        log.info("StockUnit {} assigned to Slot {}", stockUnitCode, slotCode);
 
         return ResponseEntity.ok(slotDTO);
     }

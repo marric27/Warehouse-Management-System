@@ -53,26 +53,43 @@ public class PickingService {
     @Transactional(rollbackFor = {ResourceNotFoundException.class, QuantityMismatchException.class}, propagation = Propagation.REQUIRED)
     public void confirmPicking(ConfirmPickingRequest request) throws Exception {
         PickListItemDto pickListItem = loadPickListItem(request.getPickListCode(), request.getPickListItemCode());
-        Map<String, Integer> stockUnitQuantities = request.getStockUnitQuantities().stream().collect(Collectors.toMap(
-                            StockUnitQuantityDto::suId,
-                            StockUnitQuantityDto::quantity
-                    ));
-        if (stockUnitQuantities == null || stockUnitQuantities.isEmpty()) {
+
+        Map<String, Integer> stockUnitQuantities = request.getStockUnitQuantities().stream()
+                .collect(Collectors.toMap(
+                        StockUnitQuantityDto::suId,
+                        StockUnitQuantityDto::quantity
+                ));
+
+        if (stockUnitQuantities.isEmpty()) {
             throw new Exception("No stock units provided for picking");
         }
-        int toPick = stockUnitQuantities.values().stream().mapToInt(Integer::intValue).sum();
-        if(toPick > pickListItem.getQuantity()-pickListItem.getPickedQty()) throw new QuantityMismatchException("Errore: Stai richiedendo quantità maggiore di quanto specificata nel pick list item");
 
-        ErrorReason errorReason;
-        if(toPick < pickListItem.getQuantity() && request.getErrorReason() != null) {
-            log.info("Set error reason from request");
-            errorReason = request.getErrorReason();
-        } else if(toPick == pickListItem.getQuantity()) {
-            errorReason = null;
-        } else {
-            throw new Exception("Error reason cant be omitted when qty to pick is lower than ");
+        int toPickNow = stockUnitQuantities.values().stream().mapToInt(Integer::intValue).sum();
+        int alreadyPicked = pickListItem.getPickedQty();
+        int totalRequested = pickListItem.getQty();
+        int remainingToPick = totalRequested - alreadyPicked;
+
+        // Controllo che non si stia prelevando più del dovuto
+        if (toPickNow > remainingToPick) {
+            throw new QuantityMismatchException("Errore: Stai prelevando " + toPickNow + " ma ne mancano solo " + remainingToPick);
         }
 
+        // 3. Gestione ErrorReason (Motivo del prelievo parziale)
+        ErrorReason errorReason = null;
+        boolean isComplete = (alreadyPicked + toPickNow == totalRequested);
+
+        if (!isComplete) {
+            // Se il prelievo non è completo, DEVE esserci un motivo
+            if (request.getErrorReason() == null) {
+                throw new Exception("Error reason can't be omitted when total picked qty is lower than requested");
+            }
+            errorReason = request.getErrorReason();
+        } else {
+            // Se è completo, l'eventuale motivo della richiesta viene ignorato (o messo a null)
+            errorReason = null;
+        }
+
+        // 4. Caricamento StockUnits e validazione disponibilità
         Map<String, StockUnitDto> stockUnitsByCode = new HashMap<>();
         for (String code : stockUnitQuantities.keySet()) {
             StockUnitDto su = stockUnitService.getStockUnitByCode(code);
@@ -81,8 +98,9 @@ public class PickingService {
 
         canPickFromSU(stockUnitQuantities, stockUnitsByCode, pickListItem);
 
+        // 5. Esecuzione e Aggiornamento
         executePicking(stockUnitQuantities, stockUnitsByCode, pickListItem);
-        updatePickListItem(pickListItem, toPick, errorReason);
+        updatePickListItem(pickListItem, toPickNow, errorReason);
     }
 
     ////////////////////////////////////////////////
@@ -147,7 +165,7 @@ public class PickingService {
 
         int pickedQty = item.getPickedQty() + totalPickedQty;
         item.setPickedQty(pickedQty);
-        if(pickedQty == item.getQuantity())
+        if(pickedQty == item.getQty())
             item.setState(PickListItemState.PICKED);
         item.setErrorReason(errorReason);
         pickListItemService.update(item.getCode(), item);

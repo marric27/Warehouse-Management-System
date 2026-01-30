@@ -77,9 +77,9 @@ public class SlotServiceImpl implements SlotService {
         existingSlot.setCapacity(slotDTO.getCapacity());
 
         if (existingSlot.getProd() == null)
-            existingSlot.setAllowedCategory(slotDTO.getAllowedCategory());
-        else if (existingSlot.getProd().getCategory().equals(slotDTO.getAllowedCategory())) {
-            existingSlot.setAllowedCategory(slotDTO.getAllowedCategory());
+            existingSlot.setAllowedCategory(slotDTO.getCategory());
+        else if (existingSlot.getProd().getCategory().equals(slotDTO.getCategory())) {
+            existingSlot.setAllowedCategory(slotDTO.getCategory());
         } else throw new UpdateEntityException(id);
 
         if (slotDTO.getStockUnits() != null) {

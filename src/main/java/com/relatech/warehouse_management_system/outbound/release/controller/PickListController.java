@@ -37,7 +37,6 @@ public class PickListController {
     @PostMapping("/release")
     @Operation(summary = "Generate picklist", description = "Generates a picklist DTO based on the order IDs")
     public ResponseEntity<List<PickListDto>> releaseOrders(@RequestBody List<Long> orderIds) throws ResourceNotFoundException {
-
         List<PickListDto> pickLists = pickListGen.generatePickLists(orderIds);
         return ResponseEntity.ok(pickLists);
     }

@@ -201,6 +201,7 @@
                                 <exclude>**/config/**</exclude>
                                 <exclude>**/mapper/**</exclude>
                                 <exclude>**/exception/**</exclude>
+                                <exclude>**/logistic/**</exclude>
                                 <exclude>com/relatech/warehouse_management_system/WarehouseManagementSystemApplication*</exclude>
                             </excludes>
                         </configuration>

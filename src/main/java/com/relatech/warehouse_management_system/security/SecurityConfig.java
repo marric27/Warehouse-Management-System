@@ -29,13 +29,14 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html").permitAll()
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/sales-order/**").hasAnyRole("CUSTOMER", "ADMIN")
-                        .requestMatchers("/receiving/**").hasAnyRole("OPERATOR", "ADMIN")
-                        .requestMatchers("/**").hasRole("ADMIN")
+                        // .requestMatchers("/v3/api-docs/**",
+                        //         "/swagger-ui/**",
+                        //         "/swagger-ui.html").permitAll()
+                        // .requestMatchers("/login").permitAll()
+                        // .requestMatchers("/sales-order/**").hasAnyRole("CUSTOMER", "ADMIN")
+                        // .requestMatchers("/receiving/**").hasAnyRole("OPERATOR", "ADMIN")
+                        // .requestMatchers("/**").hasRole("ADMIN")
+                        .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

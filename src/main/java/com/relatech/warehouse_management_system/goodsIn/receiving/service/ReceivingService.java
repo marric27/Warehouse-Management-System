@@ -44,8 +44,6 @@ public class ReceivingService {
             CannotAssignItemToGrnClosedException, InvalidQuantityException, QuantityMismatchException,
             OverReceivedQuantityException, GrnItemNotFoundException, ResourceNotFoundException {
         GrnDto grn = grnService.getGRNByCode(grnCode);
-        if (grnService.getGRNByCode(grnCode) == null)
-            throw new GrnNotFoundException(grnCode);
         if (stateService.checkGrnIfClosed(grn.getId()))
             throw new CannotAssignItemToGrnClosedException(grnCode);
 

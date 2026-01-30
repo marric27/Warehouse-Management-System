@@ -62,7 +62,7 @@ public class PickListGen {
                 PickListItemDto itemDTO = PickListItemDto.builder()
                         .productCode(productCode)
                         .state(PickListItemState.OPEN)
-                        .quantity(line.getQuantity())
+                        .qty(line.getQuantity())
                         .pickedQty(0)
                         .pickingSequence(slot.getPickingSequence())
                         .slotCode(slot.getCode())

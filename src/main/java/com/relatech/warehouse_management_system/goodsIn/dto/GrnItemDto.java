@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -50,6 +51,6 @@ public class GrnItemDto {
     private Long grnId;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    private List<CheckingInfoDto> checkingInfoList;
+    private List<CheckingInfoDto> checkingInfoList = new ArrayList<>();
 }
 
