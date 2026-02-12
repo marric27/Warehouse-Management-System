@@ -42,18 +42,20 @@ class PutawayServiceTest {
 
         SlotDto slot = new SlotDto();
         slot.setId(1L);
-        slot.setAllowedCategory(Category.STANDARD);
+        slot.setCode("slotcode");
+        slot.setCategory(Category.STANDARD);
         slot.setStockUnits(new ArrayList<>());
 
         StockUnitDto su = new StockUnitDto();
         su.setId(10L);
+        su.setCode("sucode");
         su.setCategory(Category.FLAMMABLE);
 
-        when(slotService.getSlotById(1L)).thenReturn(slot);
-        when(stockUnitService.getStockUnitById(10L)).thenReturn(su);
+        when(slotService.getSlotByCode(slot.getCode())).thenReturn(slot);
+        when(stockUnitService.getStockUnitByCode(su.getCode())).thenReturn(su);
 
         assertThrows(IllegalArgumentException.class,
-                () -> service.assignStockUnitToSlot(10L, 1L));
+                () -> service.assignStockUnitToSlot("sucode", "slotcode"));
 
         verify(slotService, never()).updateSlot(anyLong(), any());
     }
@@ -63,16 +65,20 @@ class PutawayServiceTest {
 
         Long slotId = 1L;
         Long suId = 10L;
+        String slotCode = "slotCode";
+        String suCode = "suCode";
 
         // ------ SLOT ------
         SlotDto slot = new SlotDto();
         slot.setId(slotId);
-        slot.setAllowedCategory(Category.STANDARD);
+        slot.setCode(slotCode);
+        slot.setCategory(Category.STANDARD);
         slot.setStockUnits(new ArrayList<>());
 
         // ------ STOCK UNIT ------
         StockUnitDto su = new StockUnitDto();
         su.setId(suId);
+        su.setCode(suCode);
         su.setCategory(Category.STANDARD);
 
         // ------ CHECKING INFO ------
@@ -85,8 +91,8 @@ class PutawayServiceTest {
         item.setId(100L);
 
         // MOCK GET
-        when(slotService.getSlotById(slotId)).thenReturn(slot);
-        when(stockUnitService.getStockUnitById(suId)).thenReturn(su);
+        when(slotService.getSlotByCode(slot.getCode())).thenReturn(slot);
+        when(stockUnitService.getStockUnitByCode(su.getCode())).thenReturn(su);
         when(checkingInfoService.getByStockUnitId(suId)).thenReturn(ci);
         when(grnItemService.getGrnItemById(ci.getGrnItemId())).thenReturn(item);
 
@@ -102,7 +108,7 @@ class PutawayServiceTest {
         doNothing().when(stateService).evaluateAndProgressItemState(item);
 
         // ------ CALL SERVICE ------
-        SlotDto result = service.assignStockUnitToSlot(suId, slotId);
+        SlotDto result = service.assignStockUnitToSlot(suCode, slotCode);
 
         // ------ VERIFY SLOT + STOCK UNIT UPDATES ------
         assertEquals(slotId, result.getId());

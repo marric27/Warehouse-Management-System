@@ -7,6 +7,7 @@ import com.relatech.warehouse_management_system.picking.dto.ConfirmPickingReques
 import com.relatech.warehouse_management_system.picking.dto.NextItemRequest;
 import com.relatech.warehouse_management_system.picking.dto.StockUnitQuantityDto;
 import com.relatech.warehouse_management_system.picking.service.PickingService;
+import com.relatech.warehouse_management_system.security.JwtGenerator;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PickingController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class PickingControllerTest {
 
     @Autowired
@@ -40,6 +43,9 @@ class PickingControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @MockitoBean
+    private JwtGenerator jwtGenerator;
+
     private PickListItemDto sampleItem;
 
     private Validator validator;
@@ -49,7 +55,7 @@ class PickingControllerTest {
         sampleItem = PickListItemDto.builder()
                 .code("PKLI-22")
                 .productCode("PROD-01")
-                .quantity(5)
+                .qty(5)
                 .pickedQty(0)
                 .build();
 
@@ -71,7 +77,7 @@ class PickingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("PKLI-22"))
                 .andExpect(jsonPath("$.productCode").value("PROD-01"))
-                .andExpect(jsonPath("$.quantity").value(5));
+                .andExpect(jsonPath("$.qty").value(5));
     }
 
     @Test

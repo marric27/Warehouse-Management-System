@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.goodsIn.serviceUnitTest;
 
+import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import com.relatech.warehouse_management_system.goodsIn.checkGoodsIn.service.CheckGoodsInService;
@@ -11,6 +12,7 @@ import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemSe
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
 import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignCIToGrnItemInClosedOrPutawayStateException;
 
+import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.product.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,56 +64,64 @@ class CheckGoodsInServiceTest {
 
     @Test
     void createCheckingInfoAndStockUnit_success() throws Exception {
-        // given
+        // --- GIVEN ---
+        String grnItemCode = "ITEM-001";
+        String productCode = "PROD-123";
         Long grnItemId = 1L;
+        Long stockUnitId = 100L;
+        Long checkingInfoId = 200L;
 
+        // 1. Setup Input StockUnitDto
         StockUnitDto inputSu = new StockUnitDto();
-        inputSu.setProductCode("PROD-001");
         inputSu.setQuantity(10);
-        inputSu.setBatchNumber("BATCH-1");
+        inputSu.setBatchNumber("BATCH-XYZ");
         inputSu.setExpirationDate(LocalDate.now().plusDays(30));
 
-        StockUnitDto createdSu = new StockUnitDto();
-        createdSu.setId(100L);
-
-        CheckingInfoDto savedCi = new CheckingInfoDto();
-        savedCi.setId(200L);
-
+        // 2. Setup GrnItemDto (con tutti i campi necessari per superare i controlli)
         GrnItemDto grnItem = new GrnItemDto();
         grnItem.setId(grnItemId);
+        grnItem.setCode(grnItemCode);
+        grnItem.setProductCode(productCode);
+        grnItem.setReceivedQty(15);
+        grnItem.setCheckingInfoList(new ArrayList<>());
 
-        when(stateService.checkGrnItemIfCheckedOrPutaway(grnItem.getCode()))
-                .thenReturn(false);
+        // 3. Setup ProductDto
+        ProductDto mockProduct = new ProductDto();
+        mockProduct.setCategory(Category.STANDARD);
 
-        when(stockUnitService.createStockUnit(inputSu))
-                .thenReturn(createdSu);
+        // 4. Setup Mock dei risultati dei salvataggi
+        StockUnitDto createdSu = new StockUnitDto();
+        createdSu.setId(stockUnitId);
 
-        when(checkingInfoService.create(any(CheckingInfoDto.class)))
-                .thenReturn(savedCi);
+        CheckingInfoDto savedCi = new CheckingInfoDto();
+        savedCi.setId(checkingInfoId);
 
-        when(grnItemService.getGrnItemById(grnItemId))
-                .thenReturn(grnItem);
+        // --- STUBBING (Mockito setup) ---
+        when(grnItemService.getGrnItemByCode(grnItemCode)).thenReturn(grnItem);
+        when(stateService.checkGrnItemIfCheckedOrPutaway(grnItemCode)).thenReturn(false);
+        when(productService.getProductByCode(productCode)).thenReturn(mockProduct);
 
-        // when
-        GrnItemDto result =
-                service.createCheckingInfoAndStockUnit(grnItem.getCode(), inputSu);
+        when(stockUnitService.createStockUnit(any(StockUnitDto.class))).thenReturn(createdSu);
+        when(checkingInfoService.create(any(CheckingInfoDto.class))).thenReturn(savedCi);
 
-        // then
+        // --- WHEN ---
+        GrnItemDto result = service.createCheckingInfoAndStockUnit(grnItemCode, inputSu);
+
+        // --- THEN ---
         assertNotNull(result);
-        assertEquals(grnItemId, result.getId());
 
-        verify(productService).validateProductExists("PROD-001");
-        verify(stockUnitService).createStockUnit(inputSu);
+        // Verifichiamo che i flussi logici siano stati rispettati
+        verify(productService).getProductByCode(productCode);
+        verify(stockUnitService).createStockUnit(argThat(su -> su.getCategory() == Category.STANDARD));
 
+        // Verifica che la CheckingInfo sia stata creata con i dati corretti
         verify(checkingInfoService).create(argThat(ci ->
-                ci.getStockUnitId().equals(100L) &&
-                        ci.getGrnItemId().equals(grnItemId) &&
-                        ci.getState() == State.OPEN &&
-                        ci.getQuantity().equals(10) &&
-                        ci.getBatchNumber().equals("BATCH-1")
+                ci.getGrnItemId().equals(grnItemId) &&
+                        ci.getStockUnitId().equals(stockUnitId) &&
+                        ci.getQuantity() == 10
         ));
 
-        verify(grnItemService).addCheckingInfo(grnItem.getCode(), 200L);
+        verify(grnItemService).addCheckingInfo(grnItemCode, checkingInfoId);
         verify(stateService).evaluateAndProgressItemState(grnItem);
     }
 

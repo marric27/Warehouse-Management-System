@@ -145,6 +145,7 @@ class GrnItemStateServiceTest {
         GrnItemDto item = new GrnItemDto();
         item.setId(1L);
         item.setExpectedQty(10);
+        item.setReceivedQty(10);
         item.setState(State.OPEN);
         item.setCheckingInfoList(List.of()); // no assigned qty
 
@@ -219,7 +220,7 @@ class GrnItemStateServiceTest {
         item.setCode("item1");
         item.setState(State.CHECKED);
 
-        when(grnItemService.getGrnItemById(5L)).thenReturn(item);
+        when(grnItemService.getGrnItemByCode(item.getCode())).thenReturn(item);
 
         assertTrue(stateService.checkGrnItemIfCheckedOrPutaway(item.getCode()));
     }
@@ -230,7 +231,7 @@ class GrnItemStateServiceTest {
         item.setCode("item1");
         item.setState(State.OPEN);
 
-        when(grnItemService.getGrnItemById(5L)).thenReturn(item);
+        when(grnItemService.getGrnItemByCode(item.getCode())).thenReturn(item);
 
         assertFalse(stateService.checkGrnItemIfCheckedOrPutaway(item.getCode()));
     }

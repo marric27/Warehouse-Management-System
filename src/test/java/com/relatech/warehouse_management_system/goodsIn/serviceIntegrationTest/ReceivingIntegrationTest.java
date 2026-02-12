@@ -105,12 +105,12 @@ public class ReceivingIntegrationTest {
         String itemBody = mapper.writeValueAsString(item);
 
         String itemResp = mockMvc.perform(
-                        post("/receiving/grns/" + createdGrn.getId() + "/items")
+                        post("/receiving/grns/" + createdGrn.getCode() + "/items")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(itemBody)
                 )
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", notNullValue()))
+                .andExpect(jsonPath("$.code", notNullValue()))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();

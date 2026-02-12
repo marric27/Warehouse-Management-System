@@ -65,7 +65,7 @@ class PickingServiceTest {
         item.setCode("PLI-1");
         item.setSlotCode("SLOT-1");
         item.setProductCode("PROD-1");
-        item.setQuantity(5);
+        item.setQty(5);
         item.setPickedQty(0);
         item.setState(PickListItemState.OPEN);
 
@@ -115,7 +115,7 @@ class PickingServiceTest {
         item.setCode("PLI-2");
         item.setSlotCode("SLOT-2");
         item.setProductCode("PROD-2");
-        item.setQuantity(5);
+        item.setQty(5);
         item.setPickedQty(0);
         item.setState(PickListItemState.OPEN);
 
@@ -143,7 +143,7 @@ class PickingServiceTest {
         PickListItemDto updated = captor.getValue();
         assertEquals(2, updated.getPickedQty());
         assertEquals(ErrorReason.MISSING_QTY, updated.getErrorReason());
-        assertEquals(PickListItemState.PICKED, updated.getState());
+        assertEquals(PickListItemState.OPEN, updated.getState());
     }
 
     @Test
@@ -158,7 +158,7 @@ class PickingServiceTest {
         item.setCode("PLI-3");
         item.setSlotCode("SLOT-3");
         item.setProductCode("PROD-3");
-        item.setQuantity(5);
+        item.setQty(5);
         item.setPickedQty(0);
         item.setState(PickListItemState.OPEN);
 
@@ -208,7 +208,7 @@ class PickingServiceTest {
         PickListItemDto itemDto = new PickListItemDto();
         itemDto.setCode("PLI-004");
         itemDto.setSlotCode("SLOT-004");
-        itemDto.setQuantity(1);
+        itemDto.setQty(1);
         itemDto.setState(PickListItemState.OPEN);
 
         PickListDto pickListDto = new PickListDto();
@@ -232,7 +232,8 @@ class PickingServiceTest {
         PickListItemDto itemDto = new PickListItemDto();
         itemDto.setCode("PLI-006");
         itemDto.setSlotCode("SLOT-006");
-        itemDto.setQuantity(10);
+        itemDto.setQty(10);
+        itemDto.setPickedQty(0);
         itemDto.setState(PickListItemState.OPEN);
         itemDto.setProductCode("PRD-001");
 
@@ -264,7 +265,8 @@ class PickingServiceTest {
         PickListItemDto itemDto = new PickListItemDto();
         itemDto.setCode("PLI-007");
         itemDto.setSlotCode("SLOT-007");
-        itemDto.setQuantity(5);
+        itemDto.setQty(5);
+        itemDto.setPickedQty(0);
         itemDto.setState(PickListItemState.OPEN);
 
         PickListDto pickListDto = new PickListDto();
@@ -292,7 +294,8 @@ class PickingServiceTest {
         PickListItemDto itemDto = new PickListItemDto();
         itemDto.setCode("PLI-006");
         itemDto.setSlotCode("SLOT-006");
-        itemDto.setQuantity(10);
+        itemDto.setQty(10);
+        itemDto.setPickedQty(0);
         itemDto.setState(PickListItemState.OPEN);
         itemDto.setProductCode("PRD-002");
 

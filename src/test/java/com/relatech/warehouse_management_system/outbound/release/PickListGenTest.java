@@ -74,7 +74,7 @@ class PickListGenTest {
 
         PickListItemDto item = pickList.getPickListItemList().getFirst();
         assertEquals("PROD-01", item.getProductCode());
-        assertEquals(5, item.getQuantity());
+        assertEquals(5, item.getQty());
         assertEquals(0, item.getPickedQty());
         assertEquals(PickListItemState.OPEN, item.getState());
         assertEquals("SLOT-01", item.getSlotCode());
