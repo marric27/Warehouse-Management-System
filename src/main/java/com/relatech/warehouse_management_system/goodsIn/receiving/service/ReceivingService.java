@@ -8,7 +8,7 @@ import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
 import com.relatech.warehouse_management_system.goodsIn.exception.*;
-import com.relatech.warehouse_management_system.product.service.ProductService;
+import com.relatech.warehouse_management_system.product.ProductMirrorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,7 +27,7 @@ public class ReceivingService {
     private final GrnService grnService;
     private final GrnItemService grnItemService;
     private final GrnItemStateService stateService;
-    private final ProductService productService;
+    private final ProductMirrorService productMirrorService;
 
     // CREATE GRN
     @Transactional(rollbackFor = { Exception.class })
@@ -46,8 +46,8 @@ public class ReceivingService {
         GrnDto grn = grnService.getGRNByCode(grnCode);
         if (stateService.checkGrnIfClosed(grn.getId()))
             throw new CannotAssignItemToGrnClosedException(grnCode);
-
-        productService.validateProductExists(item.getProductCode());
+        
+        productMirrorService.validateProductExists(item.getProductCode());
 
         stateService.validateItemQuantities(item);
 

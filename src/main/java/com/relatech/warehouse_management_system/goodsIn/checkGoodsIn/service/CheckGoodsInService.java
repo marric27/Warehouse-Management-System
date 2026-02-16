@@ -13,7 +13,7 @@ import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnit
 import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignCIToGrnItemInClosedOrPutawayStateException;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
-import com.relatech.warehouse_management_system.product.service.ProductService;
+import com.relatech.warehouse_management_system.product.ProductMirrorService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class CheckGoodsInService {
     private final CheckingInfoService checkingInfoService;
     private final GrnItemService grnItemService;
     private final GrnItemStateService stateService;
-    private final ProductService productService;
+    private final ProductMirrorService productService;
 
     @Transactional(rollbackFor = {CannotAssignCIToGrnItemInClosedOrPutawayStateException.class, DuplicateResourceException.class, GrnItemNotFoundException.class, GrnNotFoundException.class})
     public GrnItemDto createCheckingInfoAndStockUnit(String grnItemCode, StockUnitDto su) throws Exception {

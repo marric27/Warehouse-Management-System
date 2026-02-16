@@ -7,7 +7,7 @@ import com.relatech.warehouse_management_system.customer.service.CustomerService
 import com.relatech.warehouse_management_system.outbound.dto.OrderDto;
 import com.relatech.warehouse_management_system.outbound.dto.SalesOrderLineDto;
 import com.relatech.warehouse_management_system.outbound.entity.service.OrderService;
-import com.relatech.warehouse_management_system.product.service.ProductService;
+import com.relatech.warehouse_management_system.product.ProductMirrorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,7 +24,7 @@ import java.util.List;
 public class SalesOrderService {
     private final CustomerService customerService;
     private final OrderService orderService;
-    private final ProductService productService;
+    private final ProductMirrorService productMirrorService;
 
     @Transactional(rollbackFor = ResourceNotFoundException.class)
     public OrderDto createOrderAndAssign(OrderDto orderDto) throws ResourceNotFoundException {
@@ -36,7 +36,7 @@ public class SalesOrderService {
                 .toList();
 
         for (String code : productCodes)
-            productService.validateProductExists(code);
+            productMirrorService.validateProductExists(code);
 
         orderDto.setCustomerCode(customerDTO.getCode());
         orderDto.setState(OrderState.OPEN);
