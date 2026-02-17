@@ -6,7 +6,7 @@ import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
 import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
-import com.relatech.warehouse_management_system.product.repository.ProductRepository;
+import com.relatech.warehouse_management_system.product.ProductMirrorRepository;
 import com.relatech.warehouse_management_system.warehouse.entity.Slot;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotMapper;
@@ -30,7 +30,7 @@ public class SlotServiceImpl implements SlotService {
     private StockUnitRepository stockUnitRepository;
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductMirrorRepository productRepository;
     
     @Autowired
     private SlotMapper slotMapper;
@@ -76,12 +76,6 @@ public class SlotServiceImpl implements SlotService {
 
         existingSlot.setCapacity(slotDTO.getCapacity());
 
-        if (existingSlot.getProd() == null)
-            existingSlot.setAllowedCategory(slotDTO.getCategory());
-        else if (existingSlot.getProd().getCategory().equals(slotDTO.getCategory())) {
-            existingSlot.setAllowedCategory(slotDTO.getCategory());
-        } else throw new UpdateEntityException(id);
-
         if (slotDTO.getStockUnits() != null) {
             List<StockUnit> existingUnits = existingSlot.getStockUnits();
             for (StockUnitDto stockUnitDTO : slotDTO.getStockUnits()) {
@@ -120,9 +114,6 @@ public class SlotServiceImpl implements SlotService {
         Slot slot = slotRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", id));
 
-        if (slot.getProd() != null) {
-            throw new IllegalStateException("Cannot delete slot because it contains a product");
-        }
         if (slot.getStockUnits() != null && !slot.getStockUnits().isEmpty()) {
             throw new IllegalStateException("Cannot delete slot because it contains stock units");
         }

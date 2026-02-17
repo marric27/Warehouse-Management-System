@@ -19,7 +19,6 @@ public class StockUnitMapper {
                 .code(entity.getCode())
                 .quantity(entity.getQuantity())
                 .category(entity.getCategory())
-                .productDto(entity.getProduct() != null ? ProductMapper.toDto(entity.getProduct()) : null)
                 .slotId(entity.getSlot() != null ? entity.getSlot().getId() : null)
                 .build();
     }
@@ -33,7 +32,6 @@ public class StockUnitMapper {
                 .code(dto.getCode())
                 .quantity(dto.getQuantity())
                 .category(dto.getCategory())
-                .product(dto.getProductDto() != null ? ProductMapper.toEntity(dto.getProductDto()) : null)
                 .build();
     }
 

@@ -49,11 +49,6 @@ public class Slot {
     @Column(nullable = false)
     private Integer capacity = 0;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    private Product prod;
-
     @OneToMany(mappedBy = "slot")
     private List<StockUnit> stockUnits = new ArrayList<>();
 
@@ -62,37 +57,37 @@ public class Slot {
         return this.allowedCategory == p.getCategory();
     }
 
-    public void addProduct(Product p) {
-        if (!canContain(p)) {
-            throw new IllegalArgumentException("Product category not allowed in this slot");
-        }
-        if (prod != null && !prod.getId().equals(p.getId())) {
-            throw new IllegalArgumentException("This slot already contains another product type");
-        }
-        this.prod = p;
-    }
+//    public void addProduct(Product p) {
+//        if (!canContain(p)) {
+//            throw new IllegalArgumentException("Product category not allowed in this slot");
+//        }
+//        if (prod != null && !prod.getId().equals(p.getId())) {
+//            throw new IllegalArgumentException("This slot already contains another product type");
+//        }
+//        this.prod = p;
+//    }
 
-    public void addStockUnit(StockUnit stockUnit) {
-        if (stockUnit == null) {
-            throw new IllegalArgumentException("StockUnit cannot be null");
-        }
-        if (stockUnit.getSlot() != null && stockUnit.getSlot() != this)
-            throw new IllegalArgumentException("StockUnit already assigned to another Slot");
+//    public void addStockUnit(StockUnit stockUnit) {
+//        if (stockUnit == null) {
+//            throw new IllegalArgumentException("StockUnit cannot be null");
+//        }
+//        if (stockUnit.getSlot() != null && stockUnit.getSlot() != this)
+//            throw new IllegalArgumentException("StockUnit already assigned to another Slot");
+//
+//        if (this.stockUnits == null) {
+//            this.stockUnits = new ArrayList<>();
+//        }
+//        if (stockUnit.getCategory() != this.allowedCategory) {
+//            throw new IllegalArgumentException("Category not allowed in this slot");
+//        }
+//        this.stockUnits.add(stockUnit);
+//        stockUnit.setSlot(this);
+//    }
 
-        if (this.stockUnits == null) {
-            this.stockUnits = new ArrayList<>();
-        }
-        if (stockUnit.getCategory() != this.allowedCategory) {
-            throw new IllegalArgumentException("Category not allowed in this slot");
-        }
-        this.stockUnits.add(stockUnit);
-        stockUnit.setSlot(this);
-    }
-
-    public int getAvailableQuantity() {
-        return stockUnits.stream()
-                .mapToInt(StockUnit::getQuantity)
-                .sum();
-    }
+//    public int getAvailableQuantity() {
+//        return stockUnits.stream()
+//                .mapToInt(StockUnit::getQuantity)
+//                .sum();
+//    }
 
 }

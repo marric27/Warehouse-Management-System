@@ -6,8 +6,6 @@ import com.relatech.warehouse_management_system.product.entity.Product;
 import com.relatech.warehouse_management_system.warehouse.entity.Slot;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 
@@ -52,11 +50,6 @@ public class StockUnit {
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    private Product product;
-
-    @ManyToOne
     @JoinColumn(name = "slot_id")
     private Slot slot;
 
@@ -65,14 +58,5 @@ public class StockUnit {
         return this.category == p.getCategory();
     }
 
-    public void addProduct(Product p) {
-        if (!canContain(p)) {
-            throw new IllegalArgumentException("Product category not allowed in this stock unit");
-        }
-        if (product != null && !product.getId().equals(p.getId())) {
-            throw new IllegalArgumentException("This stock unit already contains another product type");
-        }
-        this.product = p;
-    }
 }
 

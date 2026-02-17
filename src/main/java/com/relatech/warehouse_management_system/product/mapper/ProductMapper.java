@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.product.mapper;
 
-import com.relatech.warehouse_management_system.product.dto.ProductDto;
 import com.relatech.warehouse_management_system.product.entity.Product;
+import com.relatech.warehouse_management_system.product.ProductDto;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,7 +11,6 @@ public class ProductMapper {
             return null;
         }
         return ProductDto.builder()
-                .id(product.getId())
                 .code(product.getCode())
                 .name(product.getName())
                 .category(product.getCategory())
@@ -23,12 +22,10 @@ public class ProductMapper {
             return null;
         }
 
-        Product product = new Product();
-        product.setId(dto.getId());
-        product.setCode(dto.getCode());
-        product.setName(dto.getName());
-        product.setCategory(dto.getCategory());
-
-        return product;
+        return Product.builder()
+                .code(dto.getCode())
+                .name(dto.getName())
+                .category(dto.getCategory())
+                .build();
     }
 }

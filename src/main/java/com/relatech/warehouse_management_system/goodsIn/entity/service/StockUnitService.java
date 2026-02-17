@@ -18,7 +18,7 @@ public interface StockUnitService {
     StockUnitDto getStockUnitByCode(String slotCode) throws ResourceNotFoundException;
 
     void deleteStockUnit(Long id) throws ResourceNotFoundException;
-    StockUnitDto assignProductToStockUnit(Long stockUnitId, Long slotId) throws ResourceNotFoundException;
-    StockUnitDto removeProductFromStockUnit(Long stockUnitId) throws ResourceNotFoundException;
+    //StockUnitDto assignProductToStockUnit(Long stockUnitId, Long slotId) throws ResourceNotFoundException;
+    //StockUnitDto removeProductFromStockUnit(Long stockUnitId) throws ResourceNotFoundException;
 
 }

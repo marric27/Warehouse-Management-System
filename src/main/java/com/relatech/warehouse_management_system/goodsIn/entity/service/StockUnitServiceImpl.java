@@ -5,8 +5,7 @@ import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.StockUnit;
 import com.relatech.warehouse_management_system.goodsIn.entity.mapper.StockUnitMapper;
 import com.relatech.warehouse_management_system.goodsIn.entity.repository.StockUnitRepository;
-import com.relatech.warehouse_management_system.product.entity.Product;
-import com.relatech.warehouse_management_system.product.repository.ProductRepository;
+import com.relatech.warehouse_management_system.product.ProductMirrorRepository;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,7 @@ import java.util.List;
 public class StockUnitServiceImpl implements StockUnitService {
 
     private final StockUnitRepository stockUnitRepository;
-    private final ProductRepository productRepository;
+    private final ProductMirrorRepository productRepository;
     private final StockUnitMapper stockUnitMapper;
 
     @Override
@@ -84,24 +83,24 @@ public class StockUnitServiceImpl implements StockUnitService {
         stockUnitRepository.delete(stockUnit);
     }
 
-    @Override
-    @Transactional(rollbackFor = {ResourceNotFoundException.class, RuntimeException.class})
-    public StockUnitDto assignProductToStockUnit(Long stockUnitId, Long productId) throws ResourceNotFoundException {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product", productId));
-        StockUnit su = stockUnitRepository.findById(stockUnitId)
-                .orElseThrow(() -> new ResourceNotFoundException("StockUnit", stockUnitId));
+//    @Override
+//    @Transactional(rollbackFor = {ResourceNotFoundException.class, RuntimeException.class})
+//    public StockUnitDto assignProductToStockUnit(Long stockUnitId, Long productId) throws ResourceNotFoundException {
+//        Product product = productRepository.findById(productId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Product", productId));
+//        StockUnit su = stockUnitRepository.findById(stockUnitId)
+//                .orElseThrow(() -> new ResourceNotFoundException("StockUnit", stockUnitId));
+//
+//        su.addProduct(product);
+//        return stockUnitMapper.toDTO(stockUnitRepository.save(su));
+//    }
 
-        su.addProduct(product);
-        return stockUnitMapper.toDTO(stockUnitRepository.save(su));
-    }
-
-    @Override
-    @Transactional(rollbackFor = {ResourceNotFoundException.class, RuntimeException.class})
-    public StockUnitDto removeProductFromStockUnit(Long stockUnitId) throws ResourceNotFoundException {
-        StockUnit stockUnit = stockUnitRepository.findById(stockUnitId)
-                .orElseThrow(() -> new ResourceNotFoundException("Stock Unit", stockUnitId));
-        stockUnit.setProduct(null);
-        return stockUnitMapper.toDTO(stockUnitRepository.save(stockUnit));
-    }
+//    @Override
+//    @Transactional(rollbackFor = {ResourceNotFoundException.class, RuntimeException.class})
+//    public StockUnitDto removeProductFromStockUnit(Long stockUnitId) throws ResourceNotFoundException {
+//        StockUnit stockUnit = stockUnitRepository.findById(stockUnitId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Stock Unit", stockUnitId));
+//        stockUnit.setProduct(null);
+//        return stockUnitMapper.toDTO(stockUnitRepository.save(stockUnit));
+//    }
 }
