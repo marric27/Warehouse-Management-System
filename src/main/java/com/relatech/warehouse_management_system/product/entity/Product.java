@@ -21,3 +21,9 @@ public class Product {
     private LocalDateTime lastUpdated;
     private Category category;
 }
+
+/**
+ * mirror class of Product implemented in another microservice aka product-service
+ * used for check product availability to create grnitems and orders
+ * crud operations are implemented in product-service
+ */

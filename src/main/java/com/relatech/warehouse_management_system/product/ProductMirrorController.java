@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.product;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
-import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
+import com.relatech.warehouse_management_system.product.entity.ProductDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

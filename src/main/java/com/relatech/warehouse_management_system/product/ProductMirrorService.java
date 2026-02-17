@@ -1,6 +1,6 @@
 package com.relatech.warehouse_management_system.product;
 
-import com.relatech.warehouse_management_system.product.entity.Product;
+import com.relatech.warehouse_management_system.product.entity.ProductDto;
 import com.relatech.warehouse_management_system.product.mapper.ProductMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

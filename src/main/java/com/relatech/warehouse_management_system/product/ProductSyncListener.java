@@ -3,6 +3,7 @@ package com.relatech.warehouse_management_system.product;
 import java.time.LocalDateTime;
 
 import com.relatech.warehouse_management_system.product.entity.Product;
+import com.relatech.warehouse_management_system.product.entity.ProductDto;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 

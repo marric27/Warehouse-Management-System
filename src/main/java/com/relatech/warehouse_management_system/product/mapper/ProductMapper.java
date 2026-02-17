@@ -1,7 +1,7 @@
 package com.relatech.warehouse_management_system.product.mapper;
 
 import com.relatech.warehouse_management_system.product.entity.Product;
-import com.relatech.warehouse_management_system.product.ProductDto;
+import com.relatech.warehouse_management_system.product.entity.ProductDto;
 import org.springframework.stereotype.Component;
 
 @Component

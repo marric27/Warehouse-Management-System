@@ -1,4 +1,4 @@
-package com.relatech.warehouse_management_system.product;
+package com.relatech.warehouse_management_system.product.entity;
 
 import com.relatech.warehouse_management_system.common.util.Category;
 import lombok.*;
