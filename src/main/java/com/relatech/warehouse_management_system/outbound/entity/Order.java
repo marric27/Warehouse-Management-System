@@ -54,7 +54,7 @@ public class Order {
     public void prePersist() {
         if (code == null) {
             String ulid = UlidCreator.getUlid().toString();
-            this.code = "ORD-" + ulid.substring(0, 10).toUpperCase();
+            this.code = "ORD-" + ulid.toUpperCase();
         }
     }
 }

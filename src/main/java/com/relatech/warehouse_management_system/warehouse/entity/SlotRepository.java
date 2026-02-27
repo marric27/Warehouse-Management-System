@@ -16,5 +16,13 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
     @Query("SELECT DISTINCT s FROM Slot s JOIN s.stockUnits su WHERE su.productCode = :productCode")
     List<Slot> findDistinctByStockUnitsProductCode(@Param("productCode") String productCode);
 
+    @Query("""
+        SELECT DISTINCT s
+        FROM Slot s
+        JOIN FETCH s.stockUnits su
+        WHERE su.productCode IN :codes
+        """)
+    List<Slot> findSlotsByProductCodes(@Param("codes") List<String> codes);
+
     //List<Slot> findSlotContainingProduct(@Param("productCode") String productCode);
 }

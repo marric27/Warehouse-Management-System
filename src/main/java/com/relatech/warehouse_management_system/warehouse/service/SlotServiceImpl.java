@@ -17,8 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SlotServiceImpl implements SlotService {
@@ -144,6 +144,37 @@ public class SlotServiceImpl implements SlotService {
         return slotRepository.findByCode(slotCode)
                 .map(slotMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", slotCode));
+    }
+
+    @Override
+    public Map<String, SlotDto> getBestSlotsForProducts(List<String> productCodes) {
+
+        List<String> normalizedCodes = productCodes.stream()
+                .filter(c -> c != null && !c.isBlank())
+                .distinct()
+                .toList();
+
+        if (normalizedCodes.isEmpty())
+            return Map.of();
+
+        List<Slot> slotCandidates = slotRepository.findSlotsByProductCodes(normalizedCodes);
+
+        return slotCandidates.stream()
+                .flatMap(slot -> slot.getStockUnits().stream()
+                        .filter(su -> normalizedCodes.contains(su.getProductCode()))
+                        .map(su -> new AbstractMap.SimpleEntry<>(
+                                su.getProductCode(), slot
+                        ))
+                )
+                .collect(Collectors.groupingBy(
+                        Map.Entry::getKey,
+                        Collectors.collectingAndThen(
+                                Collectors.minBy(
+                                        Comparator.comparingInt(e -> e.getValue().getPickingSequence())
+                                ),
+                                opt -> slotMapper.toDto(opt.get().getValue())
+                        )
+                ));
     }
 
 }
