@@ -38,7 +38,7 @@ public class ProductController {
     public ResponseEntity<ProductDto> getProductByCode(@PathVariable String code) throws ResourceNotFoundException {
         log.info("Received GET request for product with code: {}", code);
         ProductDto product = productService.getProductByCode(code);
-        log.info("Returning product: {}", product);
+        log.info("Returning product by code: {}", product);
         return ResponseEntity.ok(product);
     }
 
@@ -60,7 +60,7 @@ public class ProductController {
     public ResponseEntity<List<ProductDto>> getProductsByCategory(@PathVariable Category category) {
         log.info("Received GET request for product with category: {}", category);
         List<ProductDto> products = productService.getAllProductByProductCategory(category);
-        log.info("Returning products: {}", products);
+        log.info("Returning products by category: {}", products);
         return ResponseEntity.ok(products);
     }
 
