@@ -71,7 +71,7 @@ class SlotServiceTest {
         slotDTO.setId(1L);
         slotDTO.setCode("SLOT-01");
         slotDTO.setCapacity(10);
-        slotDTO.setAllowedCategory(Category.STANDARD);
+        slotDTO.setCategory(Category.STANDARD);
         slotDTO.setStockUnits(new ArrayList<>());
     }
 
@@ -138,7 +138,7 @@ class SlotServiceTest {
     @DisplayName("Should throw UpdateEntityException when category mismatch")
     void updateSlot_ShouldThrowUpdateEntityException() {
         slot.setProd(product);
-        slotDTO.setAllowedCategory(Category.FLAMMABLE);
+        slotDTO.setCategory(Category.FLAMMABLE);
 
         when(slotRepository.findById(1L)).thenReturn(Optional.of(slot));
 
@@ -181,7 +181,7 @@ class SlotServiceTest {
 
         SlotDto dto = new SlotDto();
         dto.setCapacity(20);
-        dto.setAllowedCategory(Category.STANDARD);
+        dto.setCategory(Category.STANDARD);
 
         Slot existing = new Slot();
         existing.setId(id);
@@ -195,7 +195,7 @@ class SlotServiceTest {
         SlotDto result = slotService.updateSlot(id, dto);
 
         assertEquals(20, result.getCapacity());
-        assertEquals(Category.STANDARD, result.getAllowedCategory());
+        assertEquals(Category.STANDARD, result.getCategory());
     }
 
     // ------------------------------
@@ -206,7 +206,7 @@ class SlotServiceTest {
         Long id = 1L;
 
         SlotDto dto = new SlotDto();
-        dto.setAllowedCategory(Category.STANDARD);
+        dto.setCategory(Category.STANDARD);
 
         Product prod = new Product();
         prod.setCategory(Category.STANDARD);
@@ -221,7 +221,7 @@ class SlotServiceTest {
 
         SlotDto result = slotService.updateSlot(id, dto);
 
-        assertEquals(Category.STANDARD, result.getAllowedCategory());
+        assertEquals(Category.STANDARD, result.getCategory());
     }
 
     // ------------------------------
@@ -232,7 +232,7 @@ class SlotServiceTest {
         Long id = 1L;
 
         SlotDto dto = new SlotDto();
-        dto.setAllowedCategory(Category.STANDARD);
+        dto.setCategory(Category.STANDARD);
 
         Product prod = new Product();
         prod.setCategory(Category.FLAMMABLE);

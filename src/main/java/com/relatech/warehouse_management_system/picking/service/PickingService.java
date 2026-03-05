@@ -13,6 +13,7 @@ import com.relatech.warehouse_management_system.outbound.entity.service.PickList
 import com.relatech.warehouse_management_system.outbound.entity.service.PickListService;
 import com.relatech.warehouse_management_system.picking.dto.ConfirmPickingRequest;
 import com.relatech.warehouse_management_system.picking.dto.NextItemRequest;
+import com.relatech.warehouse_management_system.picking.dto.StockUnitQuantityDto;
 import com.relatech.warehouse_management_system.picking.entity.PickingInfoDto;
 import com.relatech.warehouse_management_system.picking.entity.service.PickingInfoService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -51,33 +53,54 @@ public class PickingService {
     @Transactional(rollbackFor = {ResourceNotFoundException.class, QuantityMismatchException.class}, propagation = Propagation.REQUIRED)
     public void confirmPicking(ConfirmPickingRequest request) throws Exception {
         PickListItemDto pickListItem = loadPickListItem(request.getPickListCode(), request.getPickListItemCode());
-        Map<String, Integer> stockUnitQuantities = request.getStockUnitQuantities();
-        if (stockUnitQuantities == null || stockUnitQuantities.isEmpty()) {
+
+        Map<String, Integer> stockUnitQuantities = request.getStockUnitQuantities().stream()
+                .collect(Collectors.toMap(
+                        StockUnitQuantityDto::suId,
+                        StockUnitQuantityDto::quantity
+                ));
+
+        if (stockUnitQuantities.isEmpty()) {
             throw new Exception("No stock units provided for picking");
         }
-        int toPick = request.getStockUnitQuantities().values().stream().mapToInt(Integer::intValue).sum();
-        if(toPick > pickListItem.getQuantity()) throw new QuantityMismatchException("Requested quantity > available qty");
 
-        ErrorReason errorReason;
-        if(toPick < pickListItem.getQuantity() && request.getErrorReason() != null) {
-            log.info("Set error reason from request");
-            errorReason = request.getErrorReason();
-        } else if(toPick == pickListItem.getQuantity()) {
-            errorReason = null;
-        } else {
-            throw new Exception("Error reason cant be omitted when qty to pick is lower than ");
+        int toPickNow = stockUnitQuantities.values().stream().mapToInt(Integer::intValue).sum();
+        int alreadyPicked = pickListItem.getPickedQty();
+        int totalRequested = pickListItem.getQty();
+        int remainingToPick = totalRequested - alreadyPicked;
+
+        // Controllo che non si stia prelevando più del dovuto
+        if (toPickNow > remainingToPick) {
+            throw new QuantityMismatchException("Errore: Stai prelevando " + toPickNow + " ma ne mancano solo " + remainingToPick);
         }
 
+        // 3. Gestione ErrorReason (Motivo del prelievo parziale)
+        ErrorReason errorReason = null;
+        boolean isComplete = (alreadyPicked + toPickNow == totalRequested);
+
+        if (!isComplete) {
+            // Se il prelievo non è completo, DEVE esserci un motivo
+            if (request.getErrorReason() == null) {
+                throw new Exception("Error reason can't be omitted when total picked qty is lower than requested");
+            }
+            errorReason = request.getErrorReason();
+        } else {
+            // Se è completo, l'eventuale motivo della richiesta viene ignorato (o messo a null)
+            errorReason = null;
+        }
+
+        // 4. Caricamento StockUnits e validazione disponibilità
         Map<String, StockUnitDto> stockUnitsByCode = new HashMap<>();
-        for (String code : request.getStockUnitQuantities().keySet()) {
+        for (String code : stockUnitQuantities.keySet()) {
             StockUnitDto su = stockUnitService.getStockUnitByCode(code);
             stockUnitsByCode.put(su.getCode(), su);
         }
 
-        canPickFromSU(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem);
+        canPickFromSU(stockUnitQuantities, stockUnitsByCode, pickListItem);
 
-        executePicking(request.getStockUnitQuantities(), stockUnitsByCode, pickListItem);
-        updatePickListItem(pickListItem, toPick, errorReason);
+        // 5. Esecuzione e Aggiornamento
+        executePicking(stockUnitQuantities, stockUnitsByCode, pickListItem);
+        updatePickListItem(pickListItem, toPickNow, errorReason);
     }
 
     ////////////////////////////////////////////////
@@ -142,7 +165,8 @@ public class PickingService {
 
         int pickedQty = item.getPickedQty() + totalPickedQty;
         item.setPickedQty(pickedQty);
-        item.setState(PickListItemState.PICKED);
+        if(pickedQty == item.getQty())
+            item.setState(PickListItemState.PICKED);
         item.setErrorReason(errorReason);
         pickListItemService.update(item.getCode(), item);
     }

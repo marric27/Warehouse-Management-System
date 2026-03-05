@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,10 +38,9 @@ public class PickListController {
      */
     @PostMapping("/release")
     @Operation(summary = "Generate picklist", description = "Generates a picklist DTO based on the order IDs")
-    public ResponseEntity<List<PickListDto>> releaseOrders(@RequestBody List<Long> orderIds) throws ResourceNotFoundException {
-
+    public ResponseEntity</*List<PickListDto>*/String> releaseOrders(@RequestBody List<Long> orderIds) throws ResourceNotFoundException {
         List<PickListDto> pickLists = pickListGen.generatePickLists(orderIds);
-        return ResponseEntity.ok(pickLists);
+        return ResponseEntity.status(HttpStatus.CREATED).body("pickLists");//.ok("created"/*pickLists*/);
     }
 
     @GetMapping("/release")
@@ -57,6 +58,12 @@ public class PickListController {
     @GetMapping("/{id}")
     public ResponseEntity<PickListDto> listickListById(@PathVariable Long id) throws ResourceNotFoundException {
         PickListDto pickLists = pickListService.getPickListById(id);
+        return ResponseEntity.ok(pickLists);
+    }
+
+    @GetMapping("/code/{code}")
+    public ResponseEntity<PickListDto> getPicklistByCode(@PathVariable String code) throws ResourceNotFoundException {
+        PickListDto pickLists = pickListService.getPickListByCode(code);
         return ResponseEntity.ok(pickLists);
     }
 }

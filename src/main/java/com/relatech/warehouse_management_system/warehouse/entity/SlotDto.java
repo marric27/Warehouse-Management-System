@@ -32,7 +32,7 @@ public class SlotDto {
 
     @Schema(description = "Category allowed in this slot", example = "CONTROLLED_DRUG")
     @NotNull(message = "The allowed category cannot be null.")
-    private Category allowedCategory;
+    private Category category;
 
     @Schema(description = "Maximum capacity of items in the slot", example = "100")
     @NotNull(message = "The capacity cannot be null.")

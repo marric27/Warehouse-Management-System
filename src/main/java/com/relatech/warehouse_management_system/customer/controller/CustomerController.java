@@ -42,11 +42,25 @@ public class CustomerController {
         return ResponseEntity.ok(customer);
     }
 
+    @GetMapping("/code/{code}")
+    public ResponseEntity<CustomerDto> getCustomerByCode(@PathVariable String code) throws ResourceNotFoundException {
+        log.info("Request to fetch customer with code: {}", code);
+        CustomerDto customer = customerService.getCustomerByCode(code);
+        return ResponseEntity.ok(customer);
+    }
+
     @GetMapping
     public ResponseEntity<Page<CustomerDto>> getAllCustomersPaged(@PageableDefault(page = 0, size = 10) Pageable pageable) {
         log.info("Request to fetch customers paged: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
         Page<CustomerDto> customersPage = customerService.getAllCustomersPaged(pageable);
         return ResponseEntity.ok(customersPage);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<CustomerDto>> getAllCustomers() {
+        log.info("Request to fetch all customers");
+        List<CustomerDto> customers = customerService.getAllCustomers();
+        return ResponseEntity.ok(customers);
     }
 
     @PutMapping("/{id}")

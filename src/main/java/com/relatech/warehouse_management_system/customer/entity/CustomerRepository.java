@@ -9,9 +9,9 @@ import java.util.Optional;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-Optional<Customer> findByEmail(String email);
+    Optional<Customer> findByEmail(String email);
 
-Optional<Customer> findByTaxCode(String taxCode);
+    Optional<Customer> findByTaxCode(String taxCode);
 
     @Query("SELECT c FROM Customer c WHERE " +
             "(LOWER(c.name) LIKE LOWER(CONCAT('%', :term, '%')) OR " +
@@ -20,5 +20,5 @@ Optional<Customer> findByTaxCode(String taxCode);
             "LOWER(c.billingAddress) LIKE LOWER(CONCAT('%', :term, '%')))")
     List<Customer> searchByTerm(@Param("term") String term);
 
-    Optional<Customer> findByCustomerCode(String customerCode);
+    Optional<Customer> findByCode(String customerCode);
 }

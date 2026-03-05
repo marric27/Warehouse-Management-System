@@ -50,6 +50,14 @@ public class ReceivingController {
         return ResponseEntity.ok(receivingService.getGRN(id));
     }
 
+    @GetMapping("/grns/code/{code}")
+    @Operation(summary = "Get GRN by code")
+    public ResponseEntity<GrnDto> getGRN(@PathVariable String code) throws GrnNotFoundException {
+
+        log.info("Fetching GRN {}", code);
+        return ResponseEntity.ok(receivingService.getGRNByCode(code));
+    }
+
     @GetMapping("/grns-all")
     @Operation(summary = "List all GRNs")
     public ResponseEntity<List<GrnDto>> listGRNs() {
@@ -82,15 +90,15 @@ public class ReceivingController {
         return ResponseEntity.ok(receivingService.listGrnItemsPaged(pageable));
     }
 
-    @PostMapping("/grns/{grnId}/items")
+    @PostMapping("/grns/{grnCode}/items")
     @Operation(summary = "Create item for GRN")
     @ApiResponse(responseCode = "201", description = "Item created")
     public ResponseEntity<GrnItemDto> createItem(
-            @PathVariable Long grnId,
+            @PathVariable String grnCode,
             @Valid @RequestBody GrnItemDto dto) throws Exception {
 
-        log.info("Creating item for GRN {}", grnId);
-        GrnItemDto result = receivingService.createItem(grnId, dto);
+        log.info("Creating item for GRN {}", grnCode);
+        GrnItemDto result = receivingService.createItem(grnCode, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
@@ -113,6 +121,13 @@ public class ReceivingController {
         return ResponseEntity.ok(item);
     }
 
+    @GetMapping("/items/code/{code}")
+    @Operation(summary = "Get GRN Item by code")
+    public ResponseEntity<GrnItemDto> getGrnItemByCode(@PathVariable String code) throws Exception {
+        log.info("Fetching GRN Item {}", code);
+        GrnItemDto item = receivingService.getGrnItemByCode(code);
+        return ResponseEntity.ok(item);
+    }
     // ---------------------------
     // STATE MANUAL CHANGE
     // ---------------------------

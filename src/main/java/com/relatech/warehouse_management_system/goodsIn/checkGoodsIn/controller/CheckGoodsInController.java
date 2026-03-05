@@ -32,13 +32,13 @@ public class CheckGoodsInController {
      * a GRN item, and automatically update the item state.
      * POST /check-goods-in/{grnItemId}/checking-info
      */
-    @PostMapping("/{grnItemId}/checking-info")
+    @PostMapping("/{grnItemCode}/checking-info")
     public ResponseEntity<GrnItemDto> createCheckingInfo(
-            @PathVariable Long grnItemId,
+            @PathVariable String grnItemCode,
             @RequestBody StockUnitDto request) throws Exception {
-        log.info("POST /{}/checking-info - creating checking-info and stockUnit for grnItem {}", grnItemId, grnItemId);
+        log.info("POST /{}/checking-info - creating checking-info and stockUnit for grnItem {}", grnItemCode, grnItemCode);
         GrnItemDto result = checkGoodsInService.createCheckingInfoAndStockUnit(
-                grnItemId,
+                grnItemCode,
                 request
         );
 

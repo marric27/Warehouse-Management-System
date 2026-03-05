@@ -10,15 +10,18 @@ import com.relatech.warehouse_management_system.outbound.entity.mapper.PickListM
 import com.relatech.warehouse_management_system.outbound.entity.repository.PickListItemRepository;
 import com.relatech.warehouse_management_system.outbound.entity.repository.PickListRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PickListService {
     private final PickListRepository pickListRepository;
     private final PickListItemRepository pickListItemRepository;
@@ -59,5 +62,17 @@ public class PickListService {
         return pickListRepository.findByCode(pickListCode)
                 .map(PickListMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("PickList", pickListCode));
+    }
+
+    public List<PickListDto> createBulk(ArrayList<PickListDto> pickListDtos) {
+        List<PickList> entities = pickListDtos.stream()
+                .map(PickListMapper::toEntity)
+                .toList();
+
+        List<PickList> saved = pickListRepository.saveAll(entities);
+        log.info("Picklist generated successfully (bulk)");
+        return saved.stream()
+                .map(PickListMapper::toDto)
+                .toList();
     }
 }

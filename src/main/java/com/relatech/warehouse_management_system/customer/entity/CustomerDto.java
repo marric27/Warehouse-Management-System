@@ -43,6 +43,6 @@ public class CustomerDto {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(description = "Unique ID of the Customer", example = "CUST-001", accessMode = Schema.AccessMode.READ_ONLY)
-    private String customerCode;
+    private String code;
 
 }

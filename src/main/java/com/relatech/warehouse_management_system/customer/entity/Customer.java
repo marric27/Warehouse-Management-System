@@ -38,13 +38,13 @@ public class Customer {
     private String taxCode;
 
     @Column(name = "customer_code", nullable = false, unique = true)
-    private String customerCode;
+    private String code;
 
     @PrePersist
     public void prePersist() {
-        if (customerCode == null) {
+        if (code == null) {
             String ulid = UlidCreator.getUlid().toString();
-            this.customerCode = "CUST-" + ulid.substring(0, 10).toUpperCase();
+            this.code = "CUST-" + ulid.substring(0, 10).toUpperCase();
         }
     }
 }

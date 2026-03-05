@@ -25,4 +25,6 @@ public interface CustomerService {
 
     List<CustomerDto> searchCustomers(String term);
 
+    CustomerDto getCustomerByCode(String code) throws ResourceNotFoundException;
+
 }

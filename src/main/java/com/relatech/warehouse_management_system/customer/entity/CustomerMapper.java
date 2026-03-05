@@ -14,7 +14,7 @@ public class CustomerMapper {
                 .billingAddress(entity.getBillingAddress())
                 .email(entity.getEmail())
                 .taxCode(entity.getTaxCode())
-                .customerCode(entity.getCustomerCode())
+                .code(entity.getCode())
                 .build();
     }
     public Customer toEntity(CustomerDto dto) {
@@ -27,7 +27,7 @@ public class CustomerMapper {
                 .billingAddress(dto.getBillingAddress())
                 .email(dto.getEmail())
                 .taxCode(dto.getTaxCode())
-                .customerCode(dto.getCustomerCode())
+                .code(dto.getCode())
                 .build();
     }
 }

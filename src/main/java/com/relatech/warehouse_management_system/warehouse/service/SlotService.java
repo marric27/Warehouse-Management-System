@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface SlotService {
@@ -20,4 +21,6 @@ public interface SlotService {
     Optional<SlotDto> getSlotContainingProduct(String productCode, int requiredQuantity) throws ResourceNotFoundException;
 
     SlotDto getSlotByCode(String slotCode) throws ResourceNotFoundException;
+
+    Map<String, SlotDto> getBestSlotsForProducts(List<String> productCodes);
 }

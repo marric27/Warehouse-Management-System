@@ -1,6 +1,5 @@
 package com.relatech.warehouse_management_system.goodsIn;
 
-import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.State;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
@@ -32,6 +31,7 @@ public class GrnItemStateService {
         int received = item.getReceivedQty();
 
         if(received==0) item.setState(State.PUTAWAY);
+        else item.setState(State.OPEN);
 
         if (expected <= 0)
             throw new InvalidQuantityException("Expected qty must be > 0");
@@ -95,8 +95,8 @@ public class GrnItemStateService {
         return grnService.getGRNById(grnID).getState() == State.CLOSED;
     }
 
-    public boolean checkGrnItemIfCheckedOrPutaway(Long grnItemId) throws GrnItemNotFoundException {
-        State state = grnItemService.getGrnItemById(grnItemId).getState();
+    public boolean checkGrnItemIfCheckedOrPutaway(String grnItemCode) throws GrnItemNotFoundException {
+        State state = grnItemService.getGrnItemByCode(grnItemCode).getState();
         return state == State.CHECKED || state == State.PUTAWAY;
     }
 }

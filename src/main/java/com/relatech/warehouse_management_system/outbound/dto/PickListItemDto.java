@@ -29,7 +29,7 @@ public class PickListItemDto {
 
     @Schema(description = "Quantity to be picked.")
     @Min(value = 0, message = "Quantity must be greater than or equal to 0")
-    private Integer quantity;
+    private Integer qty;
 
     @Schema(description = "Quantity picked.")
     @Min(value = 0, message = "Quantity must be greater than or equal to 0")

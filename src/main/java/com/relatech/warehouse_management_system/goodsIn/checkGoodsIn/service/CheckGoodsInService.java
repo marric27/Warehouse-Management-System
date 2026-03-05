@@ -38,15 +38,18 @@ public class CheckGoodsInService {
     private final ProductService productService;
 
     @Transactional(rollbackFor = {CannotAssignCIToGrnItemInClosedOrPutawayStateException.class, DuplicateResourceException.class, GrnItemNotFoundException.class, GrnNotFoundException.class})
-    public GrnItemDto createCheckingInfoAndStockUnit(Long grnItemId, StockUnitDto su) throws Exception {
+    public GrnItemDto createCheckingInfoAndStockUnit(String grnItemCode, StockUnitDto su) throws Exception {
 
-        if(stateService.checkGrnItemIfCheckedOrPutaway(grnItemId))
-            throw new CannotAssignCIToGrnItemInClosedOrPutawayStateException(grnItemId);
+        GrnItemDto grnItem = grnItemService.getGrnItemByCode(grnItemCode);
+        if(stateService.checkGrnItemIfCheckedOrPutaway(grnItemCode))
+            throw new CannotAssignCIToGrnItemInClosedOrPutawayStateException(grnItemCode);
 
-        GrnItemDto grnItem = grnItemService.getGrnItemById(grnItemId);
         if(su.getQuantity() > grnItem.getReceivedQty()) {
             throw new QuantityNotAvailableException(su.getQuantity(), grnItem.getReceivedQty());
         }
+        int alreadyStockedQty = grnItem.getCheckingInfoList().stream().mapToInt(CheckingInfoDto::getQuantity).sum();
+        int toStockQty = grnItem.getReceivedQty() - alreadyStockedQty;
+        if(su.getQuantity() > toStockQty) throw new QuantityNotAvailableException(su.getQuantity(), toStockQty);
         su.setProductCode(grnItem.getProductCode());
         su.setCategory(productService.getProductByCode(grnItem.getProductCode()).getCategory());
 
@@ -56,7 +59,7 @@ public class CheckGoodsInService {
         // Create CheckingInfo
         CheckingInfoDto ci = new CheckingInfoDto();
         ci.setStockUnitId(stockUnit.getId());
-        ci.setGrnItemId(grnItemId);
+        ci.setGrnItemId(grnItem.getId());
         ci.setState(State.OPEN);
         ci.setQuantity(su.getQuantity());
         ci.setBatchNumber(su.getBatchNumber());
@@ -64,10 +67,10 @@ public class CheckGoodsInService {
         CheckingInfoDto savedCI = checkingInfoService.create(ci);
 
         // assign to item
-        grnItemService.addCheckingInfo(grnItemId, savedCI.getId());
+        grnItemService.addCheckingInfo(grnItemCode, savedCI.getId());
 
         // progress state
-        GrnItemDto item = grnItemService.getGrnItemById(grnItemId);
+        GrnItemDto item = grnItemService.getGrnItemByCode(grnItemCode);
         stateService.evaluateAndProgressItemState(item);
 
         return item;

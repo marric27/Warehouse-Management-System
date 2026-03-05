@@ -27,8 +27,8 @@ public class SalesOrderService {
     private final ProductService productService;
 
     @Transactional(rollbackFor = ResourceNotFoundException.class)
-    public OrderDto createOrderAndAssign(Long customerId, OrderDto orderDto) throws ResourceNotFoundException {
-        CustomerDto customerDTO = customerService.getCustomerById(customerId);
+    public OrderDto createOrderAndAssign(OrderDto orderDto) throws ResourceNotFoundException {
+        CustomerDto customerDTO = customerService.getCustomerByCode(orderDto.getCustomerCode());
 
         List<String> productCodes = orderDto.getSalesOrderLineList().stream()
                 .map(SalesOrderLineDto::getProductCode)
@@ -38,7 +38,7 @@ public class SalesOrderService {
         for (String code : productCodes)
             productService.validateProductExists(code);
 
-        orderDto.setCustomerCode(customerDTO.getCustomerCode());
+        orderDto.setCustomerCode(customerDTO.getCode());
         orderDto.setState(OrderState.OPEN);
         orderDto.setDate(LocalDate.now());
         orderDto.getSalesOrderLineList().forEach(line -> {line.setStatus(OrderState.OPEN);});
@@ -55,7 +55,13 @@ public class SalesOrderService {
         return orderService.getAllOrdersPaged(pageable);
     }
 
+    @Transactional(readOnly = true)
+    public OrderDto getOrderById(Long id) throws ResourceNotFoundException {
+        return orderService.getOrderById(id);
+    }
 
-
-
+    @Transactional(readOnly = true)
+    public OrderDto getOrderByCode(String code) throws ResourceNotFoundException {
+        return orderService.getOrderByCode(code);
+    }
 }
