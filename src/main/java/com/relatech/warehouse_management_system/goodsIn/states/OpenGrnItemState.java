@@ -1,6 +1,7 @@
 package com.relatech.warehouse_management_system.goodsIn.states;
 
 import com.relatech.warehouse_management_system.common.util.State;
+import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ public class OpenGrnItemState implements GrnItemStateHandler {
         int assigned = 0;
         if (item.getCheckingInfoList() != null) {
             assigned = item.getCheckingInfoList().stream()
-                    .mapToInt(ci -> ci.getQuantity())
+                    .mapToInt(CheckingInfoDto::getQuantity)
                     .sum();
         }
 

@@ -41,12 +41,14 @@ public class CheckGoodsInService {
     public GrnItemDto createCheckingInfoAndStockUnit(String grnItemCode, StockUnitDto su) throws Exception {
 
         GrnItemDto grnItem = grnItemService.getGrnItemByCode(grnItemCode);
-        if(stateService.checkGrnItemIfCheckedOrPutaway(grnItemCode))
+        if(grnItem.getState() == State.CHECKED ||  grnItem.getState() == State.PUTAWAY) {
             throw new CannotAssignCIToGrnItemInClosedOrPutawayStateException(grnItemCode);
+        }
 
         if(su.getQuantity() > grnItem.getReceivedQty()) {
             throw new QuantityNotAvailableException(su.getQuantity(), grnItem.getReceivedQty());
         }
+
         int alreadyStockedQty = grnItem.getCheckingInfoList().stream().mapToInt(CheckingInfoDto::getQuantity).sum();
         int toStockQty = grnItem.getReceivedQty() - alreadyStockedQty;
         if(su.getQuantity() > toStockQty) throw new QuantityNotAvailableException(su.getQuantity(), toStockQty);

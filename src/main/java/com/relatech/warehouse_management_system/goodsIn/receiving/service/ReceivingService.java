@@ -43,8 +43,9 @@ public class ReceivingService {
     public GrnItemDto createItem(String grnCode, GrnItemDto item) throws GrnNotFoundException,
             CannotAssignItemToGrnClosedException, InvalidQuantityException, QuantityMismatchException,
             OverReceivedQuantityException, GrnItemNotFoundException, ResourceNotFoundException {
+
         GrnDto grn = grnService.getGRNByCode(grnCode);
-        if (stateService.checkGrnIfClosed(grn.getId()))
+        if (grn.getState() == State.CLOSED)
             throw new CannotAssignItemToGrnClosedException(grnCode);
 
         productService.validateProductExists(item.getProductCode());

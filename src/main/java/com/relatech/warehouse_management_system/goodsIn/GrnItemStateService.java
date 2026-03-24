@@ -89,9 +89,4 @@ public class GrnItemStateService {
     public boolean checkGrnIfClosed(Long grnID) throws GrnNotFoundException {
         return grnService.getGRNById(grnID).getState() == State.CLOSED;
     }
-
-    public boolean checkGrnItemIfCheckedOrPutaway(String grnItemCode) throws GrnItemNotFoundException {
-        State state = grnItemService.getGrnItemByCode(grnItemCode).getState();
-        return state == State.CHECKED || state == State.PUTAWAY;
-    }
 }
