@@ -59,13 +59,15 @@ public class CheckGoodsInService {
         StockUnitDto stockUnit = stockUnitService.createStockUnit(su);
 
         // Create CheckingInfo
-        CheckingInfoDto ci = new CheckingInfoDto();
-        ci.setStockUnitId(stockUnit.getId());
-        ci.setGrnItemId(grnItem.getId());
-        ci.setState(State.OPEN);
-        ci.setQuantity(su.getQuantity());
-        ci.setBatchNumber(su.getBatchNumber());
-        ci.setExpirationDate(su.getExpirationDate());
+        CheckingInfoDto ci = CheckingInfoDto.builder()
+                .batchNumber(su.getBatchNumber())
+                .expirationDate(su.getExpirationDate())
+                .quantity(su.getQuantity())
+                .state(State.OPEN)
+                .stockUnitId(stockUnit.getId())
+                .grnItemId(grnItem.getId())
+                .build();
+
         CheckingInfoDto savedCI = checkingInfoService.create(ci);
 
         // assign to item
