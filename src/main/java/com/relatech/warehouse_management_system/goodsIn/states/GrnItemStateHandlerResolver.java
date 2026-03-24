@@ -23,6 +23,9 @@ public class GrnItemStateHandlerResolver {
     }
 
     public GrnItemStateHandler resolve(State state) {
+        if (state == null) {
+            state = State.OPEN;
+        }
         return Optional.ofNullable(handlersByState.get(state))
                 .orElseThrow(() -> new IllegalArgumentException(
                         "No GRN item state handler registered for state: " + state

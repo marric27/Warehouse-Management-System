@@ -26,4 +26,14 @@ public class PutawayGrnItemState implements GrnItemStateHandler {
     public State onPutawayAssigned(GrnItemDto item) {
         return State.PUTAWAY;
     }
+
+    @Override
+    public State onQuantitiesValidated(GrnItemDto item) {
+        return State.PUTAWAY;
+    }
+
+    @Override
+    public boolean canAssignCheckingInfo(GrnItemDto item) {
+        return false;
+    }
 }

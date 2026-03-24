@@ -8,4 +8,6 @@ public interface GrnItemStateHandler {
     boolean canTransitionTo(State targetState, GrnItemDto item);
     State onCheckingInfoAdded(GrnItemDto item);
     State onPutawayAssigned(GrnItemDto item);
+    State onQuantitiesValidated(GrnItemDto item);
+    boolean canAssignCheckingInfo(GrnItemDto item);
 }

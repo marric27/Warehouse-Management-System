@@ -30,9 +30,6 @@ public class GrnItemStateService {
         int notCompliant = item.getNotCompliantQty();
         int received = item.getReceivedQty();
 
-        if(received==0) item.setState(State.PUTAWAY);
-        else item.setState(State.OPEN);
-
         if (expected <= 0)
             throw new InvalidQuantityException("Expected qty must be > 0");
 
@@ -41,6 +38,18 @@ public class GrnItemStateService {
 
         if (received > expected)
             throw new OverReceivedQuantityException("Over-received: expected=" + expected + " received=" + received);
+
+        applyStateAfterQuantityValidation(item);
+    }
+
+    public void applyStateAfterQuantityValidation(GrnItemDto item) {
+        GrnItemStateHandler currentHandler = resolver.resolve(item.getState());
+        item.setState(currentHandler.onQuantitiesValidated(item));
+    }
+
+    public boolean canAssignCheckingInfo(GrnItemDto item) {
+        GrnItemStateHandler currentHandler = resolver.resolve(item.getState());
+        return currentHandler.canAssignCheckingInfo(item);
     }
 
     // PROGRESSIONE AUTOMATICA DI STATO
