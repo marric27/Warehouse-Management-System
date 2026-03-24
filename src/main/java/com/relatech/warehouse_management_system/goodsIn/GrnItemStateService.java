@@ -1,18 +1,17 @@
 package com.relatech.warehouse_management_system.goodsIn;
 
 import com.relatech.warehouse_management_system.common.util.State;
-import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
 import com.relatech.warehouse_management_system.goodsIn.exception.*;
+import com.relatech.warehouse_management_system.goodsIn.states.GrnItemStateHandler;
+import com.relatech.warehouse_management_system.goodsIn.states.GrnItemStateHandlerResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Slf4j
@@ -21,6 +20,7 @@ public class GrnItemStateService {
 
     private final GrnService grnService;
     private final GrnItemService grnItemService;
+    private final GrnItemStateHandlerResolver resolver;
 
     // VALIDAZIONE QUANTITÀ
     public void validateItemQuantities(GrnItemDto item) throws InvalidQuantityException, QuantityMismatchException, OverReceivedQuantityException {
@@ -47,30 +47,25 @@ public class GrnItemStateService {
     @Transactional(rollbackFor = {GrnItemNotFoundException.class, GrnNotFoundException.class})
     public void evaluateAndProgressItemState(GrnItemDto item) throws GrnItemNotFoundException, GrnNotFoundException {
 
-        List<CheckingInfoDto> checks = item.getCheckingInfoList();
-        int received = item.getReceivedQty();
-        int assigned = checks == null ? 0 : checks.stream().mapToInt(CheckingInfoDto::getQuantity).sum();
+        State currentState = item.getState();
+        GrnItemStateHandler currentHandler = resolver.resolve(currentState);
 
-        State current = item.getState() == null ? State.OPEN : item.getState();
-
-        // OPEN → CHECKED
-        if (assigned >= received && current == State.OPEN) {
-            log.info("AUTO: Item {} -> CHECKED (qty complete)", item.getId());
-            item.setState(State.CHECKED);
+        State nextState = currentHandler.onCheckingInfoAdded(item);
+        if (nextState != currentState && currentHandler.canTransitionTo(nextState, item)) {
+            item.setState(nextState);
             grnItemService.updateGrnItem(item.getId(), item);
-            current = State.CHECKED;
+            currentState = nextState;
         }
 
-        // CHECKED → PUTAWAY
-        if (current == State.CHECKED
-                && checks != null
-                && !checks.isEmpty()
-                && checks.stream().allMatch(c -> c.getState() == State.PUTAWAY)) {
-
-            log.info("AUTO: Item {} -> PUTAWAY (all checks PUTAWAY)", item.getId());
-            item.setState(State.PUTAWAY);
+        currentHandler = resolver.resolve(currentState);
+        nextState = currentHandler.onPutawayAssigned(item);
+        if (nextState != currentState && currentHandler.canTransitionTo(nextState, item)) {
+            item.setState(nextState);
             grnItemService.updateGrnItem(item.getId(), item);
+        }
 
+        if (item.getState() == State.PUTAWAY) {
+            log.info("AUTO: Item {} -> PUTAWAY (all checks PUTAWAY)", item.getId());
             evaluateAndProgressGrnState(item.getGrnId());
         }
     }
