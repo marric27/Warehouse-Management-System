@@ -41,7 +41,7 @@ public class CheckGoodsInService {
     public GrnItemDto createCheckingInfoAndStockUnit(String grnItemCode, StockUnitDto su) throws Exception {
 
         GrnItemDto grnItem = grnItemService.getGrnItemByCode(grnItemCode);
-        if(grnItem.getState() == State.CHECKED ||  grnItem.getState() == State.PUTAWAY) {
+        if (!stateService.canAssignCheckingInfo(grnItem)) {
             throw new CannotAssignCIToGrnItemInClosedOrPutawayStateException(grnItemCode);
         }
 
