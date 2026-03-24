@@ -28,4 +28,14 @@ public class CheckedGrnItemState implements GrnItemStateHandler {
     public State onPutawayAssigned(GrnItemDto item) {
         return onCheckingInfoAdded(item);
     }
+
+    @Override
+    public State onQuantitiesValidated(GrnItemDto item) {
+        return item.getReceivedQty() == 0 ? State.PUTAWAY : State.CHECKED;
+    }
+
+    @Override
+    public boolean canAssignCheckingInfo(GrnItemDto item) {
+        return false;
+    }
 }

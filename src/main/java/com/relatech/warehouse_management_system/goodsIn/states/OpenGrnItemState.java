@@ -34,4 +34,14 @@ public class OpenGrnItemState implements GrnItemStateHandler {
     public State onPutawayAssigned(GrnItemDto item) {
         return onCheckingInfoAdded(item);
     }
+
+    @Override
+    public State onQuantitiesValidated(GrnItemDto item) {
+        return item.getReceivedQty() == 0 ? State.PUTAWAY : State.OPEN;
+    }
+
+    @Override
+    public boolean canAssignCheckingInfo(GrnItemDto item) {
+        return true;
+    }
 }

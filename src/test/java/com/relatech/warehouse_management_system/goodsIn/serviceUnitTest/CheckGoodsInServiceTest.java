@@ -53,8 +53,12 @@ class CheckGoodsInServiceTest {
 
     @Test
     void createCheckingInfoAndStockUnit_itemInCheckedOrPutaway_throws() throws Exception {
+        GrnItemDto grnItem = new GrnItemDto();
+        grnItem.setCode("5L");
+        grnItem.setState(State.CHECKED);
 
-        when(stateService.checkGrnItemIfCheckedOrPutaway("5L")).thenReturn(true);
+        when(grnItemService.getGrnItemByCode("5L")).thenReturn(grnItem);
+        when(stateService.canAssignCheckingInfo(grnItem)).thenReturn(false);
 
         assertThrows(
                 CannotAssignCIToGrnItemInClosedOrPutawayStateException.class,
@@ -98,7 +102,7 @@ class CheckGoodsInServiceTest {
 
         // --- STUBBING (Mockito setup) ---
         when(grnItemService.getGrnItemByCode(grnItemCode)).thenReturn(grnItem);
-        when(stateService.checkGrnItemIfCheckedOrPutaway(grnItemCode)).thenReturn(false);
+        when(stateService.canAssignCheckingInfo(grnItem)).thenReturn(true);
         when(productService.getProductByCode(productCode)).thenReturn(mockProduct);
 
         when(stockUnitService.createStockUnit(any(StockUnitDto.class))).thenReturn(createdSu);
