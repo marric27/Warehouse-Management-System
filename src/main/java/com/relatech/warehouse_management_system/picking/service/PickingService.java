@@ -1,5 +1,6 @@
 package com.relatech.warehouse_management_system.picking.service;
 
+import com.relatech.warehouse_management_system.common.exception.BadRequestException;
 import com.relatech.warehouse_management_system.common.exception.MatchingDifferentCategoryException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.ErrorReason;
@@ -51,7 +52,7 @@ public class PickingService {
     }
 
     @Transactional(rollbackFor = {ResourceNotFoundException.class, QuantityMismatchException.class}, propagation = Propagation.REQUIRED)
-    public void confirmPicking(ConfirmPickingRequest request) throws Exception {
+    public void confirmPicking(ConfirmPickingRequest request) throws ResourceNotFoundException, QuantityMismatchException, MatchingDifferentCategoryException, BadRequestException {
         PickListItemDto pickListItem = loadPickListItem(request.getPickListCode(), request.getPickListItemCode());
 
         Map<String, Integer> stockUnitQuantities = request.getStockUnitQuantities().stream()
@@ -61,7 +62,7 @@ public class PickingService {
                 ));
 
         if (stockUnitQuantities.isEmpty()) {
-            throw new Exception("No stock units provided for picking");
+            throw new BadRequestException("No stock units provided for picking");
         }
 
         int toPickNow = stockUnitQuantities.values().stream().mapToInt(Integer::intValue).sum();
@@ -81,7 +82,7 @@ public class PickingService {
         if (!isComplete) {
             // Se il prelievo non è completo, DEVE esserci un motivo
             if (request.getErrorReason() == null) {
-                throw new Exception("Error reason can't be omitted when total picked qty is lower than requested");
+                throw new BadRequestException("Error reason can't be omitted when total picked qty is lower than requested");
             }
             errorReason = request.getErrorReason();
         } else {

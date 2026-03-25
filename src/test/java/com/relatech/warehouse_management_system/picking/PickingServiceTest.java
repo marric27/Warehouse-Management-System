@@ -1,6 +1,7 @@
 package com.relatech.warehouse_management_system.picking;
 
 import com.relatech.warehouse_management_system.common.exception.MatchingDifferentCategoryException;
+import com.relatech.warehouse_management_system.common.exception.BadRequestException;
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.ErrorReason;
 import com.relatech.warehouse_management_system.common.util.PickListItemState;
@@ -151,7 +152,7 @@ class PickingServiceTest {
         ConfirmPickingRequest request = new ConfirmPickingRequest();
         request.setPickListCode("PL-3");
         request.setPickListItemCode("PLI-3");
-        StockUnitQuantityDto stockUnitQuantityDto = new StockUnitQuantityDto("SU-3", 5);
+        StockUnitQuantityDto stockUnitQuantityDto = new StockUnitQuantityDto("SU-3", 3);
         request.setStockUnitQuantities(List.of(stockUnitQuantityDto));
 
         PickListItemDto item = new PickListItemDto();
@@ -169,12 +170,13 @@ class PickingServiceTest {
         StockUnitDto su = new StockUnitDto();
         su.setCode("SU-3");
         su.setProductCode("PROD-3");
-        su.setQuantity(1);
+        su.setQuantity(10);
 
         SlotDto slot = new SlotDto();
         slot.setStockUnits(List.of(su));
 
-        assertThrows(Exception.class, () -> pickingService.confirmPicking(request));
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> pickingService.confirmPicking(request));
+        assertTrue(exception.getMessage().contains("Error reason can't be omitted"));
     }
 
     @Test
@@ -208,17 +210,23 @@ class PickingServiceTest {
         PickListItemDto itemDto = new PickListItemDto();
         itemDto.setCode("PLI-004");
         itemDto.setSlotCode("SLOT-004");
-        itemDto.setQty(1);
+        itemDto.setQty(5);
+        itemDto.setPickedQty(0);
         itemDto.setState(PickListItemState.OPEN);
+        itemDto.setProductCode("PRD-004");
 
         PickListDto pickListDto = new PickListDto();
         pickListDto.setPickListItemList(List.of(itemDto));
         when(pickListService.getPickListByCode("PL-004")).thenReturn(pickListDto);
 
-        SlotDto slotDto = new SlotDto();
-        slotDto.setStockUnits(List.of()); // vuoto
+        when(stockUnitService.getStockUnitByCode("SU-404"))
+                .thenThrow(new ResourceNotFoundException("StockUnit", "SU-404"));
 
-        assertThrows(Exception.class, () -> pickingService.confirmPicking(request));
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> pickingService.confirmPicking(request)
+        );
+        assertTrue(exception.getMessage().contains("StockUnit not found with id: SU-404"));
     }
 
     @Test
@@ -251,7 +259,8 @@ class PickingServiceTest {
         SlotDto slotDto = new SlotDto();
         slotDto.setStockUnits(List.of(su));
 
-        assertThrows(QuantityMismatchException.class, () -> pickingService.confirmPicking(request));
+        QuantityMismatchException exception = assertThrows(QuantityMismatchException.class, () -> pickingService.confirmPicking(request));
+        assertTrue(exception.getMessage().contains("Requested quantity > available qty for stock unit: SU-006"));
     }
 
     @Test
@@ -280,7 +289,8 @@ class PickingServiceTest {
         SlotDto slotDto = new SlotDto();
         slotDto.setStockUnits(List.of(su));
 
-        assertThrows(QuantityMismatchException.class, () -> pickingService.confirmPicking(request));
+        QuantityMismatchException exception = assertThrows(QuantityMismatchException.class, () -> pickingService.confirmPicking(request));
+        assertTrue(exception.getMessage().contains("Errore: Stai prelevando 6 ma ne mancano solo 5"));
     }
 
     @Test
