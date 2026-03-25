@@ -2,24 +2,23 @@ package com.relatech.warehouse_management_system.goodsIn.putaway.service;
 
 import com.relatech.warehouse_management_system.common.exception.ResourceNotFoundException;
 import com.relatech.warehouse_management_system.common.util.State;
-import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import com.relatech.warehouse_management_system.goodsIn.dto.CheckingInfoDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.CheckingInfoService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
+import com.relatech.warehouse_management_system.goodsIn.events.GrnItemPutawayAssignedEvent;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoundException;
-import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.exception.UpdateEntityException;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import com.relatech.warehouse_management_system.warehouse.service.SlotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 @Slf4j
@@ -30,11 +29,10 @@ public class PutawayService {
     private final StockUnitService stockUnitService;
     private final CheckingInfoService checkingInfoService;
     private final GrnItemService grnItemService;
-    private final GrnItemStateService stateService;
-
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(rollbackFor = {ResourceNotFoundException.class, UpdateEntityException.class, GrnItemNotFoundException.class}, propagation = Propagation.REQUIRES_NEW)
-    public SlotDto assignStockUnitToSlot(String stockUnitCode, String slotCode) throws ResourceNotFoundException, UpdateEntityException, GrnItemNotFoundException, GrnNotFoundException {
+    public SlotDto assignStockUnitToSlot(String stockUnitCode, String slotCode) throws ResourceNotFoundException, UpdateEntityException, GrnItemNotFoundException {
 
         SlotDto slot = slotService.getSlotByCode(slotCode);
         StockUnitDto su = stockUnitService.getStockUnitByCode(stockUnitCode);
@@ -52,8 +50,12 @@ public class PutawayService {
         checkingInfoService.update(ci.getId(), ci);
 
         GrnItemDto item = grnItemService.getGrnItemById(ci.getGrnItemId());
-        stateService.evaluateAndProgressItemState(item);
-
+        eventPublisher.publishEvent(new GrnItemPutawayAssignedEvent(
+                item.getId(),
+                item.getState(),
+                item.getState(),
+                item.getGrnId()
+        ));
         return savedSlot;
     }
 }

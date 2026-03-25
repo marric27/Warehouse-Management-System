@@ -10,6 +10,7 @@ import com.relatech.warehouse_management_system.goodsIn.dto.StockUnitDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.CheckingInfoService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.StockUnitService;
+import com.relatech.warehouse_management_system.goodsIn.events.GrnItemCheckingInfoAddedEvent;
 import com.relatech.warehouse_management_system.goodsIn.exception.CannotAssignCIToGrnItemInClosedOrPutawayStateException;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnItemNotFoundException;
 import com.relatech.warehouse_management_system.goodsIn.exception.GrnNotFoundException;
@@ -18,6 +19,7 @@ import com.relatech.warehouse_management_system.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,7 @@ public class CheckGoodsInService {
     private final GrnItemService grnItemService;
     private final GrnItemStateService stateService;
     private final ProductService productService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(rollbackFor = {CannotAssignCIToGrnItemInClosedOrPutawayStateException.class, DuplicateResourceException.class, GrnItemNotFoundException.class, GrnNotFoundException.class})
     public GrnItemDto createCheckingInfoAndStockUnit(String grnItemCode, StockUnitDto su) throws Exception {
@@ -73,9 +76,13 @@ public class CheckGoodsInService {
         // assign to item
         grnItemService.addCheckingInfo(grnItemCode, savedCI.getId());
 
-        // progress state
         GrnItemDto item = grnItemService.getGrnItemByCode(grnItemCode);
-        stateService.evaluateAndProgressItemState(item);
+        eventPublisher.publishEvent(new GrnItemCheckingInfoAddedEvent(
+                item.getId(),
+                grnItem.getState(),
+                item.getState(),
+                item.getGrnId()
+        ));
 
         return item;
     }

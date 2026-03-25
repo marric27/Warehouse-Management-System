@@ -7,10 +7,12 @@ import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
+import com.relatech.warehouse_management_system.goodsIn.events.GrnItemQuantitiesValidatedEvent;
 import com.relatech.warehouse_management_system.goodsIn.exception.*;
 import com.relatech.warehouse_management_system.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class ReceivingService {
     private final GrnItemService grnItemService;
     private final GrnItemStateService stateService;
     private final ProductService productService;
+    private final ApplicationEventPublisher eventPublisher;
 
     // CREATE GRN
     @Transactional(rollbackFor = { Exception.class })
@@ -42,7 +45,7 @@ public class ReceivingService {
     @Transactional(rollbackFor = { Exception.class })
     public GrnItemDto createItem(String grnCode, GrnItemDto item) throws GrnNotFoundException,
             CannotAssignItemToGrnClosedException, InvalidQuantityException, QuantityMismatchException,
-            OverReceivedQuantityException, GrnItemNotFoundException, ResourceNotFoundException {
+            OverReceivedQuantityException, ResourceNotFoundException {
 
         GrnDto grn = grnService.getGRNByCode(grnCode);
         if (grn.getState() == State.CLOSED)
@@ -55,7 +58,12 @@ public class ReceivingService {
         item.setGrnId(grn.getId());
         GrnItemDto saved = grnItemService.createGrnItem(item);
 
-        stateService.evaluateAndProgressItemState(saved);
+        eventPublisher.publishEvent(new GrnItemQuantitiesValidatedEvent(
+                saved.getId(),
+                null,
+                saved.getState(),
+                saved.getGrnId()
+        ));
         return saved;
     }
 
@@ -74,11 +82,17 @@ public class ReceivingService {
         if (dto.getNotCompliantQty() >= 0)
             item.setNotCompliantQty(dto.getNotCompliantQty());
 
+        State oldState = item.getState();
         stateService.validateItemQuantities(item);
 
         GrnItemDto saved = grnItemService.updateGrnItem(itemId, item);
 
-        stateService.evaluateAndProgressItemState(saved);
+        eventPublisher.publishEvent(new GrnItemQuantitiesValidatedEvent(
+                saved.getId(),
+                oldState,
+                saved.getState(),
+                saved.getGrnId()
+        ));
         return saved;
     }
 
