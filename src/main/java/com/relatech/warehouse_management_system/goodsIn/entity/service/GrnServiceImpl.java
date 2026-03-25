@@ -31,7 +31,7 @@ public class GrnServiceImpl implements GrnService {
     @Override
     @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
     public GrnDto createGRN(GrnDto grnDTO) {
-        log.debug("Creating new GRN with ID: {}", grnDTO.getId());
+        log.info("Creating new GRN with ID: {}", grnDTO.getId());
 
         Grn entity = grnMapper.toEntity(grnDTO);
         Grn saved = grnRepository.save(entity);
@@ -42,7 +42,7 @@ public class GrnServiceImpl implements GrnService {
     @Override
     @Transactional(readOnly = true)
     public GrnDto getGRNById(Long id) throws GrnNotFoundException {
-        log.debug("Fetching GRN with ID: {}", id);
+        log.info("Fetching GRN with ID: {}", id);
         Grn entity = grnRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("GRN not found with ID: {}", id);
@@ -54,7 +54,7 @@ public class GrnServiceImpl implements GrnService {
     @Override
     @Transactional(readOnly = true)
     public GrnDto getGRNByCode(String code) throws GrnNotFoundException {
-        log.debug("Fetching GRN with code: {}", code);
+        log.info("Fetching GRN with code: {}", code);
         Grn entity = grnRepository.findByCode(code)
                 .orElseThrow(() -> {
                     log.warn("GRN not found with code: {}", code);
@@ -66,7 +66,7 @@ public class GrnServiceImpl implements GrnService {
     @Override
     @Transactional(readOnly = true)
     public List<GrnDto> getAllGRNs() {
-        log.debug("Fetching all GRNs");
+        log.info("Fetching all GRNs");
         return grnRepository.findAll().stream()
                 .map(grnMapper::toDto)
                 .toList();
@@ -75,7 +75,7 @@ public class GrnServiceImpl implements GrnService {
     @Override
     @Transactional(readOnly = true)
     public Page<GrnDto> getAllGRNsPaged(Pageable pageable) {
-        log.debug("Fetching paginated GRNs: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
+        log.info("Fetching paginated GRNs: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
         Page<Grn> grnPage = grnRepository.findAll(pageable);
         return grnPage.map(grnMapper::toDto);
     }
@@ -112,7 +112,7 @@ public class GrnServiceImpl implements GrnService {
     @Transactional(rollbackFor = {GrnNotFoundException.class, GrnWithItemsException.class},
             propagation = Propagation.REQUIRES_NEW)
     public void deleteById(Long id) throws GrnNotFoundException, GrnWithItemsException {
-        log.debug("Deleting GRN with ID: {}", id);
+        log.info("Deleting GRN with ID: {}", id);
 
         Grn grn = grnRepository.findById(id)
                 .orElseThrow(() -> {
@@ -132,7 +132,7 @@ public class GrnServiceImpl implements GrnService {
     @Override
     @Transactional(readOnly = true)
     public List<GrnDto> searchGrns(String term) {
-        log.debug("Searching GRNs with term: {}", term);
+        log.info("Searching GRNs with term: {}", term);
 
         if (term == null || term.trim().isEmpty()) {
             return getAllGRNs();

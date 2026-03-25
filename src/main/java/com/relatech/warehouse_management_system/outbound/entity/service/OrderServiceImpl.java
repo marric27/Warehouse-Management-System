@@ -27,7 +27,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
     public OrderDto createOrder(OrderDto orderDto) {
-        log.debug("Creating new Order");
+        log.info("Creating new Order");
         Order order = OrderMapper.toEntity(orderDto);
         return OrderMapper.toDto(orderRepository.save(order));
     }

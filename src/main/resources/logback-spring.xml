@@ -1,0 +1,39 @@
+<configuration>
+
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>http://localhost:3100/loki/api/v1/push</url>
+        </http>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <format>
+            <label>
+                <pattern>app=wms-app-spring,level=%level</pattern>
+            </label>
+            <message>
+                <pattern>
+                    {"timestamp":"%d{ISO8601}","level":"%level","logger":"%logger","thread":"%thread","RequestPath":"%X{RequestPath}","Elapsed":%X{Elapsed:-0},"message":"%msg"}
+                </pattern>
+            </message>
+        </format>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>
+                {"timestamp":"%d{ISO8601}","level":"%level","logger":"%logger","thread":"%thread","RequestPath":"%X{RequestPath}","Elapsed":%X{Elapsed:-0},"message":"%msg"}
+                %n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="LOKI"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

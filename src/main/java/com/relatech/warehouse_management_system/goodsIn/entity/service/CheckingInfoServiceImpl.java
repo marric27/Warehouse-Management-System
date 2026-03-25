@@ -75,7 +75,7 @@ public class CheckingInfoServiceImpl implements CheckingInfoService {
     @Override
     @Transactional(readOnly = true)
     public Page<CheckingInfoDto> getAllPaged(Pageable pageable) {
-        log.debug("Fetching paginated Checking info: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
+        log.info("Fetching paginated Checking info: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
         Page<CheckingInfo> checkingInfoDtoPage = checkingInfoRepository.findAll(pageable);
         return checkingInfoDtoPage.map(CheckingInfoMapper::toDto);
     }

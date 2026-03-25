@@ -76,7 +76,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public Page<ProductDto> getAllProductsPaged(Pageable pageable) {
-        log.debug("Fetching paginated GRNs: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
+        log.info("Fetching paginated GRNs: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
         Page<Product> productPage = productRepository.findAll(pageable);
         return productPage.map(ProductMapper::toDto);
     }

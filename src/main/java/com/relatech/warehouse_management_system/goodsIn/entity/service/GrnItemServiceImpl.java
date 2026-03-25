@@ -30,7 +30,7 @@ public class GrnItemServiceImpl implements GrnItemService {
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public GrnItemDto createGrnItem(GrnItemDto dto) {
-        log.debug("Creating new GRN item with ID: {}", dto.getId());
+        log.info("Creating new GRN item with ID: {}", dto.getId());
         GrnItem grnItem = grnItemMapper.toEntity(dto);
         grnItemRepository.save(grnItem);
         log.info("GRN item created successfully with ID: {}", grnItem.getId());
@@ -47,7 +47,7 @@ public class GrnItemServiceImpl implements GrnItemService {
 
     @Override
     public Page<GrnItemDto> getAllGrnItemsPaged(Pageable pageable) {
-        log.debug("Fetching paginated GrnItems: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
+        log.info("Fetching paginated GrnItems: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
         Page<GrnItem> grnItemPage = grnItemRepository.findAll(pageable);
         return grnItemPage.map(grnItemMapper::toDto);
     }
@@ -55,7 +55,7 @@ public class GrnItemServiceImpl implements GrnItemService {
     @Override
     @Transactional(readOnly = true)
     public GrnItemDto getGrnItemById(Long id) throws GrnItemNotFoundException {
-        log.debug("Fetching GRN item with ID: {}", id);
+        log.info("Fetching GRN item with ID: {}", id);
         GrnItem grnItem = grnItemRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("GRN item not found with ID: {}", id);
@@ -67,7 +67,7 @@ public class GrnItemServiceImpl implements GrnItemService {
     @Override
     @Transactional(readOnly = true)
     public GrnItemDto getGrnItemByCode(String code) throws GrnItemNotFoundException {
-        log.debug("Fetching GRN item with code: {}", code);
+        log.info("Fetching GRN item with code: {}", code);
         GrnItem grnItem = grnItemRepository.findByCode(code)
                 .orElseThrow(() -> {
                     log.warn("GRN not found with code: {}", code);
