@@ -5,11 +5,15 @@ import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
+import com.relatech.warehouse_management_system.goodsIn.event.CheckingInfoCreatedEvent;
+import com.relatech.warehouse_management_system.goodsIn.event.CheckingInfoPutawayAssignedEvent;
+import com.relatech.warehouse_management_system.goodsIn.event.GrnItemQuantitiesValidatedEvent;
 import com.relatech.warehouse_management_system.goodsIn.exception.*;
 import com.relatech.warehouse_management_system.goodsIn.states.GrnItemStateHandler;
 import com.relatech.warehouse_management_system.goodsIn.states.GrnItemStateHandlerResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,5 +101,23 @@ public class GrnItemStateService {
 
     public boolean checkGrnIfClosed(Long grnID) throws GrnNotFoundException {
         return grnService.getGRNById(grnID).getState() == State.CLOSED;
+    }
+
+    @EventListener
+    public void onCheckingInfoCreated(CheckingInfoCreatedEvent event) throws GrnItemNotFoundException, GrnNotFoundException {
+        GrnItemDto item = grnItemService.getGrnItemById(event.grnItemId());
+        evaluateAndProgressItemState(item);
+    }
+
+    @EventListener
+    public void onCheckingInfoPutawayAssigned(CheckingInfoPutawayAssignedEvent event) throws GrnItemNotFoundException, GrnNotFoundException {
+        GrnItemDto item = grnItemService.getGrnItemById(event.grnItemId());
+        evaluateAndProgressItemState(item);
+    }
+
+    @EventListener
+    public void onGrnItemQuantitiesValidated(GrnItemQuantitiesValidatedEvent event) throws GrnItemNotFoundException, GrnNotFoundException {
+        GrnItemDto item = grnItemService.getGrnItemById(event.grnItemId());
+        evaluateAndProgressItemState(item);
     }
 }

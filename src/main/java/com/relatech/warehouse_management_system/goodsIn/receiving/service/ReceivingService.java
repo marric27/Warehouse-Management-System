@@ -7,10 +7,12 @@ import com.relatech.warehouse_management_system.goodsIn.dto.GrnDto;
 import com.relatech.warehouse_management_system.goodsIn.dto.GrnItemDto;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemService;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
+import com.relatech.warehouse_management_system.goodsIn.event.GrnItemQuantitiesValidatedEvent;
 import com.relatech.warehouse_management_system.goodsIn.exception.*;
 import com.relatech.warehouse_management_system.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class ReceivingService {
     private final GrnItemService grnItemService;
     private final GrnItemStateService stateService;
     private final ProductService productService;
+    private final ApplicationEventPublisher publisher;
 
     // CREATE GRN
     @Transactional(rollbackFor = { Exception.class })
@@ -54,8 +57,7 @@ public class ReceivingService {
 
         item.setGrnId(grn.getId());
         GrnItemDto saved = grnItemService.createGrnItem(item);
-
-        stateService.evaluateAndProgressItemState(saved);
+        publisher.publishEvent(new GrnItemQuantitiesValidatedEvent(saved.getId()));
         return saved;
     }
 
@@ -77,8 +79,7 @@ public class ReceivingService {
         stateService.validateItemQuantities(item);
 
         GrnItemDto saved = grnItemService.updateGrnItem(itemId, item);
-
-        stateService.evaluateAndProgressItemState(saved);
+        publisher.publishEvent(new GrnItemQuantitiesValidatedEvent(saved.getId()));
         return saved;
     }
 
