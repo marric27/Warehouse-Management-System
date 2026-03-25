@@ -2,19 +2,23 @@ package com.relatech.warehouse_management_system.goodsIn.serviceUnitTest;
 
 import com.relatech.warehouse_management_system.common.util.Category;
 import com.relatech.warehouse_management_system.common.util.State;
-import com.relatech.warehouse_management_system.goodsIn.GrnItemStateService;
 import com.relatech.warehouse_management_system.goodsIn.dto.*;
 import com.relatech.warehouse_management_system.goodsIn.entity.service.*;
+import com.relatech.warehouse_management_system.goodsIn.events.GrnItemPutawayAssignedEvent;
 import com.relatech.warehouse_management_system.goodsIn.putaway.service.PutawayService;
 import com.relatech.warehouse_management_system.warehouse.entity.SlotDto;
 import com.relatech.warehouse_management_system.warehouse.service.SlotService;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+
+import org.springframework.context.ApplicationEventPublisher;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,7 +36,7 @@ class PutawayServiceTest {
     @Mock
     private GrnItemService grnItemService;
     @Mock
-    private GrnItemStateService stateService;
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private PutawayService service;
@@ -89,6 +93,8 @@ class PutawayServiceTest {
         // ------ GRN ITEM ------
         GrnItemDto item = new GrnItemDto();
         item.setId(100L);
+        item.setState(State.CHECKING);
+        item.setGrnId(200L);
 
         // MOCK GET
         when(slotService.getSlotByCode(slot.getCode())).thenReturn(slot);
@@ -105,7 +111,6 @@ class PutawayServiceTest {
         when(slotService.updateSlot(slotId, slot)).thenReturn(savedSlot);
         when(checkingInfoService.update(ci.getId(), ci)).thenReturn(ci);
 
-        doNothing().when(stateService).evaluateAndProgressItemState(item);
 
         // ------ CALL SERVICE ------
         SlotDto result = service.assignStockUnitToSlot(suCode, slotCode);
@@ -121,8 +126,15 @@ class PutawayServiceTest {
         assertEquals(State.PUTAWAY, ci.getState());
         verify(checkingInfoService).update(ci.getId(), ci);
 
-        // ------ VERIFY ITEM STATE PROGRESSION ------
-        verify(stateService).evaluateAndProgressItemState(item);
+        // ------ VERIFY PUTAWAY EVENT ------
+        ArgumentCaptor<GrnItemPutawayAssignedEvent> eventCaptor = ArgumentCaptor.forClass(GrnItemPutawayAssignedEvent.class);
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+
+        GrnItemPutawayAssignedEvent event = eventCaptor.getValue();
+        assertEquals(item.getId(), event.grnItemId());
+        assertEquals(item.getState(), event.oldState());
+        assertEquals(item.getState(), event.newState());
+        assertEquals(item.getGrnId(), event.grnId());
 
         assertNotNull(result);
     }
