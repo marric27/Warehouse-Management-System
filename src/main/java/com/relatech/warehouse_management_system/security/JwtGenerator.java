@@ -1,10 +1,6 @@
 package com.relatech.warehouse_management_system.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -16,28 +12,30 @@ import java.util.Date;
 @Component
 public class JwtGenerator {
 
-    private final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final SecretKey key = Jwts.SIG.HS256.key().build();
 
     public String generateToken(Authentication authentication) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + SecurityConstants.JWT_EXPIRATION);
 
         return Jwts.builder()
-                .setSubject(authentication.getName())
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
+                .subject(authentication.getName())
+                .issuedAt(now)
+                .expiration(expiryDate)
                 .signWith(key)
                 .compact();
     }
 
     public String getUsernameFromJwt(String token) {
         try {
-            Jws<Claims> claimsJws = Jwts.parserBuilder()
-                    .setSigningKey(key)
+            // parserBuilder() -> parser()
+            // setSigningKey() -> verifyWith()
+            return Jwts.parser()
+                    .verifyWith(key)
                     .build()
-                    .parseClaimsJws(token);
-
-            return claimsJws.getBody().getSubject();
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
         } catch (Exception e) {
             throw new AuthenticationCredentialsNotFoundException("Invalid JWT token");
         }
@@ -45,10 +43,10 @@ public class JwtGenerator {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
+            Jwts.parser()
+                    .verifyWith(key)
                     .build()
-                    .parseClaimsJws(token);
+                    .parseSignedClaims(token);
             return true;
         } catch (Exception e) {
             throw new AuthenticationCredentialsNotFoundException("JWT expired or invalid");
