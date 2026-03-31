@@ -22,31 +22,6 @@ public class GrnItemStateService {
     private final GrnItemService grnItemService;
     private final GrnItemStateHandlerResolver resolver;
 
-    // VALIDAZIONE QUANTITÀ
-    public void validateItemQuantities(GrnItemDto item) throws InvalidQuantityException, QuantityMismatchException, OverReceivedQuantityException {
-
-        int expected = item.getExpectedQty();
-        int compliant = item.getCompliantQty();
-        int notCompliant = item.getNotCompliantQty();
-        int received = item.getReceivedQty();
-
-        if (expected <= 0)
-            throw new InvalidQuantityException("Expected qty must be > 0");
-
-        if (received != compliant + notCompliant)
-            throw new QuantityMismatchException("Received != compliant + notCompliant");
-
-        if (received > expected)
-            throw new OverReceivedQuantityException("Over-received: expected=" + expected + " received=" + received);
-
-        applyStateAfterQuantityValidation(item);
-    }
-
-    public void applyStateAfterQuantityValidation(GrnItemDto item) {
-        GrnItemStateHandler currentHandler = resolver.resolve(item.getState());
-        item.setState(currentHandler.onQuantitiesValidated(item));
-    }
-
     public boolean canAssignCheckingInfo(GrnItemDto item) {
         GrnItemStateHandler currentHandler = resolver.resolve(item.getState());
         return currentHandler.canAssignCheckingInfo(item);
@@ -85,8 +60,7 @@ public class GrnItemStateService {
 
         GrnDto grn = grnService.getGRNById(grnId);
 
-        boolean allPutaway =
-                grn.getItems().stream().allMatch(i -> i.getState() == State.PUTAWAY);
+        boolean allPutaway = grn.getItems().stream().allMatch(i -> i.getState() == State.PUTAWAY);
 
         if (allPutaway) {
             grn.setState(State.CLOSED);

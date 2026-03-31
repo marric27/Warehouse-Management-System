@@ -9,6 +9,8 @@ import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnItemSe
 import com.relatech.warehouse_management_system.goodsIn.entity.service.GrnService;
 import com.relatech.warehouse_management_system.goodsIn.events.GrnItemQuantitiesValidatedEvent;
 import com.relatech.warehouse_management_system.goodsIn.exception.*;
+import com.relatech.warehouse_management_system.goodsIn.states.GrnItemStateHandler;
+import com.relatech.warehouse_management_system.goodsIn.states.GrnItemStateHandlerResolver;
 import com.relatech.warehouse_management_system.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ public class ReceivingService {
     private final GrnItemStateService stateService;
     private final ProductService productService;
     private final ApplicationEventPublisher eventPublisher;
+    private final GrnItemStateHandlerResolver resolver;
 
     // CREATE GRN
     @Transactional(rollbackFor = { Exception.class })
@@ -53,7 +56,7 @@ public class ReceivingService {
 
         productService.validateProductExists(item.getProductCode());
 
-        stateService.validateItemQuantities(item);
+        validateItemQuantities(item);
 
         item.setGrnId(grn.getId());
         GrnItemDto saved = grnItemService.createGrnItem(item);
@@ -67,33 +70,25 @@ public class ReceivingService {
         return saved;
     }
 
-    // UPDATE ITEM
-    @Transactional(rollbackFor = { Exception.class })
-    public GrnItemDto updateItem(Long itemId, GrnItemDto dto) throws Exception {
+    // VALIDAZIONE QUANTITÀ
+    public void validateItemQuantities(GrnItemDto item) throws InvalidQuantityException, QuantityMismatchException, OverReceivedQuantityException {
 
-        GrnItemDto item = grnItemService.getGrnItemById(itemId);
+        int expected = item.getExpectedQty();
+        int compliant = item.getCompliantQty();
+        int notCompliant = item.getNotCompliantQty();
+        int received = item.getReceivedQty();
 
-        if (dto.getExpectedQty() > 0)
-            item.setExpectedQty(dto.getExpectedQty());
-        if (dto.getReceivedQty() >= 0)
-            item.setReceivedQty(dto.getReceivedQty());
-        if (dto.getCompliantQty() >= 0)
-            item.setCompliantQty(dto.getCompliantQty());
-        if (dto.getNotCompliantQty() >= 0)
-            item.setNotCompliantQty(dto.getNotCompliantQty());
+        if (expected <= 0)
+            throw new InvalidQuantityException("Expected qty must be > 0");
 
-        State oldState = item.getState();
-        stateService.validateItemQuantities(item);
+        if (received != compliant + notCompliant)
+            throw new QuantityMismatchException("Received != compliant + notCompliant");
 
-        GrnItemDto saved = grnItemService.updateGrnItem(itemId, item);
+        if (received > expected)
+            throw new OverReceivedQuantityException("Over-received: expected=" + expected + " received=" + received);
 
-        eventPublisher.publishEvent(new GrnItemQuantitiesValidatedEvent(
-                saved.getId(),
-                oldState,
-                saved.getState(),
-                saved.getGrnId()
-        ));
-        return saved;
+        GrnItemStateHandler currentHandler = resolver.resolve(item.getState());
+        item.setState(currentHandler.onQuantitiesValidated(item));
     }
 
     @Transactional(readOnly = true)

@@ -102,17 +102,6 @@ public class ReceivingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @PutMapping("/items/{itemId}")
-    @Operation(summary = "Update item")
-    public ResponseEntity<GrnItemDto> updateItem(
-            @PathVariable Long itemId,
-            @Valid @RequestBody GrnItemDto dto) throws Exception {
-
-        log.info("Updating item {}", itemId);
-        GrnItemDto updated = receivingService.updateItem(itemId, dto);
-        return ResponseEntity.ok(updated);
-    }
-
     @GetMapping("/items/{itemId}")
     @Operation(summary = "Get GRN Item by ID")
     public ResponseEntity<GrnItemDto> getGrnItemById(@PathVariable Long itemId) throws Exception {
