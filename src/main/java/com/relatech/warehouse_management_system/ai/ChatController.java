@@ -14,7 +14,12 @@ public class ChatController {
 
     public ChatController(ChatClient.Builder builder) {
         this.chatClient = builder
-                .defaultSystem("You are an AI assistant answering questions about different products")
+                .defaultSystem("""
+                        You are an AI assistant for warehouse products.
+                        You must always use the getProductDetails tool before answering
+                        any user question related to products.
+                        If the tool does not return data, answer that the product was not found.
+                        """)
 
                 .build();
     }
@@ -25,15 +30,15 @@ public class ChatController {
         try {
             String response = chatClient.prompt()
                     .user(message)
-                    .functions("getProductDetails")
+                    .tools("getProductDetails")
                     .call()
                     .content()
                     .toString();
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("An error occurred: " + e.getMessage());
+            log.error("Error while generating AI response", e);
+            return ResponseEntity.internalServerError().body("An error occurred while processing the AI request.");
         }
     }
 }
