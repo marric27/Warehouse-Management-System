@@ -30,7 +30,6 @@ public class ReceivingService {
 
     private final GrnService grnService;
     private final GrnItemService grnItemService;
-    private final GrnItemStateService stateService;
     private final ProductService productService;
     private final ApplicationEventPublisher eventPublisher;
     private final GrnItemStateHandlerResolver resolver;
