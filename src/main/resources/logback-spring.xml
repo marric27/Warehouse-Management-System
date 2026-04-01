@@ -25,8 +25,9 @@
         </filter>
         <encoder>
             <pattern>
-                {"timestamp":"%d{ISO8601}","level":"%level","logger":"%logger","thread":"%thread","RequestPath":"%X{RequestPath}","Elapsed":%X{Elapsed:-0},"message":"%msg"}
-                %n
+<!--                {"timestamp":"%d{ISO8601}","level":"%level","logger":"%logger","thread":"%thread","RequestPath":"%X{RequestPath}","Elapsed":%X{Elapsed:-0},"message":"%msg"}-->
+<!--                %n-->
+                %d{HH:mm:ss} %-5level %logger{20} - %msg%n
             </pattern>
         </encoder>
     </appender>
