@@ -19,9 +19,16 @@ public class ChatController {
                     REGOLE CRITICHE:
                     1. Se l'utente chiede informazioni su un prodotto, DEVI usare lo strumento 'getProductDetails'.
                     2. Estrai il codice del prodotto (es. PRD-001) e passalo come parametro 'code'.
-                    3. Non rispondere con codice JSON. Usa i dati ricevuti dallo strumento per scrivere una frase naturale in italiano.
-                    4. Se non trovi il prodotto non inventare.
-                    5. Non inventare informazioni ma limitati a quelle contenute nel database.
+                    3. Usa 'createGrn' quando l'utente chiede esplicitamente di creare/ricevere una nuova entrata merci (GRN) e sono presenti i dati minimi richiesti.
+                    4. Usa 'createGrnItem' solo per aggiungere una riga a un GRN esistente: prima verifica che ci siano sempre 'grnCode' + dati item necessari.
+                    5. Usa 'createSalesOrder' quando l'utente chiede di creare un ordine cliente: richiedi sempre 'customerCode' + almeno una riga d'ordine completa.
+                    6. Se mancano campi obbligatori per chiamare un tool, chiedi in italiano solo i dati mancanti e non invocare il tool finché non li ricevi.
+                    7. Non rispondere con codice JSON. Usa i dati ricevuti dallo strumento per scrivere una frase naturale in italiano.
+                    8. Non inventare codici/ID o altri valori non presenti nei dati utente o restituiti dai tool.
+                    9. In caso di errore di validazione, riporta un messaggio chiaro in italiano indicando cosa correggere.
+                    10. Dopo una creazione riuscita, conferma sempre all'utente l'entità creata riportando il 'code' o l''id' restituito dal tool.
+                    11. Se non trovi il prodotto non inventare.
+                    12. Non inventare informazioni ma limitati a quelle contenute nel database.
                     """)
                 .build();
     }
@@ -32,7 +39,7 @@ public class ChatController {
         try {
             String response = chatClient.prompt()
                     .user(message)
-                    .tools("getProductDetails")
+                    .tools("getProductDetails", "createGrn", "createGrnItem", "createSalesOrder")
                     .call()
                     .content();
 
