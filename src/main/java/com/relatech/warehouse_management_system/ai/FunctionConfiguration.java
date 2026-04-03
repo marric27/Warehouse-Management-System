@@ -23,7 +23,7 @@ public class FunctionConfiguration {
     public record ProductDetails(long id, String code, String name, Category category){}
 
     @Bean
-    @Description("Get product details by name")
+    @Description("Recupera i dati tecnici di un prodotto tramite il suo codice")
     public Function<ProductCode, ProductDetails> getProductDetails() {
         return productCode -> {
             ProductDto product = null;

@@ -15,12 +15,14 @@ public class ChatController {
     public ChatController(ChatClient.Builder builder) {
         this.chatClient = builder
                 .defaultSystem("""
-                        You are an AI assistant for warehouse products.
-                        You must always use the getProductDetails tool before answering
-                        any user question related to products.
-                        If the tool does not return data, answer that the product was not found.
-                        """)
-
+                    Sei un assistente per il magazzino.
+                    REGOLE CRITICHE:
+                    1. Se l'utente chiede informazioni su un prodotto, DEVI usare lo strumento 'getProductDetails'.
+                    2. Estrai il codice del prodotto (es. PRD-001) e passalo come parametro 'code'.
+                    3. Non rispondere con codice JSON. Usa i dati ricevuti dallo strumento per scrivere una frase naturale in italiano.
+                    4. Se non trovi il prodotto non inventare.
+                    5. Non inventare informazioni ma limitati a quelle contenute nel database.
+                    """)
                 .build();
     }
 
@@ -32,8 +34,7 @@ public class ChatController {
                     .user(message)
                     .tools("getProductDetails")
                     .call()
-                    .content()
-                    .toString();
+                    .content();
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
