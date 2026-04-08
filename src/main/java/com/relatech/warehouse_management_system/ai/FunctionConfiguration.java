@@ -33,6 +33,7 @@ public class FunctionConfiguration {
 
     public record ProductCode(String code) {}
     public record ProductDetails(long id, String code, String name, Category category){}
+    public record CreateProductInput(String name, Category category) {}
 
     public record CreateGrnInput(String supplier, String receivingDate) {}
 
@@ -66,6 +67,32 @@ public class FunctionConfiguration {
                 return new ProductDetails(product.getId(), product.getCode(), product.getName(), product.getCategory());
             } else {
                 return new ProductDetails(0, "Not Found", null, null);
+            }
+        };
+    }
+
+    @Bean
+    @Description("Crea un nuovo prodotto con nome e categoria")
+    public Function<CreateProductInput, AiOperationResult> createProduct() {
+        return input -> {
+            try {
+                ProductDto request = ProductDto.builder()
+                        .name(input.name())
+                        .category(input.category())
+                        .build();
+
+                ProductDto created = productService.createProduct(request);
+                log.info("prodotto creato con codice {}", created.getCode());
+                return new AiOperationResult(
+                        true,
+                        created.getId(),
+                        created.getCode(),
+                        null,
+                        "Prodotto creato con successo"
+                );
+            } catch (Exception e) {
+                log.warn("Error while creating product", e);
+                return new AiOperationResult(false, null, null, null, "Errore creazione prodotto: " + e.getMessage());
             }
         };
     }
